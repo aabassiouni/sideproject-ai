@@ -38,11 +38,11 @@ async function DashboardPage() {
     // let generations = results.rows
 
     return (
-        <div className="flex h-screen flex-col items-center gap-4 p-4">
+        <div className="flex h-screen flex-col items-center gap-4 p-4 pt-0">
             <Card className="mt-10 w-full sm:w-[450px]">
                 <CardHeader className="flex flex-row items-center justify-center gap-4 text-center">
                     <div className="grow">
-                        <p className="text-lg font-semibold">
+                        <p className="text-base sm:text-lg  font-semibold">
                             {user?.username ?? user?.emailAddresses[0].emailAddress}
                         </p>
                     </div>

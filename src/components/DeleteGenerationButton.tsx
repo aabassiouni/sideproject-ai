@@ -15,6 +15,7 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { useRouter, usePathname } from 'next/navigation'
+import { Trash2Icon } from 'lucide-react'
 
 function DeleteGenerationButton({ className, generationID }: { className?: string; generationID: string }) {
     const router = useRouter()
@@ -52,8 +53,8 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button className={cn(className)} disabled={isEditing} variant={'destructive'}>
-                    {isEditing ? 'Deleting' : 'Delete'}
+                <Button size={'sm'} className={cn(className)} disabled={isEditing} variant={'destructive'}>
+                    {isEditing ? 'Deleting' : <Trash2Icon size={16}/>}
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>

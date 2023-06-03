@@ -79,7 +79,7 @@ async function UserButton() {
 
 function DashboardNavbar() {
     return (
-        <div className="p-4">
+        <div className="p-4 shadow-md ">
             <div className="container mx-auto flex items-center justify-between">
                 <div className="text-xl font-bold">
                     <Link href="/dashboard" replace>Sideproject.ai</Link>

@@ -15,6 +15,7 @@ import DashboardNavbar from '@/components/DashboardNavbar'
 import RepoInfo from '@/components/RepoInfo'
 import ts from 'typescript'
 import { Skeleton } from '@/components/ui/skeleton'
+import MobileRepoSelect from '@/components/MobileRepoSelect'
 
 function RepoCardSkeleton() {
     return <Skeleton className="h-16 w-full" />
@@ -45,9 +46,22 @@ async function WritePage() {
     }
 
     return (
-        <div className="flex h-screen">
+        <div className="flex h-screen flex-col sm:flex-row">
+            <MobileRepoSelect>
+                <ScrollArea className="h-44">
+                    <div className="space-y-3">
+                        {repos?.map((repo) => (
+                            // @ts-ignore
+                            <Suspense fallback={<div>Loading...</div>}>
+                                {/*  @ts-ignore */}
+                                <RepoCard key={repo.id} repo={repo} />
+                            </Suspense>
+                        ))}
+                    </div>
+                </ScrollArea>
+            </MobileRepoSelect>
             <GithubRepoCard>
-                <ScrollArea className="h-96">
+                <ScrollArea className="sm:h-96">
                     <div className="mr-3 space-y-3">
                         {repos?.map((repo) => (
                             // @ts-ignore
@@ -60,7 +74,7 @@ async function WritePage() {
                 </ScrollArea>
             </GithubRepoCard>
             <div className="flex grow flex-col">
-                <div className="">
+                <div className='m-4 my-2'>
                     <RepoInfo />
                 </div>
                 <Generation />

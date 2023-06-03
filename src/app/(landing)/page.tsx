@@ -1,56 +1,11 @@
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 // import { Suspense, useState } from "react";
-import {
-	Configuration,
-	CreateCompletionResponse,
-	CreateCompletionResponseChoicesInner,
-	OpenAIApi,
-} from "openai";
+
 import { Button } from "@/components/ui/button";
-import Generation from "@/components/Generation";
-import { auth } from "@clerk/nextjs";
-import { clerkClient, currentUser } from "@clerk/nextjs";
-import { Octokit } from "octokit";
-import clerk from "@clerk/clerk-sdk-node";
-import GithubRepoCard from "@/components/GithubRepoCard";
-import Navbar from "@/components/Navbar";
+
 
 export default async function Home() {
-	// const user = await currentUser();
-	// console.log("user", user);
-	// const { userId, getToken } = auth();
-	// const user = await currentUser();
-	// console.log(user);
-	// const token = await getToken();
-	// console.log(token);
-
-	// let repos;
-	// if (userId) {
-	// 	const githubToken = await clerk.users.getUserOauthAccessToken(
-	// 		userId,
-	// 		"oauth_github"
-	// 	);
-	// 	const test = await fetch("https://api.github.com/user/repos", {
-	// 		headers: {
-	// 			Authorization: `token ${githubToken[0].token}`,
-	// 		},
-	// 	});
-
-	// 	// console.log(test.json());
-	// 	const res = await test.json();
-	// 	console.log(res);
-
-	// 	const octokit = new Octokit({
-	// 		auth: githubToken[0].token,
-	// 	});
-	// 	console.log("token", githubToken[0].token);
-	// 	const { data } = await octokit.rest.repos.listForAuthenticatedUser({
-	// 		type: "private",
-	// 	});
-	// 	repos = data;
-	// 	console.log(repos);
-	// }
 
 	return (
 		<>

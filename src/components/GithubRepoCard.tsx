@@ -33,15 +33,12 @@ function GithubRepoCard({ children }: { children: React.ReactNode }) {
         setIsSubmitted(true)
     }
 
-    const variants = {
-        hidden: { x: '0%' },
-        show: { x: '-100%' },
-    }
+    
 
     return (
-        <div className="max-h-screen max-w-sm overflow-x-hidden rounded-tr-xl bg-white px-6 py-3">
-            <Link href={"/dashboard"}>
-                <Button size={'sm'} className="">
+        <div className="sm:max-h-screen hidden sm:flex flex-col items-center max-w-sm overflow-x-hidden rounded-xl sm:rounded-none sm:rounded-tr-xl bg-white px-6 py-3">
+            <Link className='self-start' href={"/dashboard"}>
+                <Button variant={'link'} size={'sm'} className="">
                     <ArrowLeftCircleIcon size={16} />
                 </Button>
             </Link>
@@ -51,35 +48,14 @@ function GithubRepoCard({ children }: { children: React.ReactNode }) {
                     Choose a repo from your Github account to import into sideproject.ai or input a github a link
                 </CardDescription>
             </CardHeader>
-            <div className="space-y-2">
+            <CardContent className="w-full space-y-2">
                 <SubmitLinkButton />
-                <Separator />
+            </CardContent>
+            <Separator className='mx-0 my-3 mt-2'/>
+            <div className="space-y-2">
                 {children}
             </div>
         </div>
-        // <Card className="max-w-sm max-h-screen overflow-x-hidden">
-        // 	{/* <motion.div
-        // 		variants={variants}
-        // 		initial="hidden"
-        // 		animate={isSubmitted ? "show" : "hidden"}
-        // 		transition={{ duration: 1 }}> */}
-        // 	<CardHeader>
-        // 		<CardTitle>Choose a repo!</CardTitle>
-        // 		<CardDescription>
-        // 			Choose a repo from your Github account to import into sideproject.ai
-        // 			or input a github a link
-        // 		</CardDescription>
-        // 	</CardHeader>
-        // 	<CardContent className="space-y-2">
-        // 		<Input placeholder="Github Link" className="w-full" />
-        // 		<Button onClick={handleSubmit} className="w-full">
-        // 			Submit
-        // 		</Button>
-        // 		<Separator />
-        // 		{children}
-        // 	</CardContent>
-        // 	{/* </motion.div> */}
-        // </Card>
     )
 }
 

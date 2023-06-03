@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 import { conn } from '@/lib/planetscale'
-import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import GithubIcon from '@/components/icons/GithubIcon'
 import DeleteGenerationButton from '@/components/DeleteGenerationButton'
 import { Button } from '@/components/ui/button'
@@ -24,37 +24,32 @@ async function GenerationPage({ params }: { params: { generation: string } }) {
     ])) as { rows: Generation[] }
 
     return (
-        <div className="flex h-full grow flex-col items-center justify-center gap-2">
-            <div className="mt-10 flex items-center">
-                <Link href={'/dashboard'}>
-                    <Button className="m-4 rounded-full">
-                        <ArrowLeftCircleIcon />
+        <div className="flex h-full  flex-col items-center justify-center gap-2 px-4">
+            <div className="mt-10 flex flex-col items-center sm:flex-row">
+                <Link className='hidden sm:block' href={'/dashboard'}>
+                    <Button variant={'link'} className="m-4 rounded-full">
+                        <ArrowLeftCircleIcon size={16} />
                     </Button>
                 </Link>
-                <Card className="relative h-24 w-full p-2 sm:w-[550px]">
-                    <CardContent className="flex h-full items-center gap-4">
+                <Card className="flex h-24  w-full flex-col p-2 sm:w-[550px]">
+                    <p className="self-end p-1 text-sm leading-none text-muted-foreground">
+                        {rows[0]?.created_on_date}
+                    </p>
+                    <CardContent className="flex h-full items-center gap-4 self-center">
                         <Suspense fallback={<Loading />}>
-                            <p className="text-lg font-semibold">
+                            <p className="inline-flex items-center justify-center text-base font-semibold sm:text-lg">
                                 <GithubIcon className="mr-2 inline-block" />
                                 {rows[0]?.repo_name}
                             </p>
-                            <p className="absolute right-0 top-0 m-4 text-sm leading-none text-muted-foreground">
-                                {rows[0]?.created_on_date}
-                            </p>
+                            {/* <p className="text-sm leading-none text-muted-foreground">{rows[0]?.created_on_date}</p> */}
                         </Suspense>
                     </CardContent>
                 </Card>
             </div>
-            <Card className="relative m-4 mt-2 h-full w-[650px]">
-                {/* <CardHeader>
-				<CardTitle>
-					<GithubIcon className="inline-block mr-2" size={16} />
-					aabassiouni/framebound
-				</CardTitle>
-				<CardDescription>
-					<p>38 files, </p>
-				</CardDescription>
-			</CardHeader> */}
+            <Card className="relative mt-2 h-full sm:w-[650px]">
+                <CardHeader>
+                    <CardTitle>Generated Text</CardTitle>
+                </CardHeader>
                 <div className="flex h-full grow items-center justify-center">
                     <CardContent className="">
                         <DeleteGenerationButton

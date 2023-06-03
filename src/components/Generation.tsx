@@ -11,7 +11,7 @@ function Generation() {
     const { generation } = useValues()
 
     return (
-        <Card className="m-4 mt-2 h-full">
+        <Card className=" m-4 mt-2 h-52 sm:h-full sm:min-w-0">
             {/* <CardHeader>
 				<CardTitle>
 					<GithubIcon className="inline-block mr-2" size={16} />

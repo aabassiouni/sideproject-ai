@@ -13,7 +13,7 @@ function KeywordInput({
     return (
         <div className="flex gap-2">
             <div className='flex gap-2 items-center'>
-                <Input placeholder="Keyword" className="text-center w-56" />
+                <Input placeholder="Keyword" className="text-center sm:w-56" />
                 <Button size={'sm'}>
                     <PlusIcon size={16} />
                 </Button>
