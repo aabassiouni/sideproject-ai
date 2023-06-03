@@ -4,11 +4,11 @@ import React from 'react'
 
 function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
-        <ValueProvider >
-        <div className="flex h-screen flex-col">
-            <DashboardNavbar />
-            {children}
-        </div>
+        <ValueProvider>
+            <div className="flex h-screen flex-col">
+                <DashboardNavbar />
+                {children}
+            </div>
         </ValueProvider>
     )
 }

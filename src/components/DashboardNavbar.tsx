@@ -82,7 +82,7 @@ function DashboardNavbar() {
         <div className="p-4">
             <div className="container mx-auto flex items-center justify-between">
                 <div className="text-xl font-bold">
-                    <Link href="/dashboard">Sideproject.ai</Link>
+                    <Link href="/dashboard" replace>Sideproject.ai</Link>
                 </div>
                 {/* <p>https://github.com/aabassiouni/next-js-app-router-helper</p> */}
                 {/* @ts-ignore */}

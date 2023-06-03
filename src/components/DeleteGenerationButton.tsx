@@ -22,10 +22,8 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
     const [isEditing, setIsEditing] = useState(false)
 
     async function handleClick() {
-
         setIsEditing(true)
-        try{
-
+        try {
             const res = await fetch('/api/generations', {
                 method: 'POST',
                 headers: {
@@ -37,18 +35,18 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
             })
             const data = await res.json()
             console.log(data)
+
+            setIsEditing(false)
+            startTransition(() => {
+                if (pathname === '/dashboard') {
+                    router.refresh()
+                } else {
+                    router.replace('/dashboard')
+                }
+            })
         } catch (e) {
             console.log(e)
         }
-
-        setIsEditing(false)
-        startTransition(() => {
-            if (pathname === '/dashboard') {
-                router.refresh()
-            } else {
-                router.replace('/dashboard')
-            }
-        })
     }
 
     return (
