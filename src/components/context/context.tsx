@@ -1,7 +1,7 @@
 "use client";
 
 import type { SelectedRepo } from "@/types";
-import { createContext, useContext, useState } from "react";
+import { SetStateAction, createContext, useContext, useState } from "react";
 
 export const ValueContext = createContext({
 	selectedRepo: { owner: "", repo: "", path: "", url: "" },
@@ -10,8 +10,10 @@ export const ValueContext = createContext({
 	setIsLoading: (isLoading: boolean) => {},
 	link: "",
 	setLink: (link: string) => {},
-	generation: "",
-	setGeneration: (generation: string) => {},
+	generation: [""],
+	setGeneration: (generation: string[]) => {},
+	keywords: [""],
+	setKeywords: (keywords: string[]) => {}
 });
 
 export default function ValueProvider({
@@ -27,7 +29,9 @@ export default function ValueProvider({
 	});
 	const [isLoading, setIsLoading] = useState(false);
 	const [link, setLink] = useState<string>("");
-	const [generation, setGeneration] = useState<string>("");
+	const [generation, setGeneration] = useState<string[]>([""]);
+    const [keywords, setKeywords] = useState<string[]>([])
+
 
 	return (
 		<ValueContext.Provider
@@ -40,6 +44,8 @@ export default function ValueProvider({
 				setSelectedRepo,
 				generation,
 				setGeneration,
+				keywords,
+				setKeywords
 			}}>
 			{children}
 		</ValueContext.Provider>

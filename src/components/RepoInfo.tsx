@@ -3,24 +3,18 @@ import React, { useEffect, useState } from 'react'
 import GithubIcon from './icons/GithubIcon'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card'
 import { Skeleton } from './ui/skeleton'
-
 import { useValues } from './context/context'
-import { Button } from './ui/button'
-import SparkleIcon from './icons/SparkleIcon'
-import GenerateButton from './GenerateButton'
+import GenerateButton from './buttons/GenerateButton'
 import { Separator } from './ui/separator'
-import { Input } from './ui/input'
 import KeywordInput from './KeywordInput'
+import KeywordDeleteButton from './buttons/KeywordDeleteButton'
 function RepoInfo() {
-    const { selectedRepo } = useValues()
+    const { selectedRepo, keywords } = useValues()
     const [title, setTitle] = useState<string>('')
     const [size, setSize] = useState<number>(0)
     const [starCount, setStarCount] = useState<number>(0)
     const [numFiles, setNumFiles] = useState<number>(0)
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [keywords, setKeywords] = useState<string[]>([])
-    const [description, setDescription] = useState<string>('')
-    const [numLines, setNumLines] = useState<number>(0)
 
     console.log('selected repo is repo info is ', selectedRepo)
 
@@ -73,38 +67,33 @@ function RepoInfo() {
     // }
 
     return (
-        <Card className="sm:h-44 ">
+        <Card className="sm:h-fit">
             <div className="flex flex-col sm:flex-row">
                 {isLoading ? (
                     // <Card className="m-4 h-40">
-                        <CardHeader className='h-40'>
-                            {/* <CardTitle> */}
-                            {/* <GithubIcon className="inline-block mr-2" size={16} /> */}
-                            {/* {title ?? "N/A"} */}
-                            {/* </CardTitle> */}
+                    <div className="sm:basis-1/3  ">
+                        <CardHeader className="h-44">
                             <Skeleton className="h-4 w-48" />
                             <Skeleton className="h-4 w-28" />
-                            {/* <CardDescription> */}
-                            {/* {numFiles} files, {size}MB, {starCount} stars{" "} */}
-                            {/* </CardDescription> */}
                         </CardHeader>
-                    // </Card>
+                        {/* </Card> */}
+                    </div>
                 ) : (
                     <></>
                 )}
                 {selectedRepo.repo && !isLoading ? (
                     <>
-                        <div className="grow">
+                        <div className="basis-1/3">
                             <CardHeader>
-                                <CardTitle className='text-center sm:text-left'>
-                                    <GithubIcon className="text-center sm:text-left mr-2 inline-block" size={16} />
+                                <CardTitle className="text-center sm:text-left">
+                                    <GithubIcon className="mr-2 inline-block text-center sm:text-left" size={16} />
                                     {title ?? 'N/A'}
                                 </CardTitle>
-                                <CardDescription className='text-center sm:text-left'>
+                                <CardDescription className="text-center sm:text-left">
                                     {numFiles} files, {size}MB, {starCount} stars{' '}
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent className='flex justify-center'>
+                            <CardContent className="flex justify-center">
                                 <GenerateButton />
                             </CardContent>
                         </div>
@@ -118,15 +107,27 @@ function RepoInfo() {
                         </div>
                     )
                 )}
-                <Separator orientation="vertical" className="hidden h-44 sm:block" />
+                <Separator orientation="vertical" className="hidden sm:block" />
                 <Separator orientation="horizontal" className="w-full sm:hidden" />
-                <div className="grow">
+                <div className="basis-2/3">
                     <CardHeader className="text-center">
                         <CardTitle>Optimize for Keywords:</CardTitle>
-                        <CardDescription>Input a comma separated list for keywords to optimize for</CardDescription>
+                        <CardDescription>Input a comma separated list for keywords to optimize for <br />( Max 5 keywords. )</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <KeywordInput keywords={keywords} setKeywords={setKeywords} />
+                    <CardContent className='flex flex-col sm:flex-row items-center justify-between'>
+                        <KeywordInput />
+                        <div className="grid grid-cols-5 w-full gap-2 rounded-xl p-2 h-11 m-2 bg-slate-200 justify-center   ">
+                            {keywords.map((keyword, index) => {
+								console.log('keyword is ', keyword)
+                                return (
+                                    <div key={index} className="flex text-sm border w-fit p-1  px-2 rounded-full border-slate-400 items-center gap-2">
+                                        <p className="text-xs text-center ">{keyword}</p>
+                                        
+                                        <KeywordDeleteButton currKeyword= {keyword} />
+                                    </div>
+                                )
+                            })}
+                        </div>
                     </CardContent>
                 </div>
             </div>

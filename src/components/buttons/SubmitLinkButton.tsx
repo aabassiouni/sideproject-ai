@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { useValues } from "./context/context";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { useValues } from "../context/context";
 import { extractOwnerAndRepoAndPath } from "@/lib/utils";
 function SubmitLinkButton() {
 

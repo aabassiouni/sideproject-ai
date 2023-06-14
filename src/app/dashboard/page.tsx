@@ -1,61 +1,92 @@
 import React, { Suspense } from 'react'
 import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 import { currentUser } from '@clerk/nextjs'
-import { conn } from '@/lib/planetscale'
 import GenerationsCard from '@/components/GenerationsCard'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
-import StartWritingButton from '@/components/StartWritingButton'
+import { conn } from '@/lib/planetscale'
+import StartWritingButton from '@/components/buttons/StartWritingButton'
+import Link from 'next/link'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const runtime = "edge"
+
+
+type Generation = {
+    generation_id_uuid: string
+    user_id: string
+    repo_name: string
+    created_on_date: string
+    generated_text: string
+}
 
 function GenerationsCardLoading() {
-	return (
-		<Card className="w-full sm:w-[650px] ">
-			<CardHeader className="space-y-4">
-				<CardTitle>Generations</CardTitle>
-				<Separator />
-				<Skeleton className="w-full h-12" />
-				<Skeleton className="w-full h-12" />
-				<Skeleton className="w-full h-12" />
-				<Skeleton className="w-full h-12" />
-			</CardHeader>
-		</Card>
-		
-	)
+    return (
+        <Card className="mt-10 w-full sm:w-[650px]  ">
+            <CardHeader className="space-y-4">
+                <CardTitle>Generations</CardTitle>
+                <Separator />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+            </CardHeader>
+        </Card>
+    )
+}
+function GenerationCard({ generation }: { generation: Generation }) {
+    return (
+        <Link href={`/dashboard/${generation.generation_id_uuid}`}>
+            <Card className="flex w-full items-center justify-around bg-slate-100 p-4 py-2 sm:w-full">
+                <div className="w-44 overflow-ellipsis">
+                    <p className="line-clamp-1 text-ellipsis text-sm font-medium  tracking-tight sm:text-base">
+                        {generation.repo_name.split('/')[1]}
+                    </p>
+                </div>
+                <div className="line-clamp-1 w-fit text-sm text-slate-400">
+                    <p>{generation.created_on_date}</p>
+                </div>
+                <div className="flex items-center gap-1.5">
+                    {/* <Button size={'sm'}>View</Button> */}
+                    {/* <DeleteGenerationButton generationID={generation.generation_id_uuid} /> */}
+                </div>
+            </Card>
+        </Link>
+    )
 }
 async function DashboardPage() {
     const user = await currentUser()
 
-    console.log(user)
-
-    // const results = await conn.execute(
-    //     'SELECT user_id, repo_name, created_on_date, generated_text, BIN_TO_UUID(generation_id) AS generation_id_uuid FROM generations;',
-    //     [user?.id]
-    // )
-    // let generations = results.rows
+    const results = await conn.execute(
+        'SELECT user_id, repo_name, created_on_date, generated_text, BIN_TO_UUID(generation_id) AS generation_id_uuid FROM generations Where user_id = ? ;',
+        [user?.id]
+    )
+    let generations = results.rows
 
     return (
         <div className="flex h-screen flex-col items-center gap-4 p-4 pt-0">
-            <Card className="mt-10 w-full sm:w-[450px]">
-                <CardHeader className="flex flex-row items-center justify-center gap-4 text-center">
-                    <div className="grow">
-                        <p className="text-base sm:text-lg  font-semibold">
-                            {user?.username ?? user?.emailAddresses[0].emailAddress}
-                        </p>
-                    </div>
-                    <div className="space-x-4">
-                        <Link href="/dashboard/write">
-                            <StartWritingButton />
-                        </Link>
-                    </div>
-                </CardHeader>
-            </Card>
             <Suspense fallback={<GenerationsCardLoading />}>
-				{/* @ts-ignore */}
-                <GenerationsCard  />
+                {/* @ts-ignore */}
+                {/* <GenerationsCard /> */}
+                <Card className="mt-10 w-full sm:w-[650px] ">
+                    <CardHeader className="items-center justify-between sm:flex-row">
+                        <CardTitle className="p-2 sm:p-0">Generations</CardTitle>
+                        <Link href="/dashboard/write">
+                            <StartWritingButton className="bg-gradient-to-r from-cyan-500 to-blue-500" />
+                        </Link>
+                    </CardHeader>
+                    <Separator />
+                    <CardContent className=" my-auto flex min-h-[50px] flex-col gap-2 overflow-x-scroll p-2">
+                        {/* <div className="p-2 my-auto gap-4 overflow-x-scroll"> */}
+                        {generations?.length > 0 ? (
+                            generations.map((generation: any) => <GenerationCard generation={generation} />)
+                        ) : (
+                            <p className="text-center text-slate-400">No generations yet!</p>
+                        )}
+                        {/* </div> */}
+                    </CardContent>
+                    <CardFooter />
+                </Card>
             </Suspense>
         </div>
     )

@@ -10,24 +10,16 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { User, CreditCard, Settings, PlusCircle, LogOut } from 'lucide-react'
+import { User, CreditCard, LogOut } from 'lucide-react'
 import { Button } from './ui/button'
-import { cn } from '@/lib/utils'
-import LogoutButton from './LogoutButton'
-function UserButtonLoading() {
-    return (
-        <div>
-            <Skeleton className="h-10 w-10 rounded-full" />
-        </div>
-    )
-}
+import { SignOutButton } from '@clerk/nextjs'
+
 
 async function UserButton() {
     const user = await currentUser()
-    // console.log(user)
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -55,23 +47,29 @@ async function UserButton() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                <Link href={'/dashboard/profile'}>
-                    <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
-                        Profile
-                        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                    </DropdownMenuItem>
+                    <Link href={'/dashboard/profile'}>
+                        <DropdownMenuItem>
+                            <User className="mr-2 h-4 w-4" />
+                            Profile
+                        </DropdownMenuItem>
                     </Link>
-                    <DropdownMenuItem>
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        <span>Billing</span>
-                        <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                    </DropdownMenuItem>
+                    <Link href={'/dashboard/purchase'}>
+                        <DropdownMenuItem>
+                            <CreditCard className="mr-2 h-4 w-4" />
+                            <span>Buy Credits</span>
+                        </DropdownMenuItem>
+                    </Link>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                    <LogoutButton />
-                </DropdownMenuItem>
+                <DropdownMenuGroup>
+                    {/* <LogoutButton /> */}
+                    <SignOutButton>
+                        <DropdownMenuItem>
+                            <LogOut className="mr-2 h-4 w-4" />
+                            <span>Log out</span>
+                        </DropdownMenuItem>
+                    </SignOutButton>
+                </DropdownMenuGroup>
             </DropdownMenuContent>
         </DropdownMenu>
     )
@@ -82,7 +80,9 @@ function DashboardNavbar() {
         <div className="p-4 shadow-md ">
             <div className="container mx-auto flex items-center justify-between">
                 <div className="text-xl font-bold">
-                    <Link href="/dashboard" replace>Sideproject.ai</Link>
+                    <Link className="font-necto" href="/dashboard" replace>
+                        sideproject.ai
+                    </Link>
                 </div>
                 {/* <p>https://github.com/aabassiouni/next-js-app-router-helper</p> */}
                 {/* @ts-ignore */}

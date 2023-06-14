@@ -1,14 +1,12 @@
 import React, { Suspense } from 'react'
 import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Separator } from './ui/separator'
-import { Button } from './ui/button'
 import Link from 'next/link'
-import DeleteGenerationButton from './DeleteGenerationButton'
-import AnimateSize from './AnimateSize'
 import { currentUser } from '@clerk/nextjs'
 import { conn } from '@/lib/planetscale'
+import StartWritingButton from './buttons/StartWritingButton'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 1
 
 type Generation = {
     generation_id_uuid: string
@@ -21,7 +19,7 @@ type Generation = {
 function GenerationCard({ generation }: { generation: Generation }) {
     return (
         <Link href={`/dashboard/${generation.generation_id_uuid}`}>
-            <Card className="flex w-fit sm:w-full items-center justify-around bg-slate-100 p-4 py-2">
+            <Card className="flex w-full items-center justify-around bg-slate-100 p-4 py-2 sm:w-full">
                 <div className="w-44 overflow-ellipsis">
                     <p className="line-clamp-1 text-ellipsis text-sm font-medium  tracking-tight sm:text-base">
                         {generation.repo_name.split('/')[1]}
@@ -32,7 +30,7 @@ function GenerationCard({ generation }: { generation: Generation }) {
                 </div>
                 <div className="flex items-center gap-1.5">
                     {/* <Button size={'sm'}>View</Button> */}
-                    <DeleteGenerationButton generationID={generation.generation_id_uuid} />
+                    {/* <DeleteGenerationButton generationID={generation.generation_id_uuid} /> */}
                 </div>
             </Card>
         </Link>
@@ -48,18 +46,24 @@ async function GenerationsCard() {
     let generations = results.rows
 
     return (
-        <Card className="w-full sm:w-[650px] ">
-            <CardHeader className="space-y-4 ">
-                <CardTitle>Generations</CardTitle>
-                <Separator />
-                <CardContent className="flex flex-col gap-4 overflow-x-scroll px-0">
+        <Card className="mt-10 min-h-full h-fit w-full sm:w-[650px] ">
+            <CardHeader className="items-center justify-between sm:flex-row">
+                <CardTitle className="p-2 sm:p-0">Generations</CardTitle>
+                <Link href="/dashboard/write">
+                    <StartWritingButton className="bg-gradient-to-r from-cyan-500 to-blue-500" />
+                </Link>
+            </CardHeader>
+            <Separator />
+            <CardContent className=" flex min-h-[50px] flex-col p-2 my-auto gap-2 overflow-x-scroll">
+                {/* <div className="p-2 my-auto gap-4 overflow-x-scroll"> */}
                     {generations?.length > 0 ? (
                         generations.map((generation: any) => <GenerationCard generation={generation} />)
                     ) : (
                         <p className="text-center text-slate-400">No generations yet!</p>
                     )}
-                </CardContent>
-            </CardHeader>
+                {/* </div> */}
+            </CardContent>
+            <CardFooter />
         </Card>
     )
 }

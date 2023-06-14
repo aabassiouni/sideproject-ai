@@ -1,33 +1,106 @@
 import { NextResponse } from 'next/server'
-// import { Configuration, OpenAIApi } from "openai";
 import { GithubRepoLoader } from 'langchain/document_loaders/web/github'
 import { OpenAI } from 'langchain/llms/openai'
 import {
-    loadQAStuffChain,
-    loadQAMapReduceChain,
     RetrievalQAChain,
-    AnalyzeDocumentChain,
-    loadQARefineChain,
 } from 'langchain/chains'
 import clerk from '@clerk/clerk-sdk-node'
 import { randomUUID } from 'crypto'
-import { PineconeClient } from '@pinecone-database/pinecone'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-import { PineconeStore } from 'langchain/vectorstores/pinecone'
 import { MemoryVectorStore } from 'langchain/vectorstores/memory'
-import { Document } from 'langchain/document'
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { auth } from '@clerk/nextjs'
 import { conn } from '@/lib/planetscale'
 import { Octokit } from 'octokit'
 
 export const runtime = 'nodejs'
+// const docs = [
+//     new Document({
+//         metadata: { foo: 'bar' },
+//         pageContent: 'pinecone is a vector db',
+//     }),
+//     new Document({
+//         metadata: { foo: 'bar' },
+//         pageContent: 'the quick brown fox jumped over the lazy dog',
+//     }),
+//     new Document({
+//         metadata: { baz: 'qux' },
+//         pageContent: 'lorem ipsum dolor sit amet',
+//     }),
+//     new Document({
+//         metadata: { baz: 'qux' },
+//         pageContent: 'pinecones are the woody fruiting body and of a pine tree',
+//     }),
+// ]
 const githubLoaderIgnorePaths = [
     'package-lock.json',
     'LICENSE.txt',
     'node_modules/',
+    'dist/',
+    'build/',
+    'coverage/',
+    'yarn.lock',
+    'yarn-error.log',
+    'yarn-debug.log',
+    'test/',
+    'tests/',
+    'testsuite/',
+    'docs/',
+    'doc/',
+    'example/',
+    'examples/',
+    'demo/',
+    'demos/',
+    'benchmark/',
+    'benchmarks/',
+    'tmp/',
+    'temp/',
+    'log/',
+    'logs/',
+    'cache/',
+    'caches/',
+    'data/',
+    'datas/',
     '.vscode/',
     '.eslintrc.json',
+    '.eslintrc.js',
+    '.eslintrc.yml',
+    '.eslintrc.yaml',
+    '.eslintrc',
+    '.eslintignore',
+    '.prettierrc',
+    '.prettierrc.json',
+    '.prettierrc.yml',
+    '.prettierrc.yaml',
+    '.prettierrc.js',
+    '.prettierignore',
+    '.stylelintrc',
+    '.stylelintrc.json',
+    '.stylelintrc.yml',
+    '.stylelintrc.yaml',
+    '.stylelintrc.js',
+    '.stylelintignore',
+    '.gitattributes',
+    '.gitmodules',
+    '.DS_Store',
+    '.tern-project',
+    '.gitkeep',
+    'tailwind.config.js',
+    'postcss.config.js',
+    'webpack.config.js',
+    'rollup.config.js',
+    'gulpfile.js',
+    'Gruntfile.js',
+    'prettier.config.js',
+    'jest.config.js',
+    'jest.setup.js',
+    'jest.config.json',
+    'tsconfig.json',
+    'tsconfig.build.json',
+    'tsconfig.settings.json',
+    'tslint.json',
+    'jsconfig.json',
+    'jsconfig.settings.json',
+    'karma.conf.js',
     '.gitignore',
     '.git',
     '*.svg',
@@ -66,30 +139,35 @@ const githubLoaderIgnorePaths = [
     '*.woff2',
     '*.eot',
 ]
+
 export async function POST(request: Request) {
     console.log('GET /api/complete')
     console.log('api key is ', process.env.OPENAI_API_KEY)
     console.log('loading docs')
 
     const { userId } = auth()
-    const { repo, owner, url } = await request.json()
-    // console.log("userId", userId);
-    // console.log("repo", repo);
-    // console.log("owner", owner);
+    const { repo, owner, url, keywords } = (await request.json()) as {
+        repo: string
+        owner: string
+        url: string
+        keywords: string[]
+    }
+
+
     if (userId) {
         //maybe add a privacy check
+
+        // creating a new generation id for the DB
         const generation_id = randomUUID()
 
+        // instantiating the LLM
         const llm = new OpenAI({
             modelName: 'text-davinci-003',
-            maxTokens: 350,
-            temperature: 0.7,
-            streaming: true
+            maxTokens: -1,
+            temperature: 0.9,
         })
 
-        console.log('pinecone api key', process.env.PINECONE_API_KEY)
-        console.log('pinecone api key', process.env.PINECONE_ENVIRONMENT)
-        console.log('pinecone api key', process.env.PINECONE_INDEX)
+        // const embeddings = new OpenAIEmbeddings()
 
         // const client = new PineconeClient()
         // await client.init({
@@ -106,11 +184,13 @@ export async function POST(request: Request) {
         const octokit = new Octokit({
             auth: githubToken[0].token,
         })
+
+        console.log('## Fetching Repo Info ##')
         const { data: repoResponse } = await octokit.rest.repos.get({
             owner: owner,
             repo: repo,
         })
-        
+
         const loader = new GithubRepoLoader(url, {
             ignorePaths: githubLoaderIgnorePaths,
             accessToken: githubToken[0].token,
@@ -118,58 +198,91 @@ export async function POST(request: Request) {
         })
 
         const docs = await loader.load()
-        // const docs = [
-        //     new Document({
-        //       metadata: { foo: "bar" },
-        //       pageContent: "pinecone is a vector db",
-        //     }),
-        //     new Document({
-        //       metadata: { foo: "bar" },
-        //       pageContent: "the quick brown fox jumped over the lazy dog",
-        //     }),
-        //     new Document({
-        //       metadata: { baz: "qux" },
-        //       pageContent: "lorem ipsum dolor sit amet",
-        //     }),
-        //     new Document({
-        //       metadata: { baz: "qux" },
-        //       pageContent: "pinecones are the woody fruiting body and of a pine tree",
-        //     }),
-        //   ];
+
+        console.log('## Analyzing Docs ##')
+
         console.log(docs.map((d) => d.metadata))
 
-        console.log('indexing into pinecone')
         const vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings())
-        // console.log('MemoryVectorStore index', test)
 
-        const chain = RetrievalQAChain.fromLLM(llm, vectorStore.asRetriever())
-        // const resultOne = await test.similaritySearch("nextjs app router", 1);
-
-        // console.log('resultOne', resultOne)
-
-        console.log('loading chain')
-        // const chain = loadQARefineChain(llm)
-
-        console.log('calling chain')
-        const res = {
-            text: `generated text for ${owner}/${repo}`,
-        }
-        // After learning those things, i want you to write 3-4 resume bullet points about this project. they shouldn't be too long. they should start with an action verb.
-        // const res = await chain.call({
-        //     query: "what is this github project's name? what does it do? what technologies does it use? After learning this information, I want you to write 3-4 resume bullet points about this project. they shouldn't be too long. they should start with an action verb. only return the bullet points",
-            
+        // const vectorStore = await PineconeStore.fromDocuments(docs, embeddings, {
+        //     // pineconeIndex: 'sideproject',
+        //     pineconeIndex: pineconeIndex,
+        //     namespace: 'test_docs',
         // })
-        console.log(res)
-        console.log('ai call returned: ', res.text)
 
+        // const vectorStore =await PineconeStore.fromExistingIndex(embeddings, {
+        //     pineconeIndex: pineconeIndex,
+        //     namespace: 'test_docs',
+        // })
+
+        console.log('## keywords ##')
+        console.log(keywords)
+
+        /////////////////////////////////////////////////////////////////////////////////
+        const chain = RetrievalQAChain.fromLLM(llm, vectorStore.asRetriever())
+        const template = `
+           write me 10 resume bullet points for this codebase describing what the project does and some of the important high level software techniques implemented in this project. You should include the technogies used and the problem that this project solves. The statements should be professional and always start with an action verb in the past tense. You will also be given some metrics and achievements that the project has attained that you must include in your statements. The first 4 statements should be based on the STAR method.
+
+           ${
+               keywords.length > 0
+                   ? `You will be given the following keywords to include in your statements: ${keywords.join(', ')}.`
+                   : ''
+           }
+
+           ${
+               repoResponse.stargazers_count || repoResponse.watchers_count
+                   ? `Metrics: ${
+                         repoResponse.stargazers_count ? repoResponse.stargazers_count + 'Github Stars' : ''
+                     }, ${repoResponse.watchers_count ? repoResponse.watchers_count + 'watchers on github' : ''}`
+                   : ''
+           }
+
+           write the name of the project and 10 statements separated by "|". Do not include newline characters.
+            `
+
+        console.log('## calling chain ##')
+
+        const res = (await chain.call({
+            // query: "explain what this code does like a resume writer would if he were to put this project in a software engineers resume",
+            // query: 'create four resume bullet points for this project separated by a new line',
+            query: template,
+        })) as { text: string }
+
+        console.log('##OPENAI call returned: ', res)
+
+        console.log('## splitting the text into bullets ##')
+        const { text } = res
+        // console.log(JSON.parse(text))
+
+        const bullets = text.split('|')
+        console.log(bullets)
+
+        // const { name, firstBullet, secondBullet, thirdBullet, fourthBullet, fifthBullet } = JSON.parse(
+        //     JSON.stringify(text)
+        // )
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        const bullets2 = ["1", "2", "3", "4", "5"] 
         console.log('saving to db')
         await conn.execute(
-            'Insert into generations (generation_id, user_id, repo_name, created_on_date, generated_text) values (UUID_TO_BIN(?), ?, ?, ?, ?)',
-            [generation_id, userId, `${owner}/${repo}`, new Date(), res.text]
+            'Insert into generations (generation_id, user_id, repo_name, created_on_date, generated_text, bullets ) values (UUID_TO_BIN(?), ?, ?, ?, ?, ?)',
+            [generation_id, userId, `${owner}/${repo}`, new Date(), res?.text, JSON.stringify(bullets)]
+            // [generation_id, userId, `${owner}/${repo}`, new Date(), "", JSON.stringify(bullets2)]
+
         )
         console.log('saved to db:', generation_id)
 
-        return NextResponse.json({ text: res.text })
+        // const res = {
+        //     name: 'name of the project',
+        //     firstBullet: 'the first resume bullet point',
+        //     secondBullet: 'the second resume bullet point',
+        //     thirdBullet: 'the third resume bullet point',
+        //     fourthBullet: 'the fourth resume bullet point',
+        //     fifthBullet: 'the fifth resume bullet point',
+        // }
+
+        return NextResponse.json({ bullets })
     }
     return
 }

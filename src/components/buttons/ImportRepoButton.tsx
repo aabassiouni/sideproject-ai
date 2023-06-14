@@ -1,10 +1,10 @@
 'use client';
 
 import React from "react";
-import { Button } from "./ui/button";
-import { ArrowRightIcon } from "lucide-react";
+import { Button } from "../ui/button";
+import { ArrowRight } from "lucide-react";
 import { GithubOwnerType } from "@/types";
-import { useValues } from "./context/context";
+import { useValues } from "../context/context";
 function ImportRepoButton({ owner, name, url }: { owner: GithubOwnerType; name: string, url: string}) {
 	
 	const { setSelectedRepo } = useValues();
@@ -16,7 +16,7 @@ function ImportRepoButton({ owner, name, url }: { owner: GithubOwnerType; name: 
 	}
 	return (
 		<Button onClick={handleClick} size="sm" className="">
-			<ArrowRightIcon size={16} />
+			<ArrowRight size={16} />
 		</Button>
 	);
 }

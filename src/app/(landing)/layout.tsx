@@ -1,11 +1,13 @@
-import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
+import LandingNavbar from '@/components/LandingNavbar'
 import React from 'react'
 
 function LandingLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex h-screen flex-col">
-            <Navbar />
+        <div className="flex flex-col">
+            <LandingNavbar />
             {children}
+            <Footer />
         </div>
     )
 }

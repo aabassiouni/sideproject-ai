@@ -1,7 +1,7 @@
 'use client'
 
 import React, { startTransition, useEffect, useState } from 'react'
-import { Button } from './ui/button'
+import { Button } from '../ui/button'
 import { cn } from '@/lib/utils'
 import {
     AlertDialog,
@@ -15,14 +15,16 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { useRouter, usePathname } from 'next/navigation'
-import { Trash2Icon } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
+import Link from 'next/link'
 
 function DeleteGenerationButton({ className, generationID }: { className?: string; generationID: string }) {
     const router = useRouter()
     const pathname = usePathname()
     const [isEditing, setIsEditing] = useState(false)
 
-    async function handleClick() {
+    async function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        e.preventDefault()
         setIsEditing(true)
         try {
             const res = await fetch('/api/generations', {
@@ -38,23 +40,30 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
             console.log(data)
 
             setIsEditing(false)
-            startTransition(() => {
-                if (pathname === '/dashboard') {
-                    router.refresh()
-                } else {
-                    router.replace('/dashboard')
-                }
-            })
         } catch (e) {
             console.log(e)
         }
+
+        startTransition(() => {
+            router.replace('/dashboard')
+        })
     }
 
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button size={'sm'} className={cn(className)} disabled={isEditing} variant={'destructive'}>
-                    {isEditing ? 'Deleting' : <Trash2Icon size={16}/>}
+                <Button
+                    // onClick={(e) => {
+                    //     // e.preventDefault()
+                    //     e.stopPropagation()
+                    // }}
+                    type="button"
+                    size={'sm'}
+                    className={cn(className)}
+                    disabled={isEditing}
+                    variant={'destructive'}
+                >
+                    {isEditing ? 'Deleting' : <Trash2 size={16} />}
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -68,7 +77,7 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
                         onClick={handleClick}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     >
-                        Delete
+                        {isEditing ? 'Deleting' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

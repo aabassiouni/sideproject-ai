@@ -5,7 +5,7 @@ import React from 'react'
 function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
         <ValueProvider>
-            <div className="">
+            <div className="h-screen">
                 <DashboardNavbar />
                 {children}
             </div>

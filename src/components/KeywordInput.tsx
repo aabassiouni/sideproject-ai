@@ -1,26 +1,43 @@
-import React, { Dispatch } from 'react'
+import React, { useState } from 'react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
-import { PlusIcon } from 'lucide-react'
+import { Plus } from 'lucide-react'
+import { useValues } from './context/context';
 
-function KeywordInput({
-    keywords,
-    setKeywords,
-}: {
-    keywords: string[]
-    setKeywords: Dispatch<React.SetStateAction<string[]>>
-}) {
+function KeywordInput() {
+    const [input, setInput] = useState<string>('');
+    const { keywords, setKeywords } = useValues();
+
+    function handleChange(event: any) {
+        setInput(event.target.value);
+    }
+    function handleClick(e: any ) {
+        e.preventDefault();
+
+        // console.log(event.target.value)
+        
+        setKeywords([...keywords, input])
+    }
     return (
-        <div className="flex gap-2">
-            <div className='flex gap-2 items-center'>
-                <Input placeholder="Keyword" className="text-center sm:w-56" />
-                <Button size={'sm'}>
-                    <PlusIcon size={16} />
+        <div className="flex items-center flex-initial gap-2">
+            <div className="flex items-center justify-center gap-2">
+                <Input placeholder="Keyword" onChange={handleChange} className="text-center sm:w-24" />
+                <Button  onClick={handleClick}  size={'sm'}>
+                    <Plus size={16} />
                 </Button>
             </div>
-            <div className="grow">
-                {/* <p>asdf</p> */}
-            </div>
+            {/* <div className="grow">
+                {keywords.map((keyword, index) => {
+                    return (
+                        <div key={index} className="flex items-center gap-2">
+                            {keyword}
+                            <Button size={'sm'}>
+                                <CrossIcon size={12} />
+                            </Button>
+                        </div>
+                    )
+                })}
+            </div> */}
         </div>
     )
 }

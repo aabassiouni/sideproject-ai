@@ -1,7 +1,7 @@
 import { auth, currentUser } from '@clerk/nextjs'
 import { NextResponse, NextRequest } from 'next/server'
 import { Octokit } from 'octokit'
-import clerk from '@clerk/clerk-sdk-node'
+import { users } from '@clerk/clerk-sdk-node'
 
 // export const revalidate = 1
 
@@ -13,9 +13,22 @@ export async function POST(request: NextRequest) {
     const { repo, owner } = await request.json()
     // console.log("repo", repo);
     // console.log("owner", owner);
+    // const res = await fetch(`https://api.clerk.com/v1/oauth_applications`, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //         Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
+    //         },
+    //     body: JSON.stringify({
+    //         name: 'github',
+    //         callback_url: 'https://one-bonefish-61.clerk.accounts.dev/v1/oauth_callback'
+    //         })
+    // })
+    // const data = await res.json()
+    // console.log("data", data);   
     if (userId) {
         if (user?.externalAccounts.length !== 0) {
-            const githubToken = await clerk.users.getUserOauthAccessToken(userId, 'oauth_github')
+            const githubToken = await users.getUserOauthAccessToken(userId, 'oauth_github')
 
             const octokit = new Octokit({
                 auth: githubToken[0].token,
@@ -47,7 +60,7 @@ export async function POST(request: NextRequest) {
 
             return NextResponse.json(obj)
         } else {
-            const githubToken = await clerk.users.getUserOauthAccessToken(userId, 'oauth_github')
+            // const githubToken = await clerk.users.getUserOauthAccessToken(userId, 'oauth_github')
 
             const octokit = new Octokit()
             // console.log("token", githubToken[0].token);

@@ -1,6 +1,6 @@
 import { ArrowRightIcon,  } from "lucide-react";
 import { Button } from "./ui/button";
-import ImportRepoButton from "./ImportRepoButton";
+import ImportRepoButton from "./buttons/ImportRepoButton";
 import GithubIcon from "./icons/GithubIcon";
 import {GetResponseTypeFromEndpointMethod} from '@octokit/types'
 import { GithubRepoType } from "@/types";
