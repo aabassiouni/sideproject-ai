@@ -11,6 +11,7 @@ import { conn } from '@/lib/planetscale'
 import { Octokit } from 'octokit'
 import { PineconeClient } from '@pinecone-database/pinecone'
 import { PineconeStore } from 'langchain/vectorstores/pinecone'
+import { ChatOpenAI } from 'langchain/chat_models/openai'
 export const runtime = 'nodejs'
 // const docs = [
 //     new Document({
@@ -159,12 +160,11 @@ export async function POST(request: Request) {
         const generation_id = randomUUID()
 
         // instantiating the LLM
-        const llm = new OpenAI({
-            modelName: 'text-davinci-003',
+        const llm = new ChatOpenAI({
+            modelName: 'gpt-3.5-turbo-16k',
             maxTokens: -1,
             temperature: 0.9,
         })
-
         const embeddings = new OpenAIEmbeddings()
 
         const client = new PineconeClient()
@@ -172,8 +172,6 @@ export async function POST(request: Request) {
             apiKey: process.env.PINECONE_API_KEY ?? '',
             environment: process.env.PINECONE_ENVIRONMENT ?? '',
         })
-        const indexesList = await client.listIndexes()
-        console.log('indexesList', indexesList)
 
         const pineconeIndex = client.Index('sideproject-index')
 
@@ -232,7 +230,8 @@ export async function POST(request: Request) {
         console.time('Calling LLM API')
         const chain = RetrievalQAChain.fromLLM(llm, vectorStore.asRetriever())
         const template = `
-        You are an expert resume writer. Write me 10 resume bullet points for this codebase describing what the project does and some of the important high level software techniques implemented in this project. You should include the technogies used and the problem that this project solves. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Focus on the software engineering aspects of the project such as databases, algorithms, REST APIs, and other software engineering concepts.
+        
+            You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. Be detailed in your bullet points.
 
            ${
                keywords.length > 0
@@ -248,7 +247,20 @@ export async function POST(request: Request) {
                    : ''
            }
 
-           write the name of the project and 5 statements separated by "|". Do not include newline characters.
+           The result type should be provided in the following JSON data structure:
+           {
+               name: "name of the project",
+               firstBullet: "the first resume bullet point",
+               secondBullet: "the second resume bullet point",
+               thirdBullet: "the third resume bullet point",
+               fourthBullet: "the fourth resume bullet point",
+               fifthBullet: "the fifth resume bullet point",
+
+           }
+
+       Respond only with the output in the exact format specified, with no explanation or conversation.
+
+
             `
 
         console.log('## calling chain ##')
@@ -258,15 +270,21 @@ export async function POST(request: Request) {
             // query: 'create four resume bullet points for this project separated by a new line',
             query: template,
         })) as { text: string }
+
         console.timeEnd('Calling LLM API')
 
-        console.log('##OPENAI call returned: ', res)
+        console.log('##OPENAI call returned: ', res?.text)
 
         console.log('## splitting the text into bullets ##')
         const { text } = res
-        // console.log(JSON.parse(text))
 
-        const bullets = text.split('|')
+        const responseObj = JSON.parse(text)
+        console.log(responseObj)
+
+        const bullets = Object.values(responseObj).map((bullet: any) => bullet.replace(/\n/g, ''))
+
+
+        // const bullets = text.split('|')
         console.log(bullets)
 
         // const { name, firstBullet, secondBullet, thirdBullet, fourthBullet, fifthBullet } = JSON.parse(
@@ -284,6 +302,8 @@ export async function POST(request: Request) {
         )
         console.log('saved to db:', generation_id)
         console.timeEnd('Saving to DB')
+
+        pineconeIndex.delete1({ deleteAll: true, namespace: `${owner}/${repo}-${generation_id}` })
 
         // const res = {
         //     name: 'name of the project',

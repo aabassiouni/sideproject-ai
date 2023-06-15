@@ -12,11 +12,11 @@ function Generation() {
 
     console.log('Generation', generation)
     return (
-        <Card className={`m-4 mt-2 h-fit sm:min-w-0 ${generation.length > 1 ? 'border-2 border-sky-600' : ''}`}>
+        <Card className={`m-4 mt-2 h-full sm:min-w-0 ${generation.length > 1 ? 'border-2 border-sky-600' : ''}`}>
             <div className={`flex h-full items-start justify-start rounded-lg p-5`}>
                 {generation.length > 1 ? (
                     <div className={`flex h-full items-start justify-start rounded-lg p-5`}>
-                        <div className=" w-full rounded-md  bg-slate-100 p-10 font-serif text-lg">
+                        <div className=" w-full h-full rounded-md  bg-slate-100 p-10 font-serif text-lg">
                             <p className=" my-1 font-bold">{generation[0]}</p>
                             <Separator className="bg-black p-[1px]" />
                             <ul className="my-2 ml-6 list-disc [&>li]:mt-2 ">

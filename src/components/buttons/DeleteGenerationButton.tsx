@@ -23,6 +23,8 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
     const pathname = usePathname()
     const [isEditing, setIsEditing] = useState(false)
 
+    const [isOpen, setIsOpen] = useState(false)
+
     async function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.preventDefault()
         setIsEditing(true)
@@ -43,14 +45,24 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
         } catch (e) {
             console.log(e)
         }
-
+        setIsOpen(false)
         startTransition(() => {
-            router.replace('/dashboard')
+            if (pathname === '/dashboard') {
+                router.refresh()
+            } else {
+                router.refresh()
+                router.replace('/dashboard')
+            }
+
         })
     }
 
     return (
-        <AlertDialog>
+        <AlertDialog open={isOpen} onOpenChange={
+            (e) => {
+                setIsOpen(!isOpen)
+            }
+        }>
             <AlertDialogTrigger asChild>
                 <Button
                     // onClick={(e) => {
@@ -66,7 +78,7 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
                     {isEditing ? 'Deleting' : <Trash2 size={16} />}
                 </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent >
                 <AlertDialogHeader>
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>This will permanently delete the generation!</AlertDialogDescription>

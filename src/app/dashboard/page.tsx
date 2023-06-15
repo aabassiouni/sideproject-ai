@@ -1,16 +1,15 @@
 import React, { Suspense } from 'react'
 import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { currentUser } from '@clerk/nextjs'
-import GenerationsCard from '@/components/GenerationsCard'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
 import { conn } from '@/lib/planetscale'
 import StartWritingButton from '@/components/buttons/StartWritingButton'
 import Link from 'next/link'
+import DeleteGenerationButton from '@/components/buttons/DeleteGenerationButton'
 
 export const revalidate = 0
-export const runtime = "edge"
-
+export const runtime = 'edge'
 
 type Generation = {
     generation_id_uuid: string
@@ -36,8 +35,8 @@ function GenerationsCardLoading() {
 }
 function GenerationCard({ generation }: { generation: Generation }) {
     return (
-        <Link href={`/dashboard/${generation.generation_id_uuid}`}>
-            <Card className="flex w-full items-center justify-around bg-slate-100 p-4 py-2 sm:w-full">
+        <Card className="flex w-full items-center justify-around bg-slate-100 p-4 py-2 sm:w-full">
+            <Link className="flex gap-2 justify-between " href={`/dashboard/${generation.generation_id_uuid}`}>
                 <div className="w-44 overflow-ellipsis">
                     <p className="line-clamp-1 text-ellipsis text-sm font-medium  tracking-tight sm:text-base">
                         {generation.repo_name.split('/')[1]}
@@ -46,12 +45,12 @@ function GenerationCard({ generation }: { generation: Generation }) {
                 <div className="line-clamp-1 w-fit text-sm text-slate-400">
                     <p>{generation.created_on_date}</p>
                 </div>
-                <div className="flex items-center gap-1.5">
-                    {/* <Button size={'sm'}>View</Button> */}
-                    {/* <DeleteGenerationButton generationID={generation.generation_id_uuid} /> */}
-                </div>
-            </Card>
-        </Link>
+            </Link>
+            <div className="flex items-center gap-1.5">
+                {/* <Button size={'sm'}>View</Button> */}
+                <DeleteGenerationButton generationID={generation.generation_id_uuid} />
+            </div>
+        </Card>
     )
 }
 async function DashboardPage() {
