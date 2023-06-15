@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server'
 import { GithubRepoLoader } from 'langchain/document_loaders/web/github'
 import { OpenAI } from 'langchain/llms/openai'
-import {
-    RetrievalQAChain,
-} from 'langchain/chains'
+import { RetrievalQAChain } from 'langchain/chains'
 import clerk from '@clerk/clerk-sdk-node'
 import { randomUUID } from 'crypto'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
@@ -11,7 +9,8 @@ import { MemoryVectorStore } from 'langchain/vectorstores/memory'
 import { auth } from '@clerk/nextjs'
 import { conn } from '@/lib/planetscale'
 import { Octokit } from 'octokit'
-
+import { PineconeClient } from '@pinecone-database/pinecone'
+import { PineconeStore } from 'langchain/vectorstores/pinecone'
 export const runtime = 'nodejs'
 // const docs = [
 //     new Document({
@@ -152,8 +151,7 @@ export async function POST(request: Request) {
         url: string
         keywords: string[]
     }
-
-
+    console.log('url', url)
     if (userId) {
         //maybe add a privacy check
 
@@ -167,49 +165,59 @@ export async function POST(request: Request) {
             temperature: 0.9,
         })
 
-        // const embeddings = new OpenAIEmbeddings()
+        const embeddings = new OpenAIEmbeddings()
 
-        // const client = new PineconeClient()
-        // await client.init({
-        //     apiKey: process.env.PINECONE_API_KEY ?? '',
-        //     environment: process.env.PINECONE_ENVIRONMENT ?? '',
-        // })
-        // const indexesList = await client.listIndexes()
-        // console.log('indexesList', indexesList)
+        const client = new PineconeClient()
+        await client.init({
+            apiKey: process.env.PINECONE_API_KEY ?? '',
+            environment: process.env.PINECONE_ENVIRONMENT ?? '',
+        })
+        const indexesList = await client.listIndexes()
+        console.log('indexesList', indexesList)
 
-        // const pineconeIndex = client.Index('sideproject')
+        const pineconeIndex = client.Index('sideproject-index')
 
         const githubToken = await clerk.users.getUserOauthAccessToken(userId, 'oauth_github')
+        console.log('githubToken', githubToken)
+        console.time('Loading Docs')
 
         const octokit = new Octokit({
-            auth: githubToken[0].token,
+            auth: githubToken[0]?.token,
         })
 
         console.log('## Fetching Repo Info ##')
+        console.log('owner', owner)
+        console.log('repo', repo)
+
         const { data: repoResponse } = await octokit.rest.repos.get({
             owner: owner,
             repo: repo,
         })
 
-        const loader = new GithubRepoLoader(url, {
+        const loader = new GithubRepoLoader(url.trim(), {
             ignorePaths: githubLoaderIgnorePaths,
-            accessToken: githubToken[0].token,
+            accessToken: githubToken[0]?.token,
             branch: repoResponse.default_branch,
         })
 
         const docs = await loader.load()
 
+        console.timeEnd('Loading Docs')
+
         console.log('## Analyzing Docs ##')
 
         console.log(docs.map((d) => d.metadata))
 
-        const vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings())
+        console.time('Embedding Docs')
+        // const vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings())
 
-        // const vectorStore = await PineconeStore.fromDocuments(docs, embeddings, {
-        //     // pineconeIndex: 'sideproject',
-        //     pineconeIndex: pineconeIndex,
-        //     namespace: 'test_docs',
-        // })
+        const vectorStore = await PineconeStore.fromDocuments(docs, embeddings, {
+            // pineconeIndex: 'sideproject',
+            pineconeIndex: pineconeIndex,
+            namespace: `${owner}/${repo}-${generation_id}`,
+        })
+
+        console.timeEnd('Embedding Docs')
 
         // const vectorStore =await PineconeStore.fromExistingIndex(embeddings, {
         //     pineconeIndex: pineconeIndex,
@@ -220,13 +228,15 @@ export async function POST(request: Request) {
         console.log(keywords)
 
         /////////////////////////////////////////////////////////////////////////////////
+
+        console.time('Calling LLM API')
         const chain = RetrievalQAChain.fromLLM(llm, vectorStore.asRetriever())
         const template = `
-           write me 10 resume bullet points for this codebase describing what the project does and some of the important high level software techniques implemented in this project. You should include the technogies used and the problem that this project solves. The statements should be professional and always start with an action verb in the past tense. You will also be given some metrics and achievements that the project has attained that you must include in your statements. The first 4 statements should be based on the STAR method.
+        You are an expert resume writer. Write me 10 resume bullet points for this codebase describing what the project does and some of the important high level software techniques implemented in this project. You should include the technogies used and the problem that this project solves. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Focus on the software engineering aspects of the project such as databases, algorithms, REST APIs, and other software engineering concepts.
 
            ${
                keywords.length > 0
-                   ? `You will be given the following keywords to include in your statements: ${keywords.join(', ')}.`
+                   ? `Include the following keywords to include in your statements: ${keywords.join(', ')}.`
                    : ''
            }
 
@@ -238,7 +248,7 @@ export async function POST(request: Request) {
                    : ''
            }
 
-           write the name of the project and 10 statements separated by "|". Do not include newline characters.
+           write the name of the project and 5 statements separated by "|". Do not include newline characters.
             `
 
         console.log('## calling chain ##')
@@ -248,6 +258,7 @@ export async function POST(request: Request) {
             // query: 'create four resume bullet points for this project separated by a new line',
             query: template,
         })) as { text: string }
+        console.timeEnd('Calling LLM API')
 
         console.log('##OPENAI call returned: ', res)
 
@@ -263,15 +274,16 @@ export async function POST(request: Request) {
         // )
 
         ////////////////////////////////////////////////////////////////////////////////////
-        const bullets2 = ["1", "2", "3", "4", "5"] 
+        console.time('Saving to DB')
+        const bullets2 = ['1', '2', '3', '4', '5']
         console.log('saving to db')
         await conn.execute(
             'Insert into generations (generation_id, user_id, repo_name, created_on_date, generated_text, bullets ) values (UUID_TO_BIN(?), ?, ?, ?, ?, ?)',
             [generation_id, userId, `${owner}/${repo}`, new Date(), res?.text, JSON.stringify(bullets)]
             // [generation_id, userId, `${owner}/${repo}`, new Date(), "", JSON.stringify(bullets2)]
-
         )
         console.log('saved to db:', generation_id)
+        console.timeEnd('Saving to DB')
 
         // const res = {
         //     name: 'name of the project',

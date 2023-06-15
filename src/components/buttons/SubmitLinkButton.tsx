@@ -17,9 +17,9 @@ function SubmitLinkButton() {
     function handleClick(event: any) {
         // event.preventDefault();
         console.log("Submitted Link: " + link)
-        const { owner, repo, path } = extractOwnerAndRepoAndPath(link);
+        const { owner, repo, path } = extractOwnerAndRepoAndPath(link.trim());
 
-        setSelectedRepo({ owner, repo, path, url: link });
+        setSelectedRepo({ owner, repo, path, url: link.trim() });
     }
 
 	return (
