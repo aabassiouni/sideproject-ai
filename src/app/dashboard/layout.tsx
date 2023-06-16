@@ -6,6 +6,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
         <ValueProvider>
             <div className="h-screen">
+                {/* @ts-ignore */}
                 <DashboardNavbar />
                 {children}
             </div>

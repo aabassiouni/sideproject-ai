@@ -1,15 +1,21 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { stripe } from '@/lib/stripe'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import BuyButton from '@/components/buttons/BuyButton'
 import { Badge } from '@/components/ui/badge'
 
 export const runtime = "edge"
+// export const revalidate = 0
 
 async function PurchasePage() {
+
+    console.log('Loading purchase page...')
+    await new Promise((resolve) => setTimeout(resolve, 10000))
     const products = await stripe.products.list({
         expand: ['data.default_price'],
+        active: true
     })
+    // console.log(products)
 
     if (typeof products.data[0].default_price === 'string') {
         return
@@ -28,10 +34,7 @@ async function PurchasePage() {
             return 0
         }
     })
-    // if (typeof products.data[0].default_price === 'string') {
-    //     // console.log(products.data[0].default_price?.unit_amount)
-    //     throw new Error('default_price is a string')
-    // }
+
 
     return (
         <div className="flex flex-col justify-center">
@@ -40,7 +43,6 @@ async function PurchasePage() {
                 <p className="text-center text-xl">Select the amount of credits you would like to purchase.</p>
             </div>
             <div className="flex flex-1 flex-wrap items-center justify-center gap-10">
-
                 <Card className="mx-3 flex min-h-[350px] w-full flex-col border-2 border-blue-400 sm:mx-0 sm:w-64">
                     <CardHeader>
                         <CardTitle className="text-center text-2xl">{products.data[0].name}</CardTitle>

@@ -15,7 +15,7 @@ import {
 import { User, CreditCard, LogOut } from 'lucide-react'
 import { Button } from './ui/button'
 import { SignOutButton } from '@clerk/nextjs'
-
+import { conn } from '@/lib/planetscale'
 
 async function UserButton() {
     const user = await currentUser()
@@ -75,7 +75,12 @@ async function UserButton() {
     )
 }
 
-function DashboardNavbar() {
+async function DashboardNavbar() {
+    const user = await currentUser()
+
+    const { rows } = (await conn.execute('SELECT credits FROM users Where clerk_user_id = ? ;', [user?.id])) as {
+        rows: { credits?: number }[]
+    }
     return (
         <div className="p-4 shadow-md ">
             <div className="container mx-auto flex items-center justify-between">
@@ -85,8 +90,13 @@ function DashboardNavbar() {
                     </Link>
                 </div>
                 {/* <p>https://github.com/aabassiouni/next-js-app-router-helper</p> */}
-                {/* @ts-ignore */}
-                <UserButton />
+                <div className="flex items-center gap-4">
+                    <p className="font-necto text-muted-foreground ">
+                        {rows[0]?.credits === 1 ? rows[0]?.credits + ' credit' : rows[0]?.credits + ' credits'}
+                    </p>
+                    {/* @ts-ignore */}
+                    <UserButton />
+                </div>
             </div>
         </div>
     )
