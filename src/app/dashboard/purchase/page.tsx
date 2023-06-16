@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import BuyButton from '@/components/buttons/BuyButton'
 import { Badge } from '@/components/ui/badge'
 
-export const runtime = "edge"
+// export const runtime = "edge"
 // export const revalidate = 0
 
 async function PurchasePage() {
