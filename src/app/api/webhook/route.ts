@@ -5,7 +5,7 @@ import { stripe } from '@/lib/stripe'
 
 // import { auth, currentUser } from '@clerk/nextjs'
 
-export const runtime = 'edge'
+// export const runtime = 'edge'
 
 export async function POST(request: NextRequest) {
     console.log('/////////////// receiving webhook ///////////////')

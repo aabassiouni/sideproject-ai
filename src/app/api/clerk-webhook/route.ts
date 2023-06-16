@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { conn } from '@/lib/planetscale'
 import type { WebhookEvent } from '@clerk/clerk-sdk-node'
 
@@ -14,5 +14,7 @@ export async function POST(request: NextRequest) {
 
             console.log(`User ${event.data.id} was created!`)
             break
+
     }
+    return NextResponse.json({ received: true })
 }

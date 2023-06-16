@@ -1,16 +1,16 @@
-import React, { Suspense } from 'react'
+import React from 'react'
 import { stripe } from '@/lib/stripe'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import BuyButton from '@/components/buttons/BuyButton'
 import { Badge } from '@/components/ui/badge'
 
-export const runtime = "edge"
+// export const runtime = "edge"
 // export const revalidate = 0
 
 async function PurchasePage() {
 
     console.log('Loading purchase page...')
-    await new Promise((resolve) => setTimeout(resolve, 10000))
+    // await new Promise((resolve) => setTimeout(resolve, 10000))
     const products = await stripe.products.list({
         expand: ['data.default_price'],
         active: true
