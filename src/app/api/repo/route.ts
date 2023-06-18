@@ -6,7 +6,7 @@ import { users } from '@clerk/clerk-sdk-node'
 // export const revalidate = 1
 
 export async function POST(request: NextRequest) {
-    console.log('/////////////////////// repo route ////////////////////////')
+    console.log('/////////////////////// /api/repo ////////////////////////')
     const { userId } = auth()
     const user = await currentUser()
     // console.log("userId", userId);
@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
 
             const octokit = new Octokit({
                 auth: githubToken[0].token,
+
             })
             // console.log("token", githubToken[0].token);
 

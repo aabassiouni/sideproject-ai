@@ -9,6 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import RepoInfo from '@/components/RepoInfo'
 import { Skeleton } from '@/components/ui/skeleton'
 import MobileRepoSelect from '@/components/MobileRepoSelect'
+import { conn } from '@/lib/planetscale'
 
 function RepoCardSkeleton() {
     return <Skeleton className="h-16 w-full" />
@@ -17,7 +18,10 @@ function RepoCardSkeleton() {
 async function WritePage() {
     const user = await currentUser()
 
-    const { userId } = auth()
+    const { userId } = auth()  
+
+    
+
     let repos
     if (userId) {
         if (user?.externalAccounts?.length !== 0) {
@@ -26,6 +30,7 @@ async function WritePage() {
             const octokit = new Octokit({
                 auth: githubToken[0].token,
             })
+
             // console.log('token', githubToken[0].token)
 
             const { data } = await octokit.rest.repos.listForAuthenticatedUser({
@@ -70,9 +75,9 @@ async function WritePage() {
             </GithubRepoCard>
             <div className="flex grow flex-col">
                 <div className="m-4 my-2 basis-1/4">
-                    <RepoInfo />
+                    <RepoInfo/>
                 </div>
-                <Generation />
+                <Generation/>
             </div>
             {/* <GenerateContainer /> */}
         </div>
