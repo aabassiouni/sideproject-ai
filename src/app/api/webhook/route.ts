@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     // const event = await request.json()
     const headersList = headers()
     const signature = headersList.get('stripe-signature')
-    // console.log("SIGNATURE IS",signature)
+    console.log("SIGNATURE IS",signature)
     let event
     
     if (signature === null) {
