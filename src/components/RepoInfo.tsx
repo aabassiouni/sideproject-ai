@@ -1,13 +1,15 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import GithubIcon from './icons/GithubIcon'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card'
 import { Skeleton } from './ui/skeleton'
+import { Separator } from './ui/separator'
+import GithubIcon from './icons/GithubIcon'
 import { useValues } from './context/context'
 import GenerateButton from './buttons/GenerateButton'
-import { Separator } from './ui/separator'
 import KeywordInput from './KeywordInput'
 import KeywordDeleteButton from './buttons/KeywordDeleteButton'
+
+
 function RepoInfo() {
     const { selectedRepo, keywords } = useValues()
     const [title, setTitle] = useState<string>('')
@@ -23,7 +25,6 @@ function RepoInfo() {
         async function fetchData() {
             setIsLoading(true)
             const response = await fetch(`/api/repo`, {
-                // cache: 'no-store',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,25 +47,6 @@ function RepoInfo() {
         }
     }, [selectedRepo])
 
-    // const repoSelected = true;
-    // const
-    // if (isLoading) {
-    //     return (
-    //         <Card className="m-4 h-44">
-    //             <CardHeader>
-    //                 {/* <CardTitle> */}
-    //                 {/* <GithubIcon className="inline-block mr-2" size={16} /> */}
-    //                 {/* {title ?? "N/A"} */}
-    //                 {/* </CardTitle> */}
-    //                 <Skeleton className="h-4 w-48" />
-    //                 <Skeleton className="h-4 w-28" />
-    //                 {/* <CardDescription> */}
-    //                 {/* {numFiles} files, {size}MB, {starCount} stars{" "} */}
-    //                 {/* </CardDescription> */}
-    //             </CardHeader>
-    //         </Card>
-    //     )
-    // }
 
     return (
         <Card className="sm:h-fit">

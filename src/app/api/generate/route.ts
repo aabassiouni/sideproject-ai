@@ -141,9 +141,7 @@ const githubLoaderIgnorePaths = [
 ]
 
 export async function POST(request: Request) {
-    console.log('GET /api/complete')
-    console.log('api key is ', process.env.OPENAI_API_KEY)
-    console.log('loading docs')
+    console.log('///////////////////////// /api/generate /////////////////////////')
 
     const { userId } = auth()
     const { repo, owner, url, keywords } = (await request.json()) as {
@@ -155,6 +153,17 @@ export async function POST(request: Request) {
     console.log('url', url)
     if (userId) {
         //maybe add a privacy check
+
+        const { rows } = (await conn.execute('SELECT credits FROM users WHERE clerk_user_id = ?', [userId])) as {
+            rows: { credits?: number }[]
+        }
+
+        const credits = rows[0].credits ?? 0
+        console.log("USER HAS CREDITS: ", credits, "credits")
+
+        if (credits < 1) {
+            return NextResponse.json({ error: 'Not enough credits' })
+        }
 
         // creating a new generation id for the DB
         const generation_id = randomUUID()
@@ -283,7 +292,6 @@ export async function POST(request: Request) {
 
         const bullets = Object.values(responseObj).map((bullet: any) => bullet.replace(/\n/g, ''))
 
-
         // const bullets = text.split('|')
         console.log(bullets)
 
@@ -295,11 +303,15 @@ export async function POST(request: Request) {
         console.time('Saving to DB')
         const bullets2 = ['1', '2', '3', '4', '5']
         console.log('saving to db')
+
         await conn.execute(
             'Insert into generations (generation_id, user_id, repo_name, created_on_date, generated_text, bullets ) values (UUID_TO_BIN(?), ?, ?, ?, ?, ?)',
             [generation_id, userId, `${owner}/${repo}`, new Date(), res?.text, JSON.stringify(bullets)]
             // [generation_id, userId, `${owner}/${repo}`, new Date(), "", JSON.stringify(bullets2)]
         )
+
+        await conn.execute('UPDATE users SET credits = credits - 1 WHERE clerk_user_id = ?', [userId])
+
         console.log('saved to db:', generation_id)
         console.timeEnd('Saving to DB')
 

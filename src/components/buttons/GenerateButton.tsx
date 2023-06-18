@@ -5,15 +5,17 @@ import { Button } from '../ui/button'
 import SparkleIcon from '../icons/SparkleIcon'
 import { useValues } from '../context/context'
 import { Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 function GenerateButton() {
     const { selectedRepo, generation, setGeneration, keywords } = useValues()
     const [isLoading, setIsLoading] = useState(false)
+    const router = useRouter()
 
     async function handleClick(event: any) {
         // event.preventDefault();
-        console.log('Generating')
         setIsLoading(true)
+
         const response = await fetch(`/api/generate`, {
             // cache: 'no-store',
             method: 'POST',
@@ -27,10 +29,21 @@ function GenerateButton() {
                 keywords: keywords,
             }),
         })
-        const { bullets } = await response.json()
-        console.log(bullets)
-        setIsLoading(false)
-        setGeneration(bullets)
+
+        const data = await response.json()
+
+        if (data.error) {
+            // toast({
+            //     variant: 'destructive',
+            //     title: 'No Credits!',
+            //     description: 'You need to buy more credits to generate more bullets.',
+            // })
+        } else {
+            setIsLoading(false)
+            setGeneration(data.bullets)
+        }
+
+        router.refresh()
     }
     return (
         <Button
