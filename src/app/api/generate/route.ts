@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server'
 import { GithubRepoLoader } from 'langchain/document_loaders/web/github'
-import { OpenAI } from 'langchain/llms/openai'
-import { RetrievalQAChain } from 'langchain/chains'
+import { RetrievalQAChain, loadQAMapReduceChain, loadQAStuffChain } from 'langchain/chains'
 import clerk from '@clerk/clerk-sdk-node'
 import { randomUUID } from 'crypto'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-import { MemoryVectorStore } from 'langchain/vectorstores/memory'
 import { auth } from '@clerk/nextjs'
 import { conn } from '@/lib/planetscale'
 import { Octokit } from 'octokit'
 import { PineconeClient } from '@pinecone-database/pinecone'
 import { PineconeStore } from 'langchain/vectorstores/pinecone'
 import { ChatOpenAI } from 'langchain/chat_models/openai'
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
+
 export const runtime = 'nodejs'
 // const docs = [
 //     new Document({
@@ -34,6 +34,27 @@ export const runtime = 'nodejs'
 const githubLoaderIgnorePaths = [
     'package-lock.json',
     'LICENSE.txt',
+    'LICENSE',
+    'LICENSE.md',
+    'LICENSE-MIT',
+    'LICENSE-MIT.txt',
+    'LICENSE.BSD',
+    'LICENSE.BSD-2',
+    'LICENSE.BSD-3',
+    'LICENSE.BSD-4',
+    'LICENSE.APACHE',
+    'LICENSE.APACHE-2',
+    'LICENSE.APACHE-2.0',
+    'LICENSE.APACHE-2.0.txt',
+    'LICENSE.APACHE2',
+    'LICENSE.APACHE2.txt',
+    'LICENSE.GPL',
+    'LICENSE.GPL-2',
+    'LICENSE.GPL-3',
+    'LICENSE.GPL-3.0',
+    'LICENSE.GPL2',
+    'LICENSE.GPL3',
+    'LICENSE.LGPL',
     'node_modules/',
     'dist/',
     'build/',
@@ -138,6 +159,9 @@ const githubLoaderIgnorePaths = [
     '*.woff',
     '*.woff2',
     '*.eot',
+    '*.css',
+    'components/',
+    '*.yaml',
 ]
 
 export async function POST(request: Request) {
@@ -153,13 +177,12 @@ export async function POST(request: Request) {
     console.log('url', url)
     if (userId) {
         //maybe add a privacy check
-
         const { rows } = (await conn.execute('SELECT credits FROM users WHERE clerk_user_id = ?', [userId])) as {
             rows: { credits?: number }[]
         }
 
         const credits = rows[0].credits ?? 0
-        console.log("USER HAS CREDITS: ", credits, "credits")
+        console.log('USER HAS CREDITS: ', credits, 'credits')
 
         if (credits < 1) {
             return NextResponse.json({ error: 'Not enough credits' })
@@ -207,7 +230,11 @@ export async function POST(request: Request) {
             branch: repoResponse.default_branch,
         })
 
-        const docs = await loader.load()
+        const splitter = RecursiveCharacterTextSplitter.fromLanguage("js", {
+            chunkSize: 2000,
+        });
+
+        const docs = await loader.loadAndSplit(splitter) 
 
         console.timeEnd('Loading Docs')
 
@@ -218,11 +245,42 @@ export async function POST(request: Request) {
         console.time('Embedding Docs')
         // const vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings())
 
-        const vectorStore = await PineconeStore.fromDocuments(docs, embeddings, {
-            // pineconeIndex: 'sideproject',
-            pineconeIndex: pineconeIndex,
-            namespace: `${owner}/${repo}-${generation_id}`,
-        })
+        // let vectorStore: PineconeStore;
+        // if (docs.length > 8) {
+        //     console.log("## too many docs, splitting into two")
+        //     for (let index = 0; index < docs.length; index++) {
+        //         console.log("indexing doc", docs[index].metadata)
+        //         await PineconeStore.fromDocuments([docs[index]], embeddings, {
+        //             pineconeIndex: pineconeIndex,
+        //             namespace: `${owner}/${repo}-${generation_id}`,
+        //         })
+                
+        //     }
+        //     // await PineconeStore.fromDocuments(docs.slice(0, docs.length / 2), embeddings, {
+        //     //     // pineconeIndex: 'sideproject',
+        //     //     pineconeIndex: pineconeIndex,
+        //     //     namespace: `${owner}/${repo}-${generation_id}`,
+        //     // })
+        //     // await PineconeStore.fromDocuments(docs.slice(docs.length / 2), embeddings, {
+        //     //     // pineconeIndex: 'sideproject',
+        //     //     pineconeIndex: pineconeIndex,
+        //     //     namespace: `${owner}/${repo}-${generation_id}`,
+        //     // })
+        //     vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
+        //         pineconeIndex: pineconeIndex,
+        //         namespace: `${owner}/${repo}-${generation_id}`,
+        //     })
+
+        // } else {
+            console.log("## not too many docs, indexing all")
+            const vectorStore = await PineconeStore.fromDocuments(docs, embeddings, {
+                pineconeIndex: pineconeIndex,
+                namespace: `${owner}/${repo}-${generation_id}`,
+            })
+        // }
+
+
+
 
         console.timeEnd('Embedding Docs')
 
@@ -237,10 +295,16 @@ export async function POST(request: Request) {
         /////////////////////////////////////////////////////////////////////////////////
 
         console.time('Calling LLM API')
-        const chain = RetrievalQAChain.fromLLM(llm, vectorStore.asRetriever())
+        // const chain = RetrievalQAChain.fromLLM(llm, vectorStore.asRetriever())
+        const chain = new RetrievalQAChain({
+            retriever: vectorStore.asRetriever(),
+            combineDocumentsChain: loadQAStuffChain(llm),
+        })
         const template = `
         
             You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. Be detailed in your bullet points.
+
+            repository name: ${repo}
 
            ${
                keywords.length > 0
@@ -278,8 +342,10 @@ export async function POST(request: Request) {
             // query: "explain what this code does like a resume writer would if he were to put this project in a software engineers resume",
             // query: 'create four resume bullet points for this project separated by a new line',
             query: template,
-        })) as { text: string }
+        
+        }))
 
+        // console.log(res)
         console.timeEnd('Calling LLM API')
 
         console.log('##OPENAI call returned: ', res?.text)
