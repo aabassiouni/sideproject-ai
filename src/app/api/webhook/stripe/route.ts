@@ -1,35 +1,37 @@
+//@ts-nocheck
+
 import { NextResponse, NextRequest } from 'next/server'
 import { headers } from 'next/headers'
 import { conn } from '@/lib/planetscale'
 import { stripe } from '@/lib/stripe'
-
 // import { auth, currentUser } from '@clerk/nextjs'
 
 // export const runtime = 'edge'
 
-
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
     const body = await request.text()
+    // const body = await request.body
+    console.log("BODY IS",body)
     // const event = await request.json()
     const headersList = headers()
-    const signature = headersList.get('stripe-signature')
+    const signature = headersList.get('Stripe-Signature') as string
     console.log("SIGNATURE IS",signature)
-    let event
+    let event;
     
     if (signature === null) {
-        return NextResponse.json({ error: 'no signature' })
+        return NextResponse.json({ error: 'no signature' }, { status: 400 })
     }
-    
+    console.log("webhook secret is ",process.env.STRIPE_WEBHOOK_SECRET)
     try {
         event = stripe.webhooks.constructEvent(
             body,
             signature,
-            process.env.STRIPE_WEBHOOK_SECRET ?? ''
-        ) as any
+            process.env.STRIPE_WEBHOOK_SECRET as string,
+        )
         console.log("EVENT IS",event.type)
     } catch (err: any) {
         console.log(`⚠️  Webhook signature verification failed.`, err.message)
-        return NextResponse.json({ error: 'signature failed' })
+        return NextResponse.json({ error: 'signature failed' }, { status: 400 })
     }
     
     switch (event?.type) {
