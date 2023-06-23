@@ -10,25 +10,19 @@ import { stripe } from '@/lib/stripe'
 
 export async function POST(request: Request) {
     const body = await request.text()
-    // const body = await request.body
-    console.log("BODY IS",body)
-    // const event = await request.json()
     const headersList = headers()
     const signature = headersList.get('Stripe-Signature') as string
-    console.log("SIGNATURE IS",signature)
     let event;
     
     if (signature === null) {
         return NextResponse.json({ error: 'no signature' }, { status: 400 })
     }
-    console.log("webhook secret is ",process.env.STRIPE_WEBHOOK_SECRET)
     try {
         event = stripe.webhooks.constructEvent(
             body,
             signature,
             process.env.STRIPE_WEBHOOK_SECRET as string,
         )
-        console.log("EVENT IS",event.type)
     } catch (err: any) {
         console.log(`⚠️  Webhook signature verification failed.`, err.message)
         return NextResponse.json({ error: 'signature failed' }, { status: 400 })
