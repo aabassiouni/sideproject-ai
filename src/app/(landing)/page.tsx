@@ -26,7 +26,7 @@ export default async function Home() {
                 <div className="flex flex-row flex-wrap justify-around sm:flex-nowrap">
                     <Card className="m-4 flex-auto mt-2 sm:w-1/2  sm:min-w-0 sm:max-w-sm">
                         <CardHeader>
-                            <Image src="/images/1.svg" alt="Picture of the author" width={200} height={200} />
+                            {/* <Image src="/images/1.svg" alt="Picture of the author" width={200} height={200} /> */}
 
                             <CardTitle>1. Create an account</CardTitle>
                             <CardDescription>
@@ -37,7 +37,7 @@ export default async function Home() {
                     </Card>
                     <Card className="m-4 flex-auto mt-2 sm:w-1/2  sm:min-w-0 sm:max-w-sm">
                         <CardHeader>
-                            <Image src="/images/1.svg" alt="Picture of the author" width={200} height={200} />
+                            {/* <Image src="/images/1.svg" alt="Picture of the author" width={200} height={200} /> */}
 
                             <CardTitle>2. Select a Repository</CardTitle>
                             <CardDescription>
@@ -48,7 +48,7 @@ export default async function Home() {
                     </Card>
                     <Card className="m-4 flex-auto mt-2  sm:w-1/2  sm:min-w-0 sm:max-w-sm">
                         <CardHeader>
-                            <Image src="/images/1.svg" alt="Picture of the author" width={200} height={200} />
+                            {/* <Image src="/images/1.svg" alt="Picture of the author" width={200} height={200} /> */}
 
                             <CardTitle>3. Generate your Bullet Points</CardTitle>
                             <CardDescription>

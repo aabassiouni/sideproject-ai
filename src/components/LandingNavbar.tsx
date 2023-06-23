@@ -19,14 +19,14 @@ function LandingNavbar() {
                     </Link>
                 </div>
 
-                <div className="hidden space-x-4 sm:flex">
+                {/* <div className="hidden space-x-4 sm:flex">
                     <Link href="/pricing">
                         <p className="text-gray-700 hover:text-black">Pricing</p>
                     </Link>
                     <Link href="/details">
                         <p className="text-gray-700 hover:text-black">FAQ</p>
                     </Link>
-                </div>
+                </div> */}
 
                 <div className="hidden sm:block">
                     <Link href="/signin">
