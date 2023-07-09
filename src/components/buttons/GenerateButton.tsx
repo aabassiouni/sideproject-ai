@@ -16,34 +16,41 @@ function GenerateButton() {
         // event.preventDefault();
         setIsLoading(true)
 
-        const response = await fetch(`/api/generate`, {
-            // cache: 'no-store',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                repo: selectedRepo.repo,
-                url: selectedRepo.url,
-                owner: selectedRepo.owner,
-                keywords: keywords,
-            }),
-        })
+        try {
+            const response = await fetch(`/api/generate`, {
+                // cache: 'no-store',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    repo: selectedRepo.repo,
+                    url: selectedRepo.url,
+                    owner: selectedRepo.owner,
+                    keywords: keywords,
+                }),
+            })
 
-        const data = await response.json()
+            const data = await response.json()
 
-        if (data.error) {
-            // toast({
-            //     variant: 'destructive',
-            //     title: 'No Credits!',
-            //     description: 'You need to buy more credits to generate more bullets.',
-            // })
-        } else {
+            if (data.error) {
+                // toast({
+                //     variant: 'destructive',
+                //     title: 'No Credits!',
+                //     description: 'You need to buy more credits to generate more bullets.',
+                // })
+                setIsLoading(false)
+
+            } else {
+                setIsLoading(false)
+                setGeneration(data.bullets)
+            }
+
+            router.refresh()
+        } catch (error) {
+            console.log(error)
             setIsLoading(false)
-            setGeneration(data.bullets)
         }
-
-        router.refresh()
     }
     return (
         <Button

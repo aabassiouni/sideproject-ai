@@ -9,23 +9,8 @@ export async function POST(request: NextRequest) {
     console.log('/////////////////////// /api/repo ////////////////////////')
     const { userId } = auth()
     const user = await currentUser()
-    // console.log("userId", userId);
     const { repo, owner } = await request.json()
-    // console.log("repo", repo);
-    // console.log("owner", owner);
-    // const res = await fetch(`https://api.clerk.com/v1/oauth_applications`, {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
-    //         },
-    //     body: JSON.stringify({
-    //         name: 'github',
-    //         callback_url: 'https://one-bonefish-61.clerk.accounts.dev/v1/oauth_callback'
-    //         })
-    // })
-    // const data = await res.json()
-    // console.log("data", data);   
+ 
     if (userId) {
         if (user?.externalAccounts.length !== 0) {
             const githubToken = await users.getUserOauthAccessToken(userId, 'oauth_github')
@@ -53,7 +38,7 @@ export async function POST(request: NextRequest) {
 
             const obj = {
                 name: repoResponse.full_name,
-                size: repoResponse.size,
+                size: (repoResponse.size / 1024).toFixed(2),
                 stargazers_count: repoResponse.stargazers_count,
                 numFiles: tree.tree.length,
             }
