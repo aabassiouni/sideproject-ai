@@ -10,7 +10,11 @@ import { Octokit } from 'octokit'
 import { PineconeClient } from '@pinecone-database/pinecone'
 import { PineconeStore } from 'langchain/vectorstores/pinecone'
 import { ChatOpenAI } from 'langchain/chat_models/openai'
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
+// import { ChatAnthropic } from 'langchain/chat_models/anthropic'
+import { StructuredOutputParser } from 'langchain/output_parsers'
+import { z } from 'zod'
+import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { PromptTemplate } from 'langchain/prompts'
 
 export const runtime = 'nodejs'
 // const docs = [
@@ -32,7 +36,68 @@ export const runtime = 'nodejs'
 //     }),
 // ]
 const githubLoaderIgnorePaths = [
+    // 'utilities.js',
     'package-lock.json',
+    'CODE_OF_CONDUCT.md',
+    'CODE_OF_CONDUCT',
+    'CODE_OF_CONDUCT.txt',
+    'CODE_OF_CONDUCT.rst',
+    'CODE_OF_CONDUCT.markdown',
+    'CODE_OF_CONDUCT.MD',
+    'CODE_OF_CONDUCT.md',
+    'CODE_OF_CONDUCT.html',
+    'CODE_OF_CONDUCT.htm',
+    'CODE_OF_CONDUCT.pdf',
+    'CODE_OF_CONDUCT.doc',
+    'CODE_OF_CONDUCT.docx',
+    'CODE_OF_CONDUCT.odt',
+    'CODE_OF_CONDUCT.rtf',
+    'CODE_OF_CONDUCT.txt',
+    'CODE_OF_CONDUCT.wiki',
+    'CODE_OF_CONDUCT.yml',
+    'CODE_OF_CONDUCT.yaml',
+    'CODE_OF_CONDUCT.json',
+    'CODE_OF_CONDUCT.xml',
+    'CODE_OF_CONDUCT.svg',
+    'CODE_OF_CONDUCT.png',
+    'CODE_OF_CONDUCT.jpg',
+    'CODE_OF_CONDUCT.jpeg',
+    'CODE_OF_CONDUCT.gif',
+    'CODE_OF_CONDUCT.ico',
+    'Contributing.md',
+    'Contributing',
+    'Contributing.txt',
+    'Contributing.rst',
+    'Contributing.markdown',
+    'Contributing.MD',
+    'Contributing.md',
+    'Contributing.html',
+    'Contributing.htm',
+    'Contributing.pdf',
+    'Contributing.doc',
+    'Contributing.docx',
+    'Contributing.odt',
+    'Contributing.rtf',
+    'Contributing.txt',
+    'Contributing.wiki',
+    'Contributing.yml',
+    'Contributing.yaml',
+    'Contributing.json',
+    'CONTRIBUTING.md',
+    'CONTRIBUTING',
+    'CONTRIBUTING.txt',
+    'CONTRIBUTING.rst',
+    'CONTRIBUTING.markdown',    
+    'CONTRIBUTING.MD',
+    'CONTRIBUTING.md',
+    'CONTRIBUTING.html',
+    'CONTRIBUTING.htm',
+    'CONTRIBUTING.pdf',
+    'CONTRIBUTING.doc',
+    'CONTRIBUTING.docx',
+    'CONTRIBUTING.odt',
+    'CONTRIBUTING.rtf',
+    'CONTRIBUTING.txt',
     'LICENSE.txt',
     'LICENSE',
     'LICENSE.md',
@@ -64,6 +129,7 @@ const githubLoaderIgnorePaths = [
     'yarn-debug.log',
     'test/',
     'tests/',
+    'public/',
     'testsuite/',
     'docs/',
     'doc/',
@@ -105,10 +171,30 @@ const githubLoaderIgnorePaths = [
     '.DS_Store',
     '.tern-project',
     '.gitkeep',
+    'vite-env.d.ts',
+    'vite.config.ts',
+    'vite.config.js',
+    'babel.config.js',
+    'babel.config.json',
+    'babel.config.ts',
+    'jest.config.ts',
+    'jest.config.json',
+    'jest.config.js',
+    'jest.setup.ts',
+    'jest.setup.js',
+    'jest.json',
+    'jestrc',
+    'jest.config.babel.js',
+    'jest.config.cjs',
+    'jest.config.mjs',
+    'jest.config.json5',
+    'tsconfig.node.json',
+    'vercel.json',
     'tailwind.config.js',
     'postcss.config.js',
     'webpack.config.js',
     'rollup.config.js',
+    'tsconfig.node.json',
     'gulpfile.js',
     'Gruntfile.js',
     'prettier.config.js',
@@ -123,6 +209,7 @@ const githubLoaderIgnorePaths = [
     'jsconfig.settings.json',
     'karma.conf.js',
     '.gitignore',
+    '.vscodeignore',
     '.git',
     '*.svg',
     '*.csv',
@@ -192,11 +279,29 @@ export async function POST(request: Request) {
         const generation_id = randomUUID()
 
         // instantiating the LLM
-        const llm = new ChatOpenAI({
-            modelName: 'gpt-3.5-turbo-16k',
-            maxTokens: -1,
-            temperature: 0.9,
-        })
+        // const llm = new ChatOpenAI({
+        //     modelName: 'gpt-4',
+        //     maxTokens: -1,
+        //     temperature: 0.9,
+        // })
+        const llm = new ChatOpenAI(
+            {
+                modelName: 'anthropic/claude-instant-v1',
+                temperature: 0.8,
+                maxTokens: -1,
+                //   streaming: true,
+                openAIApiKey: process.env.OPENROUTER_API_KEY,
+            },
+            {
+                basePath: 'https://openrouter.ai' + '/api/v1',
+                baseOptions: {
+                    headers: {
+                        'HTTP-Referer': process.env.SITE_URL ?? '',
+                        'X-Title': 'sideproject-ai',
+                    },
+                },
+            }
+        )
         const embeddings = new OpenAIEmbeddings()
 
         const client = new PineconeClient()
@@ -230,20 +335,26 @@ export async function POST(request: Request) {
             branch: repoResponse.default_branch,
         })
 
-        const splitter = RecursiveCharacterTextSplitter.fromLanguage("js", {
-            chunkSize: 2000,
-        });
+        // const splitter = RecursiveCharacterTextSplitter.fromLanguage("js", {
+        //     // chunkSize: 2000,
+        // });
 
-        const docs = await loader.loadAndSplit(splitter) 
+        const docs = await loader.load()
 
         console.timeEnd('Loading Docs')
 
         console.log('## Analyzing Docs ##')
 
+        // for (const doc of docs) {
+        //     // const emedding = await embeddings.embed(doc.pageContent)
+        //     doc.pageContent = doc.pageContent.replace(/(\r\n|\n|\r|\t)/gm, '')
+        //     console.log(doc.metadata.source === 'src/utilities.js' ? doc.pageContent : "not utilities.js")
+        //     // console.log(doc.metadata)
+        // }
         console.log(docs.map((d) => d.metadata))
 
         console.time('Embedding Docs')
-        // const vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings())
+        const vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings())
 
         // let vectorStore: PineconeStore;
         // if (docs.length > 8) {
@@ -254,7 +365,7 @@ export async function POST(request: Request) {
         //             pineconeIndex: pineconeIndex,
         //             namespace: `${owner}/${repo}-${generation_id}`,
         //         })
-                
+
         //     }
         //     // await PineconeStore.fromDocuments(docs.slice(0, docs.length / 2), embeddings, {
         //     //     // pineconeIndex: 'sideproject',
@@ -272,15 +383,12 @@ export async function POST(request: Request) {
         //     })
 
         // } else {
-            console.log("## not too many docs, indexing all")
-            const vectorStore = await PineconeStore.fromDocuments(docs, embeddings, {
-                pineconeIndex: pineconeIndex,
-                namespace: `${owner}/${repo}-${generation_id}`,
-            })
+        console.log('## Embedding Documents ##')
+        // const vectorStore = await PineconeStore.fromDocuments(docs, embeddings, {
+        //     pineconeIndex: pineconeIndex,
+        //     namespace: `${owner}/${repo}-${generation_id}`,
+        // })
         // }
-
-
-
 
         console.timeEnd('Embedding Docs')
 
@@ -297,8 +405,9 @@ export async function POST(request: Request) {
         console.time('Calling LLM API')
         // const chain = RetrievalQAChain.fromLLM(llm, vectorStore.asRetriever())
         const chain = new RetrievalQAChain({
-            retriever: vectorStore.asRetriever(),
+            retriever: vectorStore.asRetriever(100),
             combineDocumentsChain: loadQAStuffChain(llm),
+            // verbose: true,
         })
         const template = `
         
@@ -320,30 +429,63 @@ export async function POST(request: Request) {
                    : ''
            }
 
-           The result type should be provided in the following JSON data structure:
-           {
-               name: "name of the project",
-               firstBullet: "the first resume bullet point",
-               secondBullet: "the second resume bullet point",
-               thirdBullet: "the third resume bullet point",
-               fourthBullet: "the fourth resume bullet point",
-               fifthBullet: "the fifth resume bullet point",
-
-           }
-
-       Respond only with the output in the exact format specified, with no explanation or conversation.
-
-
             `
 
         console.log('## calling chain ##')
 
-        const res = (await chain.call({
-            // query: "explain what this code does like a resume writer would if he were to put this project in a software engineers resume",
-            // query: 'create four resume bullet points for this project separated by a new line',
-            query: template,
+        const parser = StructuredOutputParser.fromZodSchema(
+            z.object({
+                name: z.string().describe('name of the project'),
+                firstBullet: z.string().describe('the first resume bullet point'),
+                secondBullet: z.string().describe('the second resume bullet point'),
+                thirdBullet: z.string().describe('the third resume bullet point'),
+                fourthBullet: z.string().describe('the fourth resume bullet point'),
+                fifthBullet: z.string().describe('the fifth resume bullet point'),
+            })
+        )
+
+        const formatInstructions = parser.getFormatInstructions()
+
+        const prompt = new PromptTemplate({
+            template:
+                `You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code \n repository name: {repo} 
+                
+                ${
+                    keywords.length > 0
+                        ? `Include the following keywords to include in your statements: ${keywords.join(', ')}.`
+                        : ''
+                }
+     
+                ${
+                    repoResponse.stargazers_count || repoResponse.watchers_count
+                        ? `Metrics: ${
+                              repoResponse.stargazers_count ? repoResponse.stargazers_count + 'Github Stars' : ''
+                          }, ${repoResponse.watchers_count ? repoResponse.watchers_count + 'watchers on github' : ''}`
+                        : ''
+                }
+
+                \n{format_instructions}
+
+                `,
+            inputVariables: ['repo'],
+            partialVariables: { format_instructions: formatInstructions },
+        })
+
+        const input = await prompt.format({
+            repo: repo,
+        })
         
-        }))
+        let res;
+        try {
+            res = await chain.call({
+                // query: "explain what this code does like a resume writer would if he were to put this project in a software engineers resume",
+                // query: 'create four resume bullet points for this project separated by a new line',
+                // query: template,
+                query: input,
+            })
+        } catch (error) {
+            console.log('Error fetching completion:', error);
+        }
 
         // console.log(res)
         console.timeEnd('Calling LLM API')
@@ -351,10 +493,13 @@ export async function POST(request: Request) {
         console.log('##OPENAI call returned: ', res?.text)
 
         console.log('## splitting the text into bullets ##')
+        //@ts-ignore
         const { text } = res
 
-        const responseObj = JSON.parse(text)
-        console.log(responseObj)
+        // const responseObj = JSON.parse(text)
+        const responseObj = await parser.parse(text)
+
+        console.log("the parsed object is",responseObj)
 
         const bullets = Object.values(responseObj).map((bullet: any) => bullet.replace(/\n/g, ''))
 
@@ -376,7 +521,7 @@ export async function POST(request: Request) {
             // [generation_id, userId, `${owner}/${repo}`, new Date(), "", JSON.stringify(bullets2)]
         )
 
-        await conn.execute('UPDATE users SET credits = credits - 1 WHERE clerk_user_id = ?', [userId])
+        // await conn.execute('UPDATE users SET credits = credits - 1 WHERE clerk_user_id = ?', [userId])
 
         console.log('saved to db:', generation_id)
         console.timeEnd('Saving to DB')
