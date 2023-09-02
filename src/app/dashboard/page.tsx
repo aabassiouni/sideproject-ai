@@ -78,7 +78,7 @@ async function DashboardPage() {
                     <CardContent className=" my-auto flex min-h-[50px] flex-col gap-2 overflow-x-scroll p-2">
                         {/* <div className="p-2 my-auto gap-4 overflow-x-scroll"> */}
                         {generations?.length > 0 ? (
-                            generations.map((generation: any) => <GenerationCard generation={generation} />)
+                            generations.map((generation: any, index: number) => <GenerationCard key={index} generation={generation} />)
                         ) : (
                             <p className="text-center text-slate-400">No generations yet!</p>
                         )}
