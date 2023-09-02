@@ -13,7 +13,7 @@ import { ChatOpenAI } from 'langchain/chat_models/openai'
 // import { ChatAnthropic } from 'langchain/chat_models/anthropic'
 import { StructuredOutputParser } from 'langchain/output_parsers'
 import { z } from 'zod'
-import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { MemoryVectorStore } from 'langchain/vectorstores/memory'
 import { PromptTemplate } from 'langchain/prompts'
 
 export const runtime = 'nodejs'
@@ -87,7 +87,7 @@ const githubLoaderIgnorePaths = [
     'CONTRIBUTING',
     'CONTRIBUTING.txt',
     'CONTRIBUTING.rst',
-    'CONTRIBUTING.markdown',    
+    'CONTRIBUTING.markdown',
     'CONTRIBUTING.MD',
     'CONTRIBUTING.md',
     'CONTRIBUTING.html',
@@ -447,8 +447,7 @@ export async function POST(request: Request) {
         const formatInstructions = parser.getFormatInstructions()
 
         const prompt = new PromptTemplate({
-            template:
-                `You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code \n repository name: {repo} 
+            template: `You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code \n repository name: {repo} 
                 
                 ${
                     keywords.length > 0
@@ -474,26 +473,34 @@ export async function POST(request: Request) {
         const input = await prompt.format({
             repo: repo,
         })
-        const res = await chain.call({
-            // query: "explain what this code does like a resume writer would if he were to put this project in a software engineers resume",
-            // query: 'create four resume bullet points for this project separated by a new line',
-            // query: template,
-            query: input,
 
-        })
+        let res
+        try {
+            res = await chain.call({
+                // query: "explain what this code does like a resume writer would if he were to put this project in a software engineers resume",
+                // query: 'create four resume bullet points for this project separated by a new line',
+                // query: template,
+                query: input,
+            })
 
+            
+        } catch (error) {
+            // @ts-ignore
+            console.log('Error fetching completion', error.data.error)
+        }
         // console.log(res)
         console.timeEnd('Calling LLM API')
 
         console.log('##OPENAI call returned: ', res?.text)
 
         console.log('## splitting the text into bullets ##')
+        //@ts-ignore
         const { text } = res
 
         // const responseObj = JSON.parse(text)
         const responseObj = await parser.parse(text)
 
-        console.log("the parsed object is",responseObj)
+        console.log('the parsed object is', responseObj)
 
         const bullets = Object.values(responseObj).map((bullet: any) => bullet.replace(/\n/g, ''))
 
