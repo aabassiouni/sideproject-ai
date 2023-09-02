@@ -474,18 +474,13 @@ export async function POST(request: Request) {
         const input = await prompt.format({
             repo: repo,
         })
-        
-        let res;
-        try {
-            res = await chain.call({
-                // query: "explain what this code does like a resume writer would if he were to put this project in a software engineers resume",
-                // query: 'create four resume bullet points for this project separated by a new line',
-                // query: template,
-                query: input,
-            })
-        } catch (error) {
-            console.log('Error fetching completion:', error);
-        }
+        const res = await chain.call({
+            // query: "explain what this code does like a resume writer would if he were to put this project in a software engineers resume",
+            // query: 'create four resume bullet points for this project separated by a new line',
+            // query: template,
+            query: input,
+
+        })
 
         // console.log(res)
         console.timeEnd('Calling LLM API')
@@ -493,7 +488,6 @@ export async function POST(request: Request) {
         console.log('##OPENAI call returned: ', res?.text)
 
         console.log('## splitting the text into bullets ##')
-        //@ts-ignore
         const { text } = res
 
         // const responseObj = JSON.parse(text)
