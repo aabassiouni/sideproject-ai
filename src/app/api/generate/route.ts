@@ -486,7 +486,7 @@ export async function POST(request: Request) {
             
         } catch (error) {
             // @ts-ignore
-            console.log('Error fetching completion:', error)
+            console.log('Error fetching completion:', error.response.data)
         }
         // console.log(res)
         console.timeEnd('Calling LLM API')
