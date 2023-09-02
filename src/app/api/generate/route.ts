@@ -296,7 +296,7 @@ export async function POST(request: Request) {
                 basePath: 'https://openrouter.ai' + '/api/v1',
                 baseOptions: {
                     headers: {
-                        'HTTP-Referer': process.env.SITE_URL ?? '',
+                        'HTTP-Referer': process.env.SITE_URL ?? '',                       
                         'X-Title': 'sideproject-ai',
                     },
                 },
@@ -486,7 +486,7 @@ export async function POST(request: Request) {
             
         } catch (error) {
             // @ts-ignore
-            console.log('Error fetching completion', error.data.error)
+            console.log('Error fetching completion:', error)
         }
         // console.log(res)
         console.timeEnd('Calling LLM API')
