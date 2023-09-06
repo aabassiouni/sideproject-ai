@@ -30,7 +30,7 @@ function LandingNavbar() {
 
                 <div className="hidden sm:block">
                     <Link href="/signin">
-                        <Button className="rounded bg-gray-800 px-4  py-2 text-white hover:bg-gray-900">
+                        <Button className="rounded-lg bg-gray-800 px-4  py-2 text-white hover:bg-gray-900">
                             {/* <GithubIcon className="inline-block mr-2" size={16} /> */}
                             Login
                         </Button>

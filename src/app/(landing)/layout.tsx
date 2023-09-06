@@ -4,7 +4,7 @@ import React from 'react'
 
 function LandingLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex flex-col">
+        <div className="">
             <LandingNavbar />
             {children}
             <Footer />
