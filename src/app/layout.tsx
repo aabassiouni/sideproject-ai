@@ -3,6 +3,7 @@ import './globals.css'
 import DashboardNavbar from '@/components/DashboardNavbar'
 import ValueProvider from '@/components/context/context'
 import localFont from 'next/font/local';
+import { Analytics } from '@vercel/analytics/react';
 
 
 export const metadata = {
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <ClerkProvider>
                 <body className={` ${necto.variable} bg-slate-200`}>{children}</body>
             </ClerkProvider>
+            <Analytics />
         </html>
     )
 }
