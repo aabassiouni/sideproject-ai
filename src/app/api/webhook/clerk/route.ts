@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { conn } from '@/lib/planetscale'
 import type { WebhookEvent } from '@clerk/clerk-sdk-node'
 import { insertUser } from '@/lib/db'
 

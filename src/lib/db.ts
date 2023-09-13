@@ -50,11 +50,26 @@ export async function updateUserCredits(userId: string) {
 }
 
 export async function fetchUserCredits(userId: string) {
-    const { rows } = (await conn.execute('SELECT credits FROM users WHERE clerk_user_id = ?', [userId])) as {
-        rows: { credits?: number }[]
+    
+    function delay(ms: number) {
+        return new Promise((resolve) => setTimeout(resolve, ms))
     }
-    const credits = rows[0].credits ?? 0
-    return credits
+
+    await delay(2000)
+    for (let i = 0; i < 10; i++) {
+        const { rows } = (await conn.execute('SELECT credits FROM users WHERE clerk_user_id = ?', [userId])) as {
+            rows: { credits?: number }[]
+        }
+        if (rows.length > 0 && rows[0].credits !== undefined) {
+            return rows[0].credits
+        }
+
+        await delay(1500)
+        // const credits = rows[0].credits ?? 0
+        // return credits
+    }
+
+    return 0
 }
 
 export async function insertError(
