@@ -12,10 +12,24 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { User, CreditCard, LogOut } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { User, CreditCard, LogOut, ContactIcon } from 'lucide-react'
 import { Button } from './ui/button'
 import { SignOutButton } from '@clerk/nextjs'
 import { conn } from '@/lib/planetscale'
+import { fetchUserCredits } from '@/lib/db'
+
+async function UserCredits() {
+    const user = await currentUser()
+    if (!user) return
+    const credits = await fetchUserCredits(user?.id)
+
+    return (
+        <p className="font-necto text-muted-foreground ">
+            {credits === 1 ? credits + ' credit' : credits + ' credits'}
+        </p>
+    )
+}
 
 async function UserButton() {
     const user = await currentUser()
@@ -27,7 +41,7 @@ async function UserButton() {
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Suspense fallback={<Skeleton className="h-10 w-10 rounded-full" />}>
                         <Avatar>
-                            <AvatarImage src={user?.profileImageUrl} />
+                            <AvatarImage src={user?.imageUrl} />
                             {/* <AvatarFallback>
                                 {user?.firstName && user.lastName ? user?.firstName[0] + user?.lastName[0] : ''}
                             </AvatarFallback> */}
@@ -59,6 +73,12 @@ async function UserButton() {
                             <span>Buy Credits</span>
                         </DropdownMenuItem>
                     </Link>
+                    <Link href={'/dashboard/contact'}>
+                        <DropdownMenuItem>
+                            <ContactIcon className="mr-2 h-4 w-4" />
+                            Contact
+                        </DropdownMenuItem>
+                    </Link>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
@@ -75,25 +95,21 @@ async function UserButton() {
     )
 }
 
-async function DashboardNavbar() {
-    const user = await currentUser()
-
-    const { rows } = (await conn.execute('SELECT credits FROM users Where clerk_user_id = ? ;', [user?.id])) as {
-        rows: { credits?: number }[]
-    }
+function DashboardNavbar() {
     return (
-        <div className="p-4 shadow-md ">
+        <div className="px-2 py-4 shadow-md sm:p-4 ">
             <div className="container mx-auto flex items-center justify-between">
                 <div className="text-xl font-bold">
                     <Link className="font-necto" href="/dashboard" replace>
                         sideproject.ai
                     </Link>
+                    <Badge className="ml-2 bg-slate-800">Beta</Badge>
                 </div>
                 {/* <p>https://github.com/aabassiouni/next-js-app-router-helper</p> */}
                 <div className="flex items-center gap-4">
-                    <p className="font-necto text-muted-foreground ">
-                        {rows[0]?.credits === 1 ? rows[0]?.credits + ' credit' : rows[0]?.credits + ' credits'}
-                    </p>
+                    <Suspense fallback={<Skeleton className="h-10 w-10 rounded-full" />}>
+                        <UserCredits />
+                    </Suspense>
                     {/* @ts-ignore */}
                     <UserButton />
                 </div>

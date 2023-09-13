@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server'
 import { GithubRepoLoader } from 'langchain/document_loaders/web/github'
-import { RetrievalQAChain, loadQAMapReduceChain, loadQAStuffChain } from 'langchain/chains'
+import { RetrievalQAChain, loadQAStuffChain } from 'langchain/chains'
 import clerk from '@clerk/clerk-sdk-node'
 import { randomUUID } from 'crypto'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { auth } from '@clerk/nextjs'
-import { conn } from '@/lib/planetscale'
 import { Octokit } from 'octokit'
 import { PineconeClient } from '@pinecone-database/pinecone'
 import { PineconeStore } from 'langchain/vectorstores/pinecone'
@@ -15,28 +14,11 @@ import { StructuredOutputParser } from 'langchain/output_parsers'
 import { z } from 'zod'
 import { MemoryVectorStore } from 'langchain/vectorstores/memory'
 import { PromptTemplate } from 'langchain/prompts'
+import * as db from '@/lib/db'
 
 export const runtime = 'nodejs'
-// const docs = [
-//     new Document({
-//         metadata: { foo: 'bar' },
-//         pageContent: 'pinecone is a vector db',
-//     }),
-//     new Document({
-//         metadata: { foo: 'bar' },
-//         pageContent: 'the quick brown fox jumped over the lazy dog',
-//     }),
-//     new Document({
-//         metadata: { baz: 'qux' },
-//         pageContent: 'lorem ipsum dolor sit amet',
-//     }),
-//     new Document({
-//         metadata: { baz: 'qux' },
-//         pageContent: 'pinecones are the woody fruiting body and of a pine tree',
-//     }),
-// ]
+
 const githubLoaderIgnorePaths = [
-    // 'utilities.js',
     'package-lock.json',
     'CODE_OF_CONDUCT.md',
     'CODE_OF_CONDUCT',
@@ -261,22 +243,21 @@ export async function POST(request: Request) {
         url: string
         keywords: string[]
     }
+
     console.log('url', url)
     if (userId) {
         //maybe add a privacy check
-        const { rows } = (await conn.execute('SELECT credits FROM users WHERE clerk_user_id = ?', [userId])) as {
-            rows: { credits?: number }[]
-        }
 
-        const credits = rows[0].credits ?? 0
+        const credits = await db.fetchUserCredits(userId)
+
         console.log('USER HAS CREDITS: ', credits, 'credits')
 
         if (credits < 1) {
-            return NextResponse.json({ error: 'Not enough credits' })
+            return NextResponse.json({ error: 'not enough credits' })
         }
 
         // creating a new generation id for the DB
-        const generation_id = randomUUID()
+        const generationID = randomUUID()
 
         // instantiating the LLM
         // const llm = new ChatOpenAI({
@@ -296,7 +277,7 @@ export async function POST(request: Request) {
                 basePath: 'https://openrouter.ai' + '/api/v1',
                 baseOptions: {
                     headers: {
-                        'HTTP-Referer': process.env.SITE_URL ?? '',                       
+                        'HTTP-Referer': process.env.SITE_URL ?? '',
                         'X-Title': 'sideproject-ai',
                     },
                 },
@@ -314,7 +295,7 @@ export async function POST(request: Request) {
 
         const githubToken = await clerk.users.getUserOauthAccessToken(userId, 'oauth_github')
         console.log('githubToken', githubToken)
-        console.time('Loading Docs')
+        // console.time('Loading Docs')
 
         const octokit = new Octokit({
             auth: githubToken[0]?.token,
@@ -335,101 +316,46 @@ export async function POST(request: Request) {
             branch: repoResponse.default_branch,
         })
 
-        // const splitter = RecursiveCharacterTextSplitter.fromLanguage("js", {
-        //     // chunkSize: 2000,
-        // });
-
         const docs = await loader.load()
 
-        console.timeEnd('Loading Docs')
+        // console.timeEnd('Loading Docs')
 
         console.log('## Analyzing Docs ##')
-
-        // for (const doc of docs) {
-        //     // const emedding = await embeddings.embed(doc.pageContent)
-        //     doc.pageContent = doc.pageContent.replace(/(\r\n|\n|\r|\t)/gm, '')
-        //     console.log(doc.metadata.source === 'src/utilities.js' ? doc.pageContent : "not utilities.js")
-        //     // console.log(doc.metadata)
-        // }
         console.log(docs.map((d) => d.metadata))
 
         console.time('Embedding Docs')
-        const vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings())
 
-        // let vectorStore: PineconeStore;
-        // if (docs.length > 8) {
-        //     console.log("## too many docs, splitting into two")
-        //     for (let index = 0; index < docs.length; index++) {
-        //         console.log("indexing doc", docs[index].metadata)
-        //         await PineconeStore.fromDocuments([docs[index]], embeddings, {
-        //             pineconeIndex: pineconeIndex,
-        //             namespace: `${owner}/${repo}-${generation_id}`,
-        //         })
-
-        //     }
-        //     // await PineconeStore.fromDocuments(docs.slice(0, docs.length / 2), embeddings, {
-        //     //     // pineconeIndex: 'sideproject',
-        //     //     pineconeIndex: pineconeIndex,
-        //     //     namespace: `${owner}/${repo}-${generation_id}`,
-        //     // })
-        //     // await PineconeStore.fromDocuments(docs.slice(docs.length / 2), embeddings, {
-        //     //     // pineconeIndex: 'sideproject',
-        //     //     pineconeIndex: pineconeIndex,
-        //     //     namespace: `${owner}/${repo}-${generation_id}`,
-        //     // })
-        //     vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
-        //         pineconeIndex: pineconeIndex,
-        //         namespace: `${owner}/${repo}-${generation_id}`,
-        //     })
-
-        // } else {
         console.log('## Embedding Documents ##')
-        // const vectorStore = await PineconeStore.fromDocuments(docs, embeddings, {
-        //     pineconeIndex: pineconeIndex,
-        //     namespace: `${owner}/${repo}-${generation_id}`,
-        // })
-        // }
+
+        let vectorStore
+        try {
+            vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings())
+            // const vectorStore = await PineconeStore.fromDocuments(docs, embeddings, {
+            //     pineconeIndex: pineconeIndex,
+            //     namespace: `${owner}/${repo}-${generation_id}`,
+            // })
+            // }
+        } catch (error: any) {
+            console.log('Error embedding documents:', error)
+            const errorID = randomUUID()
+            await db.insertError(errorID, userId, generationID, owner + '/' + repo, error, 'embeddings')
+            return NextResponse.json({ error: 'error during generation', errorID: errorID })
+        }
 
         console.timeEnd('Embedding Docs')
 
-        // const vectorStore =await PineconeStore.fromExistingIndex(embeddings, {
-        //     pineconeIndex: pineconeIndex,
-        //     namespace: 'test_docs',
-        // })
-
         console.log('## keywords ##')
-        console.log(keywords)
+        console.log(keywords ?? 'no keywords')
 
         /////////////////////////////////////////////////////////////////////////////////
 
         console.time('Calling LLM API')
-        // const chain = RetrievalQAChain.fromLLM(llm, vectorStore.asRetriever())
         const chain = new RetrievalQAChain({
             retriever: vectorStore.asRetriever(100),
             combineDocumentsChain: loadQAStuffChain(llm),
             // verbose: true,
         })
-        const template = `
         
-            You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. Be detailed in your bullet points.
-
-            repository name: ${repo}
-
-           ${
-               keywords.length > 0
-                   ? `Include the following keywords to include in your statements: ${keywords.join(', ')}.`
-                   : ''
-           }
-
-           ${
-               repoResponse.stargazers_count || repoResponse.watchers_count
-                   ? `Metrics: ${
-                         repoResponse.stargazers_count ? repoResponse.stargazers_count + 'Github Stars' : ''
-                     }, ${repoResponse.watchers_count ? repoResponse.watchers_count + 'watchers on github' : ''}`
-                   : ''
-           }
-
-            `
 
         console.log('## calling chain ##')
 
@@ -447,7 +373,7 @@ export async function POST(request: Request) {
         const formatInstructions = parser.getFormatInstructions()
 
         const prompt = new PromptTemplate({
-            template: `You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code \n repository name: {repo} 
+            template: `You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR (Situation, Task, Action, Result) method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. The first bullet point should be a description of the project at a high level. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code \n repository name: {repo} 
                 
                 ${
                     keywords.length > 0
@@ -475,24 +401,23 @@ export async function POST(request: Request) {
         })
 
         let res
+
         try {
             res = await chain.call({
-                // query: "explain what this code does like a resume writer would if he were to put this project in a software engineers resume",
-                // query: 'create four resume bullet points for this project separated by a new line',
-                // query: template,
                 query: input,
             })
+        } catch (error: any) {
+            console.log('Error fetching completion:', error)
 
-            
-        } catch (error) {
-            // @ts-ignore
-            console.log('Error fetching completion:', error.response.data)
+            const errorID = randomUUID()
+
+            await db.insertError(errorID, userId, generationID, owner + '/' + repo, error, 'completion')
+
+            return NextResponse.json({ error: 'error during generation', errorID: errorID })
         }
-        // console.log(res)
+
         console.timeEnd('Calling LLM API')
-
         console.log('##OPENAI call returned: ', res?.text)
-
         console.log('## splitting the text into bullets ##')
         //@ts-ignore
         const { text } = res
@@ -504,41 +429,20 @@ export async function POST(request: Request) {
 
         const bullets = Object.values(responseObj).map((bullet: any) => bullet.replace(/\n/g, ''))
 
-        // const bullets = text.split('|')
         console.log(bullets)
 
-        // const { name, firstBullet, secondBullet, thirdBullet, fourthBullet, fifthBullet } = JSON.parse(
-        //     JSON.stringify(text)
-        // )
-
-        ////////////////////////////////////////////////////////////////////////////////////
         console.time('Saving to DB')
-        const bullets2 = ['1', '2', '3', '4', '5']
-        console.log('saving to db')
+        console.log('Saving to db')
 
-        await conn.execute(
-            'Insert into generations (generation_id, user_id, repo_name, created_on_date, generated_text, bullets ) values (UUID_TO_BIN(?), ?, ?, ?, ?, ?)',
-            [generation_id, userId, `${owner}/${repo}`, new Date(), res?.text, JSON.stringify(bullets)]
-            // [generation_id, userId, `${owner}/${repo}`, new Date(), "", JSON.stringify(bullets2)]
-        )
+        await db.insertGeneration(generationID, userId, owner, repo, res, bullets)
+        // await db.updateUserCredits(userId)
 
-        // await conn.execute('UPDATE users SET credits = credits - 1 WHERE clerk_user_id = ?', [userId])
-
-        console.log('saved to db:', generation_id)
+        console.log('saved to db:', generationID)
         console.timeEnd('Saving to DB')
 
-        pineconeIndex.delete1({ deleteAll: true, namespace: `${owner}/${repo}-${generation_id}` })
+        pineconeIndex.delete1({ deleteAll: true, namespace: `${owner}/${repo}-${generationID}` })
 
-        // const res = {
-        //     name: 'name of the project',
-        //     firstBullet: 'the first resume bullet point',
-        //     secondBullet: 'the second resume bullet point',
-        //     thirdBullet: 'the third resume bullet point',
-        //     fourthBullet: 'the fourth resume bullet point',
-        //     fifthBullet: 'the fifth resume bullet point',
-        // }
-
-        return NextResponse.json({ bullets })
+        return NextResponse.json({ id: generationID, bullets })
     }
     return
 }
