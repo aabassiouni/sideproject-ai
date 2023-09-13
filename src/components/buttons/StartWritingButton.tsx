@@ -10,7 +10,7 @@ function StartWritingButton({className}: {className?: string}) {
     
     function handleClick() {
         setSelectedRepo({ repo: '', url: '', owner: '', path: '' })
-        setGeneration([])
+        setGeneration(null)
     }
 
     return <Button  className={className} onClick={handleClick}>Start Writing <span className='ml-2'><SparkleIcon /></span></Button>

@@ -1,6 +1,7 @@
+'use client'
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
-import { CheckCheck, Copy } from 'lucide-react';
+import { Check, Copy } from 'lucide-react';
 
 type CopyToClipboardButtonProps = {
   textToCopy: string;
@@ -15,8 +16,8 @@ const CopyToClipboardButton = ({ textToCopy } : CopyToClipboardButtonProps) => {
   };
 
   return (
-    <button className='bg-slate-100 p-1 rounded' onClick={handleCopyClick}>
-      {isCopied ? <CheckCheck color="green" /> : <Copy className='' />}
+    <button className='border-2 border-slate-300 bg-slate-100 p-2 rounded active:animate-click' onClick={handleCopyClick}>
+      {isCopied ? <Check className='w-4 h-4' color="green" /> : <Copy className='w-4 h-4' />}
     </button>
   );
 };

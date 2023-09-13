@@ -1,6 +1,7 @@
 import DashboardNavbar from '@/components/DashboardNavbar'
 import ValueProvider from '@/components/context/context'
 import React from 'react'
+import { Toaster } from "@/components/ui/toaster"
 
 function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -10,6 +11,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <DashboardNavbar />
                 {children}
             </div>
+            <Toaster />
         </ValueProvider>
     )
 }

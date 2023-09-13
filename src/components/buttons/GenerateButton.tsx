@@ -6,10 +6,11 @@ import SparkleIcon from '../icons/SparkleIcon'
 import { useValues } from '../context/context'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-
+import { useToast } from '../ui/use-toast'
 function GenerateButton() {
     const { selectedRepo, generation, setGeneration, keywords } = useValues()
     const [isLoading, setIsLoading] = useState(false)
+    const { toast } = useToast()
     const router = useRouter()
 
     async function handleClick(event: any) {
@@ -33,18 +34,27 @@ function GenerateButton() {
 
             const data = await response.json()
 
-            if (data.error) {
-                // toast({
-                //     variant: 'destructive',
-                //     title: 'No Credits!',
-                //     description: 'You need to buy more credits to generate more bullets.',
-                // })
+            if (data?.error === 'not enough credits') {
+                toast({
+                    variant: 'destructive',
+                    title: 'No Credits!',
+                    description: 'You need to buy more credits to generate more bullets.',
+                })
+
                 setIsLoading(false)
 
+            } else if(data?.error ==='error during generation') {
+                toast({
+                        variant: 'destructive',
+                        title: 'Error Generating Bullets!',
+                        description: 'There was an error generating bullets. Please try again.',
+                    })
+                    setIsLoading(false)
             } else {
                 setIsLoading(false)
-                setGeneration(data.bullets)
+                setGeneration(data)
             }
+
 
             router.refresh()
         } catch (error) {

@@ -8,6 +8,7 @@ import { Separator } from './ui/separator'
 import { motion } from 'framer-motion'
 import { Copy } from 'lucide-react'
 import CopyToClipboardButton from './buttons/CopyToClipboardButton'
+import RatingButton from './buttons/RatingButton'
 
 //for testing
 // const generation = [
@@ -21,47 +22,49 @@ import CopyToClipboardButton from './buttons/CopyToClipboardButton'
 
 function Generation() {
     const { generation } = useValues()
-    console.log('Generation', generation)
-    return (
-        generation.length > 1 ? (
-            <Card className="m-4 mt-2 h-max border-2 border-sky-600 sm:min-w-0 ">
-                <div className={`flex h-full items-start justify-start rounded-lg p-5`}>
-                    <div className=" h-full w-full space-y-2 rounded-md  bg-slate-100 p-10  text-lg">
-                        <p className=" my-1 font-bold">{generation[0]}</p>
-                        <Separator className="" />
-                        {generation.slice(1).map((bullet, i) => (
-                            <motion.div
-                                initial={{
-                                    opacity: 0,
-                                    translateY: 50,
-                                    // translateY: i % 2 === 0 ? -50 : 50,
-                                    // translateX: -50,
-                                }}
-                                className="w-full"
-                                animate={{ opacity: 1, translateX: 0, translateY: 0 }}
-                                transition={{ duration: 0.3, delay: i * 0.3 }}
-                            >
-                                <Card>
-                                    <CardHeader className="flex-row justify-between items-center">
-                                        <ul className="my-2 ml-6 list-disc [&>li]:mt-2 ">
-                                            <li className="list-disc">{bullet}</li>
-                                        </ul>
-                                        <CopyToClipboardButton textToCopy={bullet} />
-                                        {/* <Copy className="m-3 w-7 h-7 bg-slate-500 text-slate-400" /> */}
-                                    </CardHeader>
-                                </Card>
-                            </motion.div>
-                        ))}
+    // console.log("generation", generation)
+    return generation ? (
+        <Card className=" m-4 mt-0 h-max border-2 border-sky-600 sm:min-w-0 ">
+            <div className={`flex h-full items-start justify-start rounded-lg p-2 sm:p-5`}>
+                <div className=" h-full w-full space-y-2 rounded-md  bg-slate-100 p-2 text-lg  sm:p-10">
+                    <div className='flex justify-between'>
+                        <p className=" my-1 font-bold">{generation.bullets[0]}</p>
+                        <RatingButton />
                     </div>
+                    <Separator className="" />
+                    {generation.bullets.slice(1).map((bullet, i) => (
+                        <motion.div
+                            initial={{
+                                opacity: 0,
+                                translateY: 50,
+                                // translateY: i % 2 === 0 ? -50 : 50,
+                                // translateX: -50,
+                            }}
+                            key={i}
+                            className="w-full"
+                            animate={{ opacity: 1, translateX: 0, translateY: 0 }}
+                            transition={{ duration: 0.3, delay: i * 0.3 }}
+                        >
+                            <Card>
+                                <CardHeader className="flex-row items-center justify-between">
+                                    <ul className="my-2 ml-6 list-disc [&>li]:mt-2 ">
+                                        <li className="list-disc">{bullet}</li>
+                                    </ul>
+                                    <CopyToClipboardButton textToCopy={bullet} />
+                                    {/* <Copy className="m-3 w-7 h-7 bg-slate-500 text-slate-400" /> */}
+                                </CardHeader>
+                            </Card>
+                        </motion.div>
+                    ))}
                 </div>
-            </Card>
-        ) : (
-            <Card className="m-4 mt-2 h-full sm:min-w-0 ">
-                <div className={`flex h-full items-start justify-start rounded-lg p-5`}>
-                    <p className="mx-auto my-auto text-slate-400">Your Generation will appear here!</p>
-                </div>
-            </Card>
-        )
+            </div>
+        </Card>
+    ) : (
+        <Card className="m-4 mt-2 h-full sm:min-w-0 ">
+            <div className={`flex h-full items-start justify-start rounded-lg p-5`}>
+                <p className="mx-auto my-auto text-slate-400">Your Generation will appear here!</p>
+            </div>
+        </Card>
     )
 }
 

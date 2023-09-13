@@ -7,6 +7,7 @@ import { conn } from '@/lib/planetscale'
 import StartWritingButton from '@/components/buttons/StartWritingButton'
 import Link from 'next/link'
 import DeleteGenerationButton from '@/components/buttons/DeleteGenerationButton'
+import { fetchAllGenerations } from '@/lib/db'
 
 export const revalidate = 0
 export const runtime = 'edge'
@@ -36,16 +37,16 @@ function GenerationsCardLoading() {
 function GenerationCard({ generation }: { generation: Generation }) {
     return (
         <Card className="flex w-full items-center justify-around bg-slate-100 p-4 py-2 sm:w-full">
-            <Link className="flex gap-2 justify-between " href={`/dashboard/${generation.generation_id_uuid}`}>
+            <Link className="flex justify-between gap-2 " href={`/dashboard/${generation.generation_id_uuid}`}>
                 <div className="w-44 overflow-ellipsis">
                     <p className="line-clamp-1 text-ellipsis text-sm font-medium  tracking-tight sm:text-base">
                         {generation.repo_name.split('/')[1]}
                     </p>
                 </div>
-                <div className="line-clamp-1 w-fit text-sm text-slate-400">
-                    <p>{generation.created_on_date}</p>
-                </div>
             </Link>
+            <div className="line-clamp-1 w-fit text-sm text-slate-400">
+                <p>{generation.created_on_date}</p>
+            </div>
             <div className="flex items-center gap-1.5">
                 {/* <Button size={'sm'}>View</Button> */}
                 <DeleteGenerationButton generationID={generation.generation_id_uuid} />
@@ -56,11 +57,11 @@ function GenerationCard({ generation }: { generation: Generation }) {
 async function DashboardPage() {
     const user = await currentUser()
 
-    const results = await conn.execute(
-        'SELECT user_id, repo_name, created_on_date, generated_text, BIN_TO_UUID(generation_id) AS generation_id_uuid FROM generations Where user_id = ? ;',
-        [user?.id]
-    )
-    let generations = results.rows
+    if (!user) { 
+        return 
+    }
+    
+    const generations = await fetchAllGenerations(user?.id)
 
     return (
         <div className="flex h-screen flex-col items-center gap-4 p-4 pt-0">
@@ -78,7 +79,9 @@ async function DashboardPage() {
                     <CardContent className=" my-auto flex min-h-[50px] flex-col gap-2 overflow-x-scroll p-2">
                         {/* <div className="p-2 my-auto gap-4 overflow-x-scroll"> */}
                         {generations?.length > 0 ? (
-                            generations.map((generation: any, index: number) => <GenerationCard key={index} generation={generation} />)
+                            generations.map((generation: any, index: number) => (
+                                <GenerationCard key={index} generation={generation} />
+                            ))
                         ) : (
                             <p className="text-center text-slate-400">No generations yet!</p>
                         )}
