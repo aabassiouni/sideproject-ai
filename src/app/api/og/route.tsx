@@ -6,7 +6,7 @@ export const runtime = 'edge';
 export async function GET() {
 
   const fontData = await fetch(
-    new URL('../../../fonts/Necto-Mono.woff2', import.meta.url),
+    new URL('../../fonts/Necto-Mono.woff2', import.meta.url),
   ).then((res) => res.arrayBuffer());
  
   return new ImageResponse(
