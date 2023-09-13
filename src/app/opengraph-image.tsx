@@ -2,18 +2,23 @@ import { ImageResponse } from 'next/server';
 
  
 export const runtime = 'edge';
- 
-export async function GET() {
+
+export const size = {
+  width: 1200,
+  height: 630,
+}
+export const contentType = 'image/png'
+export default async function Image() {
 
   const fontData = await fetch(
-    new URL('../../../fonts/Necto-Mono.woff2', import.meta.url),
+    new URL('../fonts/Necto-Mono.woff', import.meta.url),
   ).then((res) => res.arrayBuffer());
  
   return new ImageResponse(
     (
       <div
         style={{
-          backgroundColor: '#f1f5f9',
+          backgroundColor: '#cbd5e1',
           height: '100%',
           width: '100%',
           fontSize: 100,
