@@ -6,8 +6,8 @@ import { Separator } from './ui/separator'
 import GithubIcon from './icons/GithubIcon'
 import { useValues } from './context/context'
 import GenerateButton from './buttons/GenerateButton'
-import KeywordInput from './KeywordInput'
-import KeywordDeleteButton from './buttons/KeywordDeleteButton'
+// import KeywordInput from './KeywordInput'
+// import KeywordDeleteButton from './buttons/KeywordDeleteButton'
 
 
 function RepoInfo() {
@@ -49,8 +49,8 @@ function RepoInfo() {
 
 
     return (
-        <Card className="sm:h-fit">
-            <div className="flex flex-col sm:flex-row">
+        <Card className="sm:h-full w-80">
+            <div className="flex flex-col justify-center sm:flex-row">
                 {isLoading ? (
                     // <Card className="m-4 h-40">
                     <div className="sm:basis-1/3  ">
@@ -65,13 +65,14 @@ function RepoInfo() {
                 )}
                 {selectedRepo.repo && !isLoading ? (
                     <>
-                        <div className="basis-1/3">
+                        {/* add basis back when keywords is added*/}
+                        <div className="basi-1/3">
                             <CardHeader>
                                 <CardTitle className="text-center sm:text-left">
                                     <GithubIcon className="mr-2 inline-block text-center sm:text-left" size={16} />
                                     {title ?? 'N/A'}
                                 </CardTitle>
-                                <CardDescription className="text-center sm:text-left">
+                                <CardDescription className="text-center mx-auto sm:text-left">
                                     {numFiles} files, {size}MB, {starCount} stars{' '}
                                 </CardDescription>
                             </CardHeader>
@@ -91,7 +92,7 @@ function RepoInfo() {
                 )}
                 <Separator orientation="vertical" className="hidden sm:block" />
                 <Separator orientation="horizontal" className="w-full sm:hidden" />
-                <div className="basis-2/3">
+                {/* <div className="basis-2/3 ">
                     <CardHeader className="text-center">
                         <CardTitle>Optimize for Keywords:</CardTitle>
                         <CardDescription>Input a comma separated list for keywords to optimize for <br />( Max 5 keywords. )</CardDescription>
@@ -102,7 +103,7 @@ function RepoInfo() {
                             {keywords.map((keyword, index) => {
 								console.log('keyword is ', keyword)
                                 return (
-                                    <div key={index} className="flex text-sm border w-fit p-1  px-2 rounded-full border-slate-400 items-center gap-2">
+                                    <div key={index} className="flex text-sm border w-fit p-1 px-2 rounded-lg border-slate-400 items-center gap-2">
                                         <p className="text-xs text-center ">{keyword}</p>
                                         
                                         <KeywordDeleteButton currKeyword= {keyword} />
@@ -111,7 +112,7 @@ function RepoInfo() {
                             })}
                         </div>
                     </CardContent>
-                </div>
+                </div> */}
             </div>
         </Card>
     )

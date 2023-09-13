@@ -9,11 +9,6 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import RepoInfo from '@/components/RepoInfo'
 import { Skeleton } from '@/components/ui/skeleton'
 import MobileRepoSelect from '@/components/MobileRepoSelect'
-import { conn } from '@/lib/planetscale'
-
-function RepoCardSkeleton() {
-    return <Skeleton className="h-16 w-full" />
-}
 
 async function WritePage() {
     const user = await currentUser()
@@ -74,7 +69,7 @@ async function WritePage() {
                 </ScrollArea>
             </GithubRepoCard>
             <div className="flex grow flex-col">
-                <div className="m-4 my-2 basis-1/4">
+                <div className="m-4 mx-auto my-2 basis-1/4">
                     <RepoInfo/>
                 </div>
                 <Generation/>
