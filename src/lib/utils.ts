@@ -11,7 +11,7 @@ export function extractOwnerAndRepoAndPath(url: string): {
 	path: string;
 } {
 	const match = url.match(
-		/https:\/\/github.com\/([^/]+)\/([^/]+)(\/tree\/[^/]+\/(.+))?/i
+		/(?:https?:\/\/)?github.com\/([^/]+)\/([^/]+)(\/tree\/[^/]+\/(.+))?/i
 	);
 
 	if (!match) {
