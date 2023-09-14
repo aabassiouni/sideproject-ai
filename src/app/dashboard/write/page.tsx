@@ -15,7 +15,7 @@ async function WritePage() {
 
     const { userId } = auth()  
 
-    
+
 
     let repos
     if (userId) {
@@ -41,11 +41,11 @@ async function WritePage() {
             <MobileRepoSelect>
                 <ScrollArea className="h-44">
                     <div className="space-y-3">
-                        {repos?.map((repo) => (
+                        {repos?.map((repo, idx) => (
                             // @ts-ignore
                             <Suspense fallback={<div>Loading...</div>}>
                                 {/*  @ts-ignore */}
-                                <RepoCard key={repo.id} repo={repo} />
+                                <RepoCard key={idx} repo={repo} />
                             </Suspense>
                         ))}
                     </div>
@@ -55,11 +55,11 @@ async function WritePage() {
                 <ScrollArea className="sm:h-96">
                     <div className="mr-3 space-y-3">
                         {repos ? (
-                            repos?.map((repo) => (
+                            repos?.map((repo, idx) => (
                                 // @ts-ignore
                                 <Suspense fallback={<div>Loading...</div>}>
                                     {/*  @ts-ignore */}
-                                    <RepoCard key={repo.id} repo={repo} />
+                                    <RepoCard key={idx} repo={repo} />
                                 </Suspense>
                             ))
                         ) : (

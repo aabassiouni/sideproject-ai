@@ -99,7 +99,7 @@ function DashboardNavbar() {
     return (
         <div className="px-2 py-4 shadow-md sm:p-4 ">
             <div className="container mx-auto flex items-center justify-between">
-                <div className="text-xl font-bold">
+                <div className="text-lg sm:text-xl font-bold">
                     <Link className="font-necto" href="/dashboard" replace>
                         sideproject.ai
                     </Link>
@@ -107,9 +107,9 @@ function DashboardNavbar() {
                 </div>
                 {/* <p>https://github.com/aabassiouni/next-js-app-router-helper</p> */}
                 <div className="flex items-center gap-4">
-                    <Suspense fallback={<Skeleton className="h-4 w-20" />}>
+                    {/* <Suspense fallback={<Skeleton className="h-4 w-20" />}>
                         <UserCredits />
-                    </Suspense>
+                    </Suspense> */}
                     {/* @ts-ignore */}
                     <Suspense fallback={<Skeleton className="h-10 w-10 rounded-full" />}>
                         <UserButton />

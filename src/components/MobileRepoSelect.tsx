@@ -12,7 +12,7 @@ import GithubIcon from './icons/GithubIcon'
 function MobileRepoSelect({ children }: { children: React.ReactNode }) {
     return (
         <Card className="min-h-44 m-4 my-2 flex h-fit flex-col items-center py-3 sm:hidden">
-            <Tabs defaultValue="input" className="flex flex-col items-center">
+            <Tabs defaultValue="select" className="flex flex-col items-center">
                 <TabsList className="mx-auto">
                     <TabsTrigger className="" value="input">
                         <LinkIcon className=" " size={16} />

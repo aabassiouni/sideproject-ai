@@ -5,6 +5,14 @@ import { Card, CardHeader } from '@/components/ui/card'
 function Loading() {
     return (
         <div className="flex h-screen flex-col sm:flex-row">
+            <Card className="min-h-44 gap-2 m-4 my-2 flex h-fit flex-col items-center p-3 py-3 pt-11 sm:hidden">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                
+
+            </Card>
             <div className="hidden max-w-sm flex-col items-center space-y-1.5 overflow-x-hidden rounded-xl bg-white px-6 py-5 sm:flex sm:max-h-screen sm:min-w-[400px] sm:rounded-none sm:rounded-tr-xl">
                 <Skeleton className="h-36 w-full" />
                 <Skeleton className="h-96 w-full" />

@@ -54,7 +54,7 @@ function RepoInfo() {
                 {isLoading ? (
                     // <Card className="m-4 h-40">
                     <div className="sm:basis-1/3  ">
-                        <CardHeader className="h-44">
+                        <CardHeader className="h-40">
                             <Skeleton className="h-4 w-48" />
                             <Skeleton className="h-4 w-28" />
                         </CardHeader>
@@ -90,8 +90,8 @@ function RepoInfo() {
                         </div>
                     )
                 )}
-                <Separator orientation="vertical" className="hidden sm:block" />
-                <Separator orientation="horizontal" className="w-full sm:hidden" />
+                {/* <Separator orientation="vertical" className="hidden sm:block" /> */}
+                {/* <Separator orientation="horizontal" className="w-full sm:hidden" /> */}
                 {/* <div className="basis-2/3 ">
                     <CardHeader className="text-center">
                         <CardTitle>Optimize for Keywords:</CardTitle>
