@@ -9,9 +9,7 @@ import exampleImg from '/public/example.png'
 import step1Img from '/public/step1.png'
 import step2Img from '/public/step2.png'
 import step3Img from '/public/step3.png'
-
-import SparkleIcon from '@/components/icons/SparkleIcon'
-import { User2, UserCircle2, Wand, Wand2, Zap } from 'lucide-react'
+import { UserCircle2, Wand2, Zap } from 'lucide-react'
 
 export const runtime = 'edge'
 
@@ -26,9 +24,11 @@ export default async function Home() {
                 <div className="mx-auto w-52 rounded-full border-2 border-blue-500 bg-white">
                     <p className="text-center font-necto">Now in beta! 🎉</p>
                 </div>
-                <p className=" w-2/3 text-center text-4xl font-extrabold sm:text-5xl">
-                    <Balancer>Transform Your GitHub Projects Into Impressive Resume Sections!</Balancer>
-                </p>
+                <div className='sm:w-2/3 bg-gradient-to-r bg-clip-text from-cyan-500/90 to-blue-500'>
+                    <span className="  text-center text-4xl font-extrabold text-transparent sm:text-5xl">
+                        <Balancer>Transform Your GitHub Projects Into Impressive Resume Sections!</Balancer>
+                    </span>
+                </div>
                 <p className="text-medium text-center text-xl font-medium ">
                     Stop thinking about your resume. Just build.
                     {/* Transform your GitHub projects into a compelling resume section in seconds! */}
@@ -98,7 +98,7 @@ export default async function Home() {
                     {/* <div className="grid grid-rows-3 justify-evenly gap-10 sm:gap-44 sm:grid-cols-3 sm:grid-rows-none"> */}
                     <Card className="w-80">
                         <CardHeader>
-                            <div className="flex h-10 w-10 items-center justify-center rounded bg-blue-500">
+                            <div className="flex h-10 w-10 items-center justify-center rounded bg-gradient-to-r from-cyan-500 to-blue-500">
                                 <UserCircle2 strokeWidth={1.5} className="h-6 w-6 text-white" />
                             </div>
                             <CardTitle className="text-xl font-bold">One-Click Login</CardTitle>
@@ -109,7 +109,7 @@ export default async function Home() {
                     </Card>
                     <Card className="w-80">
                         <CardHeader>
-                            <div className="flex h-10 w-10 items-center justify-center rounded bg-blue-500">
+                            <div className="flex h-10 w-10 items-center justify-center rounded bg-gradient-to-r from-cyan-500 to-blue-500">
                                 <Zap strokeWidth={1.5} className="h-6 w-6 text-white" />
                             </div>
                             <CardTitle className="text-xl font-bold">Easy to Use</CardTitle>
@@ -120,7 +120,7 @@ export default async function Home() {
                     </Card>
                     <Card className="w-80">
                         <CardHeader>
-                            <div className="flex h-10 w-10 items-center justify-center rounded bg-blue-500">
+                            <div className="flex h-10 w-10 items-center justify-center rounded bg-gradient-to-r from-cyan-500 to-blue-500">
                                 <Wand2 strokeWidth={1.5} className="h-6 w-6 text-slate-100" />
                             </div>
                             <CardTitle className="text-xl font-bold">AI-Driven Analysis</CardTitle>

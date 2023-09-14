@@ -74,7 +74,7 @@ function GenerateButton() {
                         Generate
                         <SparkleIcon className="ml-2 inline-block" />
                     </span>
-                    <span className="text-xs leading-none">(1 credit)</span>
+                    {/* <span className="text-xs leading-none">(1 credit)</span> */}
                 </>
             ) : (
                 <Loader2 className="h-6 w-6 animate-spin" />
