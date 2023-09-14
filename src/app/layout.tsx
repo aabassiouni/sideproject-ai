@@ -1,14 +1,34 @@
-import { ClerkProvider } from '@clerk/nextjs'
 import './globals.css'
-import DashboardNavbar from '@/components/DashboardNavbar'
-import ValueProvider from '@/components/context/context'
+import { ClerkProvider } from '@clerk/nextjs'
 import localFont from 'next/font/local';
 import { Analytics } from '@vercel/analytics/react';
+import { Metadata } from 'next';
 
 
-export const metadata = {
-    title: 'Dashboard - sideproject.ai',
-
+export const metadata: Metadata = {
+    title: 'sideproject.ai',
+    authors: [{name: 'Ali Bassiouni'}],
+    metadataBase: new URL('https://usesideprojectai.com'),
+    openGraph: {
+        title: 'sideproject.ai',
+        description: 'AI Generated Resume Bullet points for your sideprojects',
+        url: 'https://usesideprojectai.com',
+        images: [
+            {
+                url: 'https://usesideprojectai.com/opengraph-image',
+                width: 1200,
+                height: 630,
+            },
+        ],
+        type: 'website',
+        siteName: 'sideproject.ai',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'sideproject.ai',
+        description: 'AI generated resume bullet points for your sideprojects',
+        images: ['https://usesideprojectai.com/twitter-image'],
+    }
 }
 
 
