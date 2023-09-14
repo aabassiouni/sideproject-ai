@@ -3,8 +3,8 @@ import { ImageResponse } from 'next/server'
 export const runtime = 'edge'
 
 export const size = {
-    width: 1200,
-    height: 630,
+    width: 1024,
+    height: 512,
 }
 export const contentType = 'image/png'
 
@@ -34,8 +34,8 @@ export default async function Image() {
             </div>
         ),
         {
-            width: 1200,
-            height: 630,
+            width: 1024,
+            height: 512,
             fonts: [
                 {
                     name: 'Necto Mono',
