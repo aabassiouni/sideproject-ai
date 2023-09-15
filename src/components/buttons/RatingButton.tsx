@@ -42,7 +42,7 @@ function RatingButton({ generationID }: { generationID: string }) {
     }
 
     return (
-        <div className="mr-4 inline-flex gap-2">
+        <div className="mr-4 inline-flex flex-col sm:flex-row gap-2">
             <Button
                 className=" group inline-flex items-center justify-center gap-2 rounded border-2 border-slate-300  bg-slate-200 p-1 hover:bg-slate-300 active:animate-click disabled:animate-none disabled:border-green-700 disabled:opacity-100"
                 onClick={handleLike}
