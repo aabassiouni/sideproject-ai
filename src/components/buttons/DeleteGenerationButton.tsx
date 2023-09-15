@@ -35,7 +35,7 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    generation: generationID,
+                    generationID: generationID,
                 }),
             })
             const data = await res.json()

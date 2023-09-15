@@ -36,10 +36,25 @@ export async function fetchGeneration(generation_id: string) {
     const { rows } = (await conn.execute('SELECT * FROM generations WHERE generation_id = UUID_TO_BIN(?)', [
         generation_id,
     ])) as { rows: Generation[] }
-
+    
     const generation = rows[0]
     return generation
 }
+
+export async function updateGenerationRating(generation_id: string, rating: number) {
+    await conn.execute('UPDATE generations SET rating = ? WHERE generation_id = BIN_TO_UUID(?)', [
+        rating,
+        generation_id,
+    ])
+}
+
+export async function deleteGeneration(generation_id: string, userId: string) {
+    await conn.execute('UPDATE generations SET deleted = true WHERE generation_id = UUID_TO_BIN(?) AND user_id = ?', [
+        generation_id,
+        userId,
+    ])
+}
+
 
 export async function insertUser(userId: string, email: string, credits: number) {
     await conn.execute('INSERT INTO users (clerk_user_id, email, credits) VALUES (?, ?, ?);', [userId, email, credits])
@@ -86,9 +101,3 @@ export async function insertError(
     )
 }
 
-export async function updateGenerationRating(generation_id: string, rating: number) {
-    await conn.execute('UPDATE generations SET rating = ? WHERE generation_id = BIN_TO_UUID(?)', [
-        rating,
-        generation_id,
-    ])
-}

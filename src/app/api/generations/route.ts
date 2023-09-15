@@ -1,3 +1,4 @@
+import { deleteGeneration } from '@/lib/db'
 import { conn } from '@/lib/planetscale'
 import { auth } from '@clerk/nextjs'
 import { revalidatePath } from 'next/cache'
@@ -18,24 +19,24 @@ type Generation = {
 export async function POST(request: NextRequest) {
     console.log('/////////////////////// deleting generation ////////////////////////')
     const { userId } = auth()
-    const { generation } = await request.json()
+    const { generationID } = await request.json()
 
-    console.log('looking for generation:', generation)
+    console.log('looking for generation:', generationID)
     const { rows: generationFromDB } = (await conn.execute(
         'SELECT * FROM generations WHERE generation_id = UUID_TO_BIN(?)',
-        [generation]
+        [generationID]
     )) as { rows: Generation[] }
 
     console.log('generation from db', generationFromDB)
 
     if (userId) {
         if (userId === generationFromDB[0].user_id) {
-            console.log('deleting generation', generation)
-            const { rows } = await conn.execute('DELETE FROM generations WHERE generation_id = UUID_TO_BIN(?)', [
-                generation,
-            ])
+            console.log('deleting generation', generationID)
+            
+            await deleteGeneration(generationID, userId)
+
             revalidatePath('/dashboard')
-            return NextResponse.json({ generation: generation })
+            return NextResponse.json({ generationID })
         } else {
             return NextResponse.json({ error: 'not authorized' })
         }
