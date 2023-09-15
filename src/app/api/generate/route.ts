@@ -15,6 +15,7 @@ import { z } from 'zod'
 import { MemoryVectorStore } from 'langchain/vectorstores/memory'
 import { PromptTemplate } from 'langchain/prompts'
 import * as db from '@/lib/db'
+import type { Document } from 'langchain/document'
 
 export const runtime = 'nodejs'
 
@@ -193,6 +194,8 @@ const githubLoaderIgnorePaths = [
     '.gitignore',
     '.vscodeignore',
     '.git',
+    'poetry.lock',
+    '*.sqlite3',
     '*.svg',
     '*.csv',
     '*.png',
@@ -248,13 +251,12 @@ export async function POST(request: Request) {
     if (userId) {
         //maybe add a privacy check
 
-        const credits = await db.fetchUserCredits(userId)
-
-        console.log('USER HAS CREDITS: ', credits, 'credits')
-
-        if (credits < 1) {
-            return NextResponse.json({ error: 'not enough credits' })
-        }
+        //fetching credits
+        // const credits = await db.fetchUserCredits(userId)
+        // console.log('USER HAS CREDITS: ', credits, 'credits')
+        // if (credits < 1) {
+        //     return NextResponse.json({ error: 'not enough credits' })
+        // }
 
         // creating a new generation id for the DB
         const generationID = randomUUID()
@@ -265,6 +267,7 @@ export async function POST(request: Request) {
         //     maxTokens: -1,
         //     temperature: 0.9,
         // })
+
         const llm = new ChatOpenAI(
             {
                 modelName: 'anthropic/claude-instant-v1',
@@ -284,15 +287,7 @@ export async function POST(request: Request) {
             }
         )
         const embeddings = new OpenAIEmbeddings()
-
-        const client = new PineconeClient()
-        await client.init({
-            apiKey: process.env.PINECONE_API_KEY ?? '',
-            environment: process.env.PINECONE_ENVIRONMENT ?? '',
-        })
-
-        const pineconeIndex = client.Index('sideproject-index')
-
+        
         const githubToken = await clerk.users.getUserOauthAccessToken(userId, 'oauth_github')
         console.log('githubToken', githubToken)
         // console.time('Loading Docs')
@@ -323,20 +318,27 @@ export async function POST(request: Request) {
         console.log('## Analyzing Docs ##')
         console.log(docs.map((d) => d.metadata))
 
-        console.time('Embedding Docs')
+        const processedDocs = docs.map(doc => {
+            console.log("length of doc", doc.metadata.source, "is", doc.pageContent?.length)
+            if (doc.pageContent === undefined) {
+                console.log('Removing doc:', doc.metadata.source);
+                return null;
+            } else if (doc.pageContent.length > 15000) {
+                console.log('Trimming doc:', doc.metadata.source);
+                doc.pageContent = doc.pageContent.substring(0, 15000);
+            }
+            return doc;
+        }).filter(doc => doc !== null) as Document<Record<string, any>>[];
 
+        console.time('Embedding Docs')
         console.log('## Embedding Documents ##')
 
         let vectorStore
         try {
-            vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings())
-            // const vectorStore = await PineconeStore.fromDocuments(docs, embeddings, {
-            //     pineconeIndex: pineconeIndex,
-            //     namespace: `${owner}/${repo}-${generation_id}`,
-            // })
-            // }
+            vectorStore = await MemoryVectorStore.fromDocuments(processedDocs, new OpenAIEmbeddings())
         } catch (error: any) {
             console.log('Error embedding documents:', error)
+            console.log('error message:',error?.response?.data)
             const errorID = randomUUID()
             await db.insertError(errorID, userId, generationID, owner + '/' + repo, error, 'embeddings')
             return NextResponse.json({ error: 'error during generation', errorID: errorID })
@@ -344,8 +346,8 @@ export async function POST(request: Request) {
 
         console.timeEnd('Embedding Docs')
 
-        console.log('## keywords ##')
-        console.log(keywords ?? 'no keywords')
+        // console.log('## keywords ##')
+        // console.log(keywords ?? 'no keywords')
 
         /////////////////////////////////////////////////////////////////////////////////
 
@@ -355,7 +357,6 @@ export async function POST(request: Request) {
             combineDocumentsChain: loadQAStuffChain(llm),
             // verbose: true,
         })
-        
 
         console.log('## calling chain ##')
 
@@ -373,7 +374,9 @@ export async function POST(request: Request) {
         const formatInstructions = parser.getFormatInstructions()
 
         const prompt = new PromptTemplate({
-            template: `You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR (Situation, Task, Action, Result) method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. The first bullet point should be a description of the project at a high level. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code \n repository name: {repo} 
+            template: `You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR (Situation, Task, Action, Result) method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. The first bullet point should be a description of the project at a high level. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code. 
+            
+            \n repository name: {repo} 
                 
                 ${
                     keywords.length > 0
@@ -401,7 +404,6 @@ export async function POST(request: Request) {
         })
 
         let res
-
         try {
             res = await chain.call({
                 query: input,
@@ -410,20 +412,20 @@ export async function POST(request: Request) {
             console.log('Error fetching completion:', error)
 
             const errorID = randomUUID()
-
             await db.insertError(errorID, userId, generationID, owner + '/' + repo, error, 'completion')
 
             return NextResponse.json({ error: 'error during generation', errorID: errorID })
         }
 
         console.timeEnd('Calling LLM API')
-        console.log('##OPENAI call returned: ', res?.text)
+        // console.log('##OPENAI call returned: ', res?.text)
         console.log('## splitting the text into bullets ##')
         //@ts-ignore
         const { text } = res
 
-        // const responseObj = JSON.parse(text)
-        const responseObj = await parser.parse(text)
+        const filteredText = text.replace(/.*?({.*?}).*/s, '$1');
+        
+        const responseObj = await parser.parse(filteredText)
 
         console.log('the parsed object is', responseObj)
 
@@ -440,7 +442,7 @@ export async function POST(request: Request) {
         console.log('saved to db:', generationID)
         console.timeEnd('Saving to DB')
 
-        pineconeIndex.delete1({ deleteAll: true, namespace: `${owner}/${repo}-${generationID}` })
+        // pineconeIndex.delete1({ deleteAll: true, namespace: `${owner}/${repo}-${generationID}` })
 
         return NextResponse.json({ id: generationID, bullets })
     }
