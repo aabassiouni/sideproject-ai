@@ -11,7 +11,7 @@ export const ValueContext = createContext({
     link: '',
     setLink: (link: string) => {},
     generation: { id: '', bullets: [] } as { id: string; bullets: string[] } | null,
-    setGeneration: (generation: { id: string; bullets: string[] } | null) => {},
+    setGeneration: (generation: { id: string; name: string, bullets: string[] } | null) => {},
     keywords: [''],
     setKeywords: (keywords: string[]) => {},
 })
@@ -25,7 +25,7 @@ export default function ValueProvider({ children }: { children: React.ReactNode 
     })
     const [isLoading, setIsLoading] = useState(false)
     const [link, setLink] = useState<string>('')
-    const [generation, setGeneration] = useState<{ id: string; bullets: string[] } | null>(null)
+    const [generation, setGeneration] = useState<{ id: string; name: string, bullets: string[] } | null>(null)
     const [keywords, setKeywords] = useState<string[]>([])
 
     return (

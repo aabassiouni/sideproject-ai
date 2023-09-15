@@ -28,11 +28,11 @@ function Generation() {
             <div className={`flex h-full items-start justify-start rounded-lg p-2 sm:p-5`}>
                 <div className=" h-full w-full space-y-2 rounded-md  bg-slate-100 p-2 text-lg  sm:p-10">
                     <div className='flex justify-between'>
-                        <p className=" my-1 font-bold">{generation.bullets[0]}</p>
+                        <p className=" my-1 font-bold">{generation.name}</p>
                         <RatingButton />
                     </div>
                     <Separator className="" />
-                    {generation.bullets.slice(1).map((bullet, i) => (
+                    {generation.bullets.map((bullet, i) => (
                         <motion.div
                             initial={{
                                 opacity: 0,

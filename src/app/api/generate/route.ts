@@ -287,7 +287,7 @@ export async function POST(request: Request) {
             }
         )
         const embeddings = new OpenAIEmbeddings()
-        
+
         const githubToken = await clerk.users.getUserOauthAccessToken(userId, 'oauth_github')
         console.log('githubToken', githubToken)
         // console.time('Loading Docs')
@@ -318,17 +318,19 @@ export async function POST(request: Request) {
         console.log('## Analyzing Docs ##')
         console.log(docs.map((d) => d.metadata))
 
-        const processedDocs = docs.map(doc => {
-            console.log("length of doc", doc.metadata.source, "is", doc.pageContent?.length)
-            if (doc.pageContent === undefined) {
-                console.log('Removing doc:', doc.metadata.source);
-                return null;
-            } else if (doc.pageContent.length > 15000) {
-                console.log('Trimming doc:', doc.metadata.source);
-                doc.pageContent = doc.pageContent.substring(0, 15000);
-            }
-            return doc;
-        }).filter(doc => doc !== null) as Document<Record<string, any>>[];
+        const processedDocs = docs
+            .map((doc) => {
+                console.log('length of doc', doc.metadata.source, 'is', doc.pageContent?.length)
+                if (doc.pageContent === undefined) {
+                    console.log('Removing doc:', doc.metadata.source)
+                    return null
+                } else if (doc.pageContent.length > 15000) {
+                    console.log('Trimming doc:', doc.metadata.source)
+                    doc.pageContent = doc.pageContent.substring(0, 15000)
+                }
+                return doc
+            })
+            .filter((doc) => doc !== null) as Document<Record<string, any>>[]
 
         console.time('Embedding Docs')
         console.log('## Embedding Documents ##')
@@ -338,7 +340,7 @@ export async function POST(request: Request) {
             vectorStore = await MemoryVectorStore.fromDocuments(processedDocs, new OpenAIEmbeddings())
         } catch (error: any) {
             console.log('Error embedding documents:', error)
-            console.log('error message:',error?.response?.data)
+            console.log('error message:', error?.response?.data)
             const errorID = randomUUID()
             await db.insertError(errorID, userId, generationID, owner + '/' + repo, error, 'embeddings')
             return NextResponse.json({ error: 'error during generation', errorID: errorID })
@@ -362,7 +364,6 @@ export async function POST(request: Request) {
 
         const parser = StructuredOutputParser.fromZodSchema(
             z.object({
-                name: z.string().describe('name of the project'),
                 firstBullet: z.string().describe('the first resume bullet point'),
                 secondBullet: z.string().describe('the second resume bullet point'),
                 thirdBullet: z.string().describe('the third resume bullet point'),
@@ -423,9 +424,9 @@ export async function POST(request: Request) {
         //@ts-ignore
         const { text } = res
 
-        const filteredText = text.replace(/.*?({.*?}).*/s, '$1');
-        
-        let responseObj;
+        const filteredText = text.replace(/.*?({.*?}).*/s, '$1')
+
+        let responseObj
         try {
             responseObj = await parser.parse(filteredText)
         } catch (error: any) {
@@ -451,7 +452,7 @@ export async function POST(request: Request) {
 
         // pineconeIndex.delete1({ deleteAll: true, namespace: `${owner}/${repo}-${generationID}` })
 
-        return NextResponse.json({ id: generationID, bullets })
+        return NextResponse.json({ id: generationID, name: repo, bullets })
     }
     return
 }
