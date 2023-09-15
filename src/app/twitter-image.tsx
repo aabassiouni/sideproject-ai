@@ -10,7 +10,7 @@ export const contentType = 'image/png'
 
 export default async function Image() {
 
-    const fontData = await fetch(new URL('../fonts/Necto-Mono.woff', import.meta.url)).then((res) => res.arrayBuffer())
+    const fontData = await fetch(new URL('../fonts/AzeretMono-Bold.otf', import.meta.url)).then((res) => res.arrayBuffer())
 
     return new ImageResponse(
         (
@@ -28,9 +28,10 @@ export default async function Image() {
                     justifyContent: 'center',
                     textAlign: 'center',
                     fontWeight: 700,
+                    
                 }}
             >
-                sideproject.ai
+                sideprojectAI
             </div>
         ),
         {
@@ -38,10 +39,10 @@ export default async function Image() {
             height: 512,
             fonts: [
                 {
-                    name: 'Necto Mono',
+                    name: 'Azeret Mono',
                     data: fontData,
                     style: 'normal',
-                    weight: 700
+                    weight: 700,
                 },
             ],
         }
