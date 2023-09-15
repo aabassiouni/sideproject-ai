@@ -409,7 +409,7 @@ export async function POST(request: Request) {
                 query: input,
             })
         } catch (error: any) {
-            console.log('Error fetching completion:', error)
+            console.log('Error fetching completion:', error?.response?.data)
 
             const errorID = randomUUID()
             await db.insertError(errorID, userId, generationID, owner + '/' + repo, error, 'completion')
@@ -425,8 +425,15 @@ export async function POST(request: Request) {
 
         const filteredText = text.replace(/.*?({.*?}).*/s, '$1');
         
-        const responseObj = await parser.parse(filteredText)
-
+        let responseObj;
+        try {
+            responseObj = await parser.parse(filteredText)
+        } catch (error: any) {
+            console.log('Error parsing response:', error)
+            const errorID = randomUUID()
+            await db.insertError(errorID, userId, generationID, owner + '/' + repo, error, 'parsing')
+            return NextResponse.json({ error: 'error during generation', errorID: errorID })
+        }
         console.log('the parsed object is', responseObj)
 
         const bullets = Object.values(responseObj).map((bullet: any) => bullet.replace(/\n/g, ''))
