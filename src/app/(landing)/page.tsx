@@ -9,24 +9,24 @@ import exampleImg from '/public/example.png'
 import step1Img from '/public/step1.png'
 import step2Img from '/public/step2.png'
 import step3Img from '/public/step3.png'
-import { UserCircle2, Wand2, Zap } from 'lucide-react'
+import { Car, UserCircle2, Wand2, Zap } from 'lucide-react'
 
 export const runtime = 'edge'
 
 export const metadata = {
-    title: 'sideproject.ai',
+    title: 'SideprojectAI',
     description: 'Transform your GitHub projects into impressive resume bullet points!',
 }
 export default async function Home() {
     return (
         <>
             <div className="  flex grow flex-col items-center justify-center gap-5 bg-contain bg-center p-12 sm:min-h-[450px]  sm:pb-0 ">
-                <div className="mx-auto w-52 rounded-full border-2 border-blue-500 bg-white">
-                    <p className="text-center font-necto">Now in beta! 🎉</p>
+                <div className="mx-auto w-52 rounded-full bg-gradient-to-r from-cyan-500/90 to-blue-500 p-0.5 bg-white">
+                    <p className="text-center font-semibold tracking-tighter bg-white rounded-full font-necto">Now in beta! 🎉</p>
                 </div>
                 <div className='sm:w-2/3 bg-gradient-to-r bg-clip-text from-cyan-500/90 to-blue-500'>
                     <span className="  text-center text-4xl font-extrabold text-transparent sm:text-5xl">
-                        <Balancer>Transform Your GitHub Projects Into Impressive Resume Sections!</Balancer>
+                        <Balancer ratio={0.65}>Transform Your GitHub Projects Into Impressive Resume Sections!</Balancer>
                     </span>
                 </div>
                 <p className="text-medium text-center text-xl font-medium ">
@@ -132,26 +132,36 @@ export default async function Home() {
                     </Card>
                 </div>
                 <Separator className="my-5" />
+                <h1 id='pricing' className="text-center text-4xl font-extrabold">Pricing</h1>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-xl text-center font-bold">Coming Soon</CardTitle>
+                        <CardDescription className="text-center">
+                            SideprojectAI is currently in beta. During this time, all generations are free.
+                        </CardDescription>
+                    </CardHeader>
+                </Card>
+                <Separator className="my-5" />
                 <h1 className="text-center text-4xl font-extrabold">Frequently Asked Questions</h1>
-                <Accordion orientation="horizontal" type="multiple" className="sm:w-2/5">
+                <Accordion id="faq" orientation="horizontal" type="multiple" className="sm:w-2/5">
                     <AccordionItem value="item1">
                         <AccordionTrigger className="">
-                            <p className="text-center text-xl ">Is sideproject.ai free? </p>
+                            <p className="text-center text-xl ">Is SideprojectAI free? </p>
                         </AccordionTrigger>
                         <AccordionContent>
                             <p className="text-base text-slate-600">
-                                Sideproject.ai is currently in beta. During this time, all credits are free. There are
+                                SideprojectAI is currently in beta. During this time, all credits are free. There are
                                 plans to add pricing in the future.
                             </p>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item2">
                         <AccordionTrigger className="">
-                            <p className="text-xl">Who is sideproject.ai for?</p>
+                            <p className="text-xl">Who is SideprojectAI for?</p>
                         </AccordionTrigger>
                         <AccordionContent>
                             <p className="text-base text-slate-600">
-                                Sideproject.ai is designed for developers, engineers, and tech enthusiasts aiming to
+                                SideprojectAI is designed for developers, engineers, and tech enthusiasts aiming to
                                 showcase their GitHub projects on their resumes. Whether you're a seasoned pro or a
                                 budding coder, our platform translates your coding efforts into impactful resume bullet
                                 points. Perfect for anyone proud of their code and eager to highlight it!
@@ -160,7 +170,7 @@ export default async function Home() {
                     </AccordionItem>
                     <AccordionItem value="item3">
                         <AccordionTrigger className="">
-                            <p className="text-xl">Is my GitHub data safe with sideproject.ai?</p>
+                            <p className="text-xl">Is my GitHub data safe with SideprojectAI?</p>
                         </AccordionTrigger>
                         <AccordionContent>
                             <p className="text-base">
@@ -176,7 +186,7 @@ export default async function Home() {
                         </AccordionTrigger>
                         <AccordionContent>
                             <p className="text-base">
-                                Yes! Sideproject.ai can work with private repositories, just login with your GitHub
+                                Yes! SideprojectAI can work with private repositories, just login with your GitHub
                                 account. After the bullet points are generated, we don’t retain any details or data from
                                 your private repositories, ensuring the utmost confidentiality and respect for your
                                 privacy.

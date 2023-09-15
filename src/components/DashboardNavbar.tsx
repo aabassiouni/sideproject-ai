@@ -101,7 +101,7 @@ function DashboardNavbar() {
             <div className="container mx-auto flex items-center justify-between">
                 <div className="text-lg sm:text-xl font-bold">
                     <Link className="font-necto" href="/dashboard" replace>
-                        sideproject.ai
+                        sideprojectAI
                     </Link>
                     <Badge className="ml-2 bg-slate-800">Beta</Badge>
                 </div>

@@ -13,9 +13,9 @@ function LandingNavbar() {
     return (
         <div className="rounded-b-md bg-slate-200  p-4 ">
             <div className="container mx-auto flex items-center justify-between">
-                <div className="text-base font-bold sm:text-xl">
+                <div className="text-lg font-bold sm:text-xl">
                     <Link className="font-necto" href="/">
-                        sideproject.ai
+                        sideprojectAI
                     </Link>
                 </div>
 
@@ -49,10 +49,10 @@ function LandingNavbar() {
                         <Link href={'/signin'}>
                             <DropdownMenuItem>Login</DropdownMenuItem>
                         </Link>
-                        <Link href={'/pricing'}>
+                        <Link href={'#pricing'}>
                             <DropdownMenuItem>Pricing</DropdownMenuItem>
                         </Link>
-                        <Link href={'/faq'}>
+                        <Link href={'#faq'}>
                             <DropdownMenuItem>FAQ</DropdownMenuItem>
                         </Link>
                     </DropdownMenuContent>

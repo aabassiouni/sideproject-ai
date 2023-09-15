@@ -22,7 +22,7 @@ function GithubRepoCard({ children }: { children: React.ReactNode }) {
             <CardHeader className="pt-2">
                 <CardTitle>Choose a repo!</CardTitle>
                 <CardDescription>
-                    Choose a repo from your Github account to import into sideproject.ai or input a github a link
+                    Choose a repo from your Github account to import into SideprojectAI or input a github a link
                 </CardDescription>
             </CardHeader>
             <Tabs defaultValue='repo' className='w-full'>

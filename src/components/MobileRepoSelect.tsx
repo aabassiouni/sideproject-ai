@@ -25,7 +25,7 @@ function MobileRepoSelect({ children }: { children: React.ReactNode }) {
                     <CardHeader className="pt-2">
                         <CardTitle>Choose a repo!</CardTitle>
                         <CardDescription>
-                            Choose a repo from your Github account to import into sideproject.ai or input a github a
+                            Choose a repo from your Github account to import into SideprojectAI or enter a GitHub
                             link
                         </CardDescription>
                     </CardHeader>

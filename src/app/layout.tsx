@@ -6,12 +6,12 @@ import { Metadata } from 'next';
 
 
 export const metadata: Metadata = {
-    title: 'sideproject.ai',
+    title: 'sideprojectAI',
     authors: [{name: 'Ali Bassiouni'}],
     metadataBase: new URL('https://usesideprojectai.com'),
     openGraph: {
-        title: 'sideproject.ai',
-        description: 'AI Generated Resume Bullet points for your sideprojects',
+        title: 'SideprojectAI',
+        description: 'AI Generated Resume Bullet points for your sideprojects!',
         url: 'https://usesideprojectai.com',
         images: [
             {
@@ -21,21 +21,21 @@ export const metadata: Metadata = {
             },
         ],
         type: 'website',
-        siteName: 'sideproject.ai',
+        siteName: 'SideprojectAI',
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'sideproject.ai',
+        title: 'SideprojectAI',
         description: 'AI generated resume bullet points for your sideprojects',
         images: ['https://usesideprojectai.com/twitter-image'],
     }
 }
 
 
-const necto = localFont({
-    src: '../fonts/Necto-Mono.woff2',
+  const necto = localFont({
+    src: '../fonts/AzeretMonoVF.woff2',
     display: 'swap',
-    variable: "--font-necto"
+    variable: "--font-necto",
   });
 
 
