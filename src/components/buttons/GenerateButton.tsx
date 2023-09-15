@@ -66,6 +66,7 @@ function GenerateButton() {
         <Button
             size={'lg'}
             onClick={handleClick}
+            disabled={isLoading}
             className="flex w-40 flex-col bg-gradient-to-r from-cyan-500 to-blue-500"
         >
             {!isLoading ? (
