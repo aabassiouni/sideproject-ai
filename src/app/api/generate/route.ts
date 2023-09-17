@@ -234,6 +234,7 @@ const githubLoaderIgnorePaths = [
     '*.css',
     'components/',
     '*.yaml',
+    "*.h"
 ]
 
 export async function POST(request: Request) {
@@ -410,8 +411,9 @@ export async function POST(request: Request) {
                 query: input,
             })
         } catch (error: any) {
-            console.log('Error fetching completion:', error?.response?.data)
-
+            console.log('Error fetching completion:', error)
+            console.log('error message:', error?.response?.data)
+            
             const errorID = randomUUID()
             await db.insertError(errorID, userId, generationID, owner + '/' + repo, error, 'completion')
 
