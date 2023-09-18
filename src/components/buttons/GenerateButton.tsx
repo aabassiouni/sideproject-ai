@@ -50,7 +50,17 @@ function GenerateButton() {
                         description: 'There was an error generating bullets. Please try again.',
                     })
                     setIsLoading(false)
-            } else {
+            } else if(data?.error === 'not enough information'){
+                toast({
+                    variant: 'destructive',
+                    title: 'Not Enough Information!',
+                    description: "This repo doesn't have enough code to generate bullet points. Please choose a different repo",
+                    
+                })
+
+                setIsLoading(false)
+            }
+            else {
                 setIsLoading(false)
                 setGeneration(data)
             }

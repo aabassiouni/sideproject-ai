@@ -234,7 +234,8 @@ const githubLoaderIgnorePaths = [
     '*.css',
     'components/',
     '*.yaml',
-    "*.h"
+    "*.h",
+    "*.lock"
 ]
 
 export async function POST(request: Request) {
@@ -376,7 +377,7 @@ export async function POST(request: Request) {
         const formatInstructions = parser.getFormatInstructions()
 
         const prompt = new PromptTemplate({
-            template: `You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR (Situation, Task, Action, Result) method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. The first bullet point should be a description of the project at a high level. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code. 
+            template: `You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR (Situation, Task, Action, Result) method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. The first bullet point should be a description of the project at a high level. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code. If you do not have enough info to generate 5 bullet points, answer simply with the phrase "I do not have enough information to generate 5 bullet points" only. \n\n
             
             \n repository name: {repo} 
                 
@@ -426,6 +427,12 @@ export async function POST(request: Request) {
         //@ts-ignore
         const { text } = res
 
+        if(text.includes('I do not have enough information to generate 5 bullet points')){
+            const errorID = randomUUID()
+            await db.insertError(errorID, userId, generationID, owner + '/' + repo, 'not enough information', 'no_code')
+            return NextResponse.json({ error: 'not enough information' })
+        }
+           
         const filteredText = text.replace(/.*?({.*?}).*/s, '$1')
 
         let responseObj
@@ -445,7 +452,7 @@ export async function POST(request: Request) {
 
         console.time('Saving to DB')
         console.log('Saving to db')
-
+               
         await db.insertGeneration(generationID, userId, owner, repo, res, bullets)
         // await db.updateUserCredits(userId)
 
