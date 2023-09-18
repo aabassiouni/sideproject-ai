@@ -22,9 +22,9 @@ export async function insertGeneration(
     )
 }
 
-export async function fetchAllGenerations(userId: string) {
+export async function fetchAllGenerationsForUser(userId: string) {
     const results = await conn.execute(
-        'SELECT user_id, repo_name, generated_text, BIN_TO_UUID(generation_id) AS generation_id FROM generations Where user_id = ? ;',
+        'SELECT user_id, repo_name, generated_text, timestamp, BIN_TO_UUID(generation_id) AS generation_id FROM generations Where user_id = ? Order by timestamp desc;',
         [userId]
     )
     let generations = results.rows

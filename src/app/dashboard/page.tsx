@@ -7,18 +7,11 @@ import { conn } from '@/lib/planetscale'
 import StartWritingButton from '@/components/buttons/StartWritingButton'
 import Link from 'next/link'
 import DeleteGenerationButton from '@/components/buttons/DeleteGenerationButton'
-import { fetchAllGenerations } from '@/lib/db'
+import { fetchAllGenerationsForUser } from '@/lib/db'
 import type { Generation } from '@/lib/db'
 export const revalidate = 0
 export const runtime = 'edge'
 
-// type Generation = {
-//     generation_id_uuid: string
-//     user_id: string
-//     repo_name: string
-//     created_on_date: string
-//     generated_text: string
-// }
 
 function GenerationsCardLoading() {
     return (
@@ -63,13 +56,11 @@ async function DashboardPage() {
         return 
     }
     
-    const generations = await fetchAllGenerations(user?.id)
+    const generations = await fetchAllGenerationsForUser(user?.id)
 
     return (
         <div className="flex h-screen flex-col items-center gap-4 p-4 pt-0">
             <Suspense fallback={<GenerationsCardLoading />}>
-                {/* @ts-ignore */}
-                {/* <GenerationsCard /> */}
                 <Card className="mt-10 w-full sm:w-[650px] ">
                     <CardHeader className="items-center justify-between sm:flex-row">
                         <CardTitle className="p-2 sm:p-0">Generations</CardTitle>
