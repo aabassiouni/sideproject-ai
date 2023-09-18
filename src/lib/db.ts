@@ -17,7 +17,7 @@ export async function insertGeneration(
     bullets: string[]
 ) {
     await conn.execute(
-        'Insert into generations (generation_id, user_id, repo_name, generated_text, bullets ) values (UUID_TO_BIN(?), ?, ?, ?, ?, ?)',
+        'Insert into generations (generation_id, user_id, repo_name, generated_text, bullets ) values (UUID_TO_BIN(?), ?, ?, ?, ?)',
         [generation_id, userId, `${owner}/${repo}`, res?.text, JSON.stringify(bullets)]
     )
 }
