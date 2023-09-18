@@ -47,7 +47,7 @@ function GenerationCard({ generation }: { generation: Generation }) {
                 </div>
             </Link>
             <div className="line-clamp-1 w-fit text-sm text-slate-400">
-                <p>{generation.timestamp}</p>
+                <p>{date.toLocaleDateString()}</p>
             </div>
             <div className="flex items-center gap-1.5">
                 {/* <Button size={'sm'}>View</Button> */}
