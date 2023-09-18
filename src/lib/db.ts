@@ -4,9 +4,9 @@ type Generation = {
     generation_id?: string
     user_id?: string
     repo_name?: string
-    created_on_date?: string
     generated_text?: string
     bullets?: string
+    timestamp?: string
 }
 export async function insertGeneration(
     generation_id: string,
@@ -17,14 +17,14 @@ export async function insertGeneration(
     bullets: string[]
 ) {
     await conn.execute(
-        'Insert into generations (generation_id, user_id, repo_name, created_on_date, generated_text, bullets ) values (UUID_TO_BIN(?), ?, ?, ?, ?, ?)',
-        [generation_id, userId, `${owner}/${repo}`, new Date(), res?.text, JSON.stringify(bullets)]
+        'Insert into generations (generation_id, user_id, repo_name, generated_text, bullets ) values (UUID_TO_BIN(?), ?, ?, ?, ?, ?)',
+        [generation_id, userId, `${owner}/${repo}`, res?.text, JSON.stringify(bullets)]
     )
 }
 
 export async function fetchAllGenerations(userId: string) {
     const results = await conn.execute(
-        'SELECT user_id, repo_name, created_on_date, generated_text, BIN_TO_UUID(generation_id) AS generation_id_uuid FROM generations Where user_id = ? ;',
+        'SELECT user_id, repo_name, generated_text, BIN_TO_UUID(generation_id) AS generation_id_uuid FROM generations Where user_id = ? ;',
         [userId]
     )
     let generations = results.rows
