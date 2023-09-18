@@ -1,6 +1,6 @@
 import { conn } from '@/lib/planetscale'
 
-type Generation = {
+export type Generation = {
     generation_id?: string
     user_id?: string
     repo_name?: string
@@ -24,7 +24,7 @@ export async function insertGeneration(
 
 export async function fetchAllGenerations(userId: string) {
     const results = await conn.execute(
-        'SELECT user_id, repo_name, generated_text, BIN_TO_UUID(generation_id) AS generation_id_uuid FROM generations Where user_id = ? ;',
+        'SELECT user_id, repo_name, generated_text, BIN_TO_UUID(generation_id) AS generation_id FROM generations Where user_id = ? ;',
         [userId]
     )
     let generations = results.rows

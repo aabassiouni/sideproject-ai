@@ -8,17 +8,17 @@ import StartWritingButton from '@/components/buttons/StartWritingButton'
 import Link from 'next/link'
 import DeleteGenerationButton from '@/components/buttons/DeleteGenerationButton'
 import { fetchAllGenerations } from '@/lib/db'
-
+import type { Generation } from '@/lib/db'
 export const revalidate = 0
 export const runtime = 'edge'
 
-type Generation = {
-    generation_id_uuid: string
-    user_id: string
-    repo_name: string
-    created_on_date: string
-    generated_text: string
-}
+// type Generation = {
+//     generation_id_uuid: string
+//     user_id: string
+//     repo_name: string
+//     created_on_date: string
+//     generated_text: string
+// }
 
 function GenerationsCardLoading() {
     return (
@@ -35,21 +35,23 @@ function GenerationsCardLoading() {
     )
 }
 function GenerationCard({ generation }: { generation: Generation }) {
+
+    const date = new Date(generation.timestamp ?? Date.now())
     return (
         <Card className="flex w-full items-center justify-around bg-slate-100 p-4 py-2 sm:w-full">
-            <Link className="flex justify-between gap-2 " href={`/dashboard/${generation.generation_id_uuid}`}>
+            <Link className="flex justify-between gap-2 " href={`/dashboard/${generation?.generation_id}`}>
                 <div className="w-44 overflow-ellipsis">
                     <p className="line-clamp-1 text-ellipsis text-sm font-medium  tracking-tight sm:text-base">
-                        {generation.repo_name.split('/')[1]}
+                        {generation?.repo_name?.split('/')[1]}
                     </p>
                 </div>
             </Link>
             <div className="line-clamp-1 w-fit text-sm text-slate-400">
-                <p>{generation.created_on_date}</p>
+                <p>{generation.timestamp}</p>
             </div>
             <div className="flex items-center gap-1.5">
                 {/* <Button size={'sm'}>View</Button> */}
-                <DeleteGenerationButton generationID={generation.generation_id_uuid} />
+                <DeleteGenerationButton generationID={generation.generation_id ?? "0"} />
             </div>
         </Card>
     )

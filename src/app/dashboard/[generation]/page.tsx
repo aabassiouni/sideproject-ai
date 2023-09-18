@@ -9,18 +9,20 @@ import Link from 'next/link'
 import { Separator } from '@/components/ui/separator'
 import CopyToClipboardButton from '@/components/buttons/CopyToClipboardButton'
 import { fetchGeneration } from '@/lib/db'
+import type { Generation } from '@/lib/db'
+
 
 export const revalidate = 0
 export const runtime = 'edge'
 
-type Generation = {
-    generation_id?: string
-    user_id?: string
-    repo_name?: string
-    created_on_date?: string
-    generated_text?: string
-    bullets?: string
-}
+// type Generation = {
+//     generation_id?: string
+//     user_id?: string
+//     repo_name?: string
+//     created_on_date?: string
+//     generated_text?: string
+//     bullets?: string
+// }
 function Loading() {
     return <p>Loading...</p>
 }
@@ -28,7 +30,7 @@ async function GenerationPage({ params }: { params: { generation: string } }) {
     const generation = await fetchGeneration(params.generation)
     console.log('generation', generation)
     const bullets = JSON.parse(generation.bullets ?? '[]')
-
+    const date = new Date(generation.timestamp ?? Date.now())
     return (
         <div className="flex flex-col items-center justify-center gap-2 pb-4 px-4">
             <div className="mt-10 flex flex-col items-center sm:flex-row">
@@ -39,7 +41,7 @@ async function GenerationPage({ params }: { params: { generation: string } }) {
                 </Link>
                 <Card className="flex h-24  w-full flex-col p-2 sm:w-[550px]">
                     <p className="self-end p-1 text-sm leading-none text-muted-foreground">
-                        {generation?.created_on_date}
+                        {date.toLocaleDateString()}
                     </p>
                     <CardContent className="flex h-full items-center gap-4 self-center">
                         <Suspense fallback={<Loading />}>
