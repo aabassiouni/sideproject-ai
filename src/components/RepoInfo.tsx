@@ -18,7 +18,6 @@ function RepoInfo() {
     const [numFiles, setNumFiles] = useState<number>(0)
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    console.log('selected repo is repo info is ', selectedRepo)
 
     useEffect(() => {
         // console.log(selectedRepo)
@@ -40,7 +39,6 @@ function RepoInfo() {
             setStarCount(data.stargazers_count)
             setNumFiles(data.numFiles)
             setIsLoading(false)
-            console.log(data)
         }
         if (selectedRepo.repo) {
             fetchData()

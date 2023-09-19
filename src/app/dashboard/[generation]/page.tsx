@@ -28,7 +28,6 @@ function Loading() {
 }
 async function GenerationPage({ params }: { params: { generation: string } }) {
     const generation = await fetchGeneration(params.generation)
-    console.log('generation', generation)
     const bullets = JSON.parse(generation.bullets ?? '[]')
     const date = new Date(generation.timestamp ?? Date.now())
     return (

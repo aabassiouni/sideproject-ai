@@ -39,11 +39,9 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
                 }),
             })
             const data = await res.json()
-            console.log(data)
 
             setIsEditing(false)
         } catch (e) {
-            console.log(e)
         }
         setIsOpen(false)
         startTransition(() => {

@@ -20,7 +20,6 @@ function RatingButton({ generationID }: { generationID: string }) {
             setLikeClicked(true)
             setDislikeClicked(false)
             setLikeIsLoading(false)
-            console.log('Like button clicked')
         }
     }
 
@@ -37,7 +36,6 @@ function RatingButton({ generationID }: { generationID: string }) {
             setDislikeClicked(true)
             setLikeClicked(false)
             setDislikeIsLoading(false)
-            console.log('Dislike button clicked')
         }
     }
 
