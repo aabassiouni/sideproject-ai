@@ -32,11 +32,11 @@ async function ProfilePage() {
         //     </Card>
         // </div>
         <>
-            <div className="flex items-center my-4 justify-center">
+            <div className="dark:bg-gray-900 bg-slate-200 flex items-center p-4 justify-center">
                 <SignedIn>
                     {/* Signed in users will see their user profile */}
                     <div className="leading-none">
-                        <UserProfile />
+                        <UserProfile  />
                         {/* <Card className="mt-10 w-full p-2 sm:w-[550px]">
                             <CardHeader className=" items-center justify-center gap-4 text-center">
                                 <div className="grow">

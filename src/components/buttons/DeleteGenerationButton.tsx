@@ -85,7 +85,8 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleClick}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        className='bg-red-600 text-slate-50 hover:bg-red-600/90 dark:bg-red-900 dark:text-slate-50 dark:hover:bg-red-900/90'
+                        // className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     >
                         {isEditing ? 'Deleting' : 'Delete'}
                     </AlertDialogAction>

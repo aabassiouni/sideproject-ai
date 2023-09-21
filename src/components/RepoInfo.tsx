@@ -47,7 +47,7 @@ function RepoInfo() {
 
 
     return (
-        <Card className="sm:h-full w-80">
+        <Card className="dark:bg-gray-800 sm:h-full w-80">
             <div className="flex flex-col justify-center sm:flex-row">
                 {isLoading ? (
                     // <Card className="m-4 h-40">
@@ -66,7 +66,7 @@ function RepoInfo() {
                         {/* add basis back when keywords is added*/}
                         <div className="basi-1/3">
                             <CardHeader>
-                                <CardTitle className="text-center sm:text-left">
+                                <CardTitle className="text-lg text-center sm:text-left">
                                     <GithubIcon className="mr-2 inline-block text-center sm:text-left" size={16} />
                                     {title ?? 'N/A'}
                                 </CardTitle>

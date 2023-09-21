@@ -31,14 +31,14 @@ async function GenerationPage({ params }: { params: { generation: string } }) {
     const bullets = JSON.parse(generation.bullets ?? '[]')
     const date = new Date(generation.timestamp ?? Date.now())
     return (
-        <div className="flex flex-col items-center justify-center gap-2 pb-4 px-4">
+        <div className="dark:bg-gray-900 bg-slate-200 flex flex-col items-center justify-center gap-2 pb-4 px-4">
             <div className="mt-10 flex flex-col items-center sm:flex-row">
                 <Link className="hidden sm:block" href={'/dashboard'}>
                     <Button variant={'ghost'} className="m-4  rounded-xl">
                         <ArrowLeftCircle size={24} />
                     </Button>
                 </Link>
-                <Card className="flex h-24  w-full flex-col p-2 sm:w-[550px]">
+                <Card className="flex h-24 dark:bg-gray-800 w-full flex-col p-2 sm:w-[550px]">
                     <p className="self-end p-1 text-sm leading-none text-muted-foreground">
                         {date.toLocaleDateString()}
                     </p>
@@ -53,7 +53,7 @@ async function GenerationPage({ params }: { params: { generation: string } }) {
                     </CardContent>
                 </Card>
             </div>
-            <Card className="relative mt-2 sm:w-[850px]">
+            <Card className="dark:bg-gray-800 relative mt-2 sm:w-[850px]">
                 <CardHeader>
                     <CardTitle>Generated Text</CardTitle>
                 </CardHeader>
@@ -63,12 +63,12 @@ async function GenerationPage({ params }: { params: { generation: string } }) {
                             generationID={params.generation}
                             className="absolute right-0 top-0 m-4 "
                         />
-                        <div className=" h-full w-full space-y-2 rounded-md  bg-slate-100 p-2 text-lg  sm:p-10">
-                            <p className=" my-1 font-bold">{bullets[0]}</p>
+                        <div className="dark:bg-gray-900 h-full w-full space-y-2 rounded-md  bg-slate-100 p-2 text-lg  sm:p-10">
+                            <p className=" my-1 font-bold">{generation.repo_name?.split("/")[1]}</p>
                             <Separator className="" />
-                            {bullets.slice(1).map((bullet: any, i: number) => (
+                            {bullets.map((bullet: any, i: number) => (
                                 <div key={i} className="w-full">
-                                    <Card>
+                                    <Card className='dark:bg-gray-800'>
                                         <CardHeader className="flex-row items-center justify-between">
                                             <ul className="my-2 ml-6 list-disc [&>li]:mt-2 ">
                                                 <li className="list-disc">{bullet}</li>

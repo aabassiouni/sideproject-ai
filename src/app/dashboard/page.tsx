@@ -31,7 +31,7 @@ function GenerationCard({ generation }: { generation: Generation }) {
 
     const date = new Date(generation.timestamp ?? Date.now())
     return (
-        <Card className="flex w-full items-center justify-around bg-slate-100 p-4 py-2 sm:w-full">
+        <Card className="flex w-full items-center justify-around bg-slate-100 dark:bg-gray-900 p-4 py-2 sm:w-full">
             <Link className="flex justify-between gap-2 " href={`/dashboard/${generation?.generation_id}`}>
                 <div className="w-44 overflow-ellipsis">
                     <p className="line-clamp-1 text-ellipsis text-sm font-medium  tracking-tight sm:text-base">
@@ -59,13 +59,13 @@ async function DashboardPage() {
     const generations = await fetchAllGenerationsForUser(user?.id)
 
     return (
-        <div className="flex h-screen flex-col items-center gap-4 p-4 pt-0">
+        <div className="bg-slate-200 dark:bg-gray-900 flex min-h-screen flex-col items-center gap-4 p-4 pt-0">
             <Suspense fallback={<GenerationsCardLoading />}>
-                <Card className="mt-10 w-full sm:w-[650px] ">
+                <Card className="mt-10 w-full sm:w-[650px] dark:bg-gray-800 ">
                     <CardHeader className="items-center justify-between sm:flex-row">
                         <CardTitle className="p-2 sm:p-0">Generations</CardTitle>
                         <Link href="/dashboard/write">
-                            <StartWritingButton className="bg-gradient-to-r from-cyan-500 to-blue-500" />
+                            <StartWritingButton className="bg-gradient-to-r dark:bg-gradient-to-r dark:from-blue-700 dark:to-indigo-800 text-white dark:text-white from-cyan-500 to-blue-500" />
                         </Link>
                     </CardHeader>
                     <Separator />

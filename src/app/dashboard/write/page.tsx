@@ -37,7 +37,7 @@ async function WritePage() {
     }
 
     return (
-        <div className="flex h-screen flex-col sm:flex-row">
+        <div className="bg-slate-200 dark:bg-gray-900 flex min-h-screen flex-col sm:flex-row">
             <MobileRepoSelect>
                 <ScrollArea className="h-44">
                     <div className="space-y-3">

@@ -42,29 +42,26 @@ function GenerateButton() {
                 })
 
                 setIsLoading(false)
-
-            } else if(data?.error ==='error during generation') {
+            } else if (data?.error === 'error during generation') {
                 toast({
-                        variant: 'destructive',
-                        title: 'Error Generating Bullets!',
-                        description: 'There was an error generating bullets. Please try again.',
-                    })
-                    setIsLoading(false)
-            } else if(data?.error === 'not enough information'){
+                    variant: 'destructive',
+                    title: 'Error Generating Bullets!',
+                    description: 'There was an error generating bullets. Please try again.',
+                })
+                setIsLoading(false)
+            } else if (data?.error === 'not enough information') {
                 toast({
                     variant: 'destructive',
                     title: 'Not Enough Information!',
-                    description: "This repo doesn't have enough code to generate bullet points. Please choose a different repo",
-                    
+                    description:
+                        "This repo doesn't have enough code to generate bullet points. Please choose a different repo",
                 })
 
                 setIsLoading(false)
-            }
-            else {
+            } else {
                 setIsLoading(false)
                 setGeneration(data)
             }
-
 
             router.refresh()
         } catch (error) {
@@ -76,18 +73,18 @@ function GenerateButton() {
             size={'lg'}
             onClick={handleClick}
             disabled={isLoading}
-            className="flex w-40 flex-col bg-gradient-to-r from-cyan-500 to-blue-500"
+            className="flex w-40 flex-col bg-gradient-to-r from-cyan-500 to-blue-500 dark:bg-gradient-to-r dark:from-blue-700 dark:to-indigo-800"
         >
             {!isLoading ? (
                 <>
-                    <span className="leading-none">
+                    <span className="leading-none text-white">
                         Generate
                         <SparkleIcon className="ml-2 inline-block" />
                     </span>
                     {/* <span className="text-xs leading-none">(1 credit)</span> */}
                 </>
             ) : (
-                <Loader2 className="h-6 w-6 animate-spin" />
+                <Loader2 className="text-white h-6 w-6 animate-spin" />
             )}
         </Button>
     )

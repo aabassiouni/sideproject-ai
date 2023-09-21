@@ -16,7 +16,7 @@ const CopyToClipboardButton = ({ textToCopy } : CopyToClipboardButtonProps) => {
   };
 
   return (
-    <button className='border-2 border-slate-300 bg-slate-100 p-2 rounded active:animate-click' onClick={handleCopyClick}>
+    <button className='border-2 border-slate-300 dark:border-gray-700 bg-slate-100 dark:bg-gray-950 p-2 rounded active:animate-click' onClick={handleCopyClick}>
       {isCopied ? <Check className='w-4 h-4' color="green" /> : <Copy className='w-4 h-4' />}
     </button>
   );

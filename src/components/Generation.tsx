@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { useValues } from './context/context'
 import { Separator } from './ui/separator'
 import { motion } from 'framer-motion'
-import { Copy } from 'lucide-react'
 import CopyToClipboardButton from './buttons/CopyToClipboardButton'
 import RatingButton from './buttons/RatingButton'
 
@@ -24,9 +23,9 @@ function Generation() {
     const { generation } = useValues()
     // console.log("generation", generation)
     return generation ? (
-        <Card className=" m-4 mt-0 h-max border-2 border-sky-600 sm:min-w-0 ">
+        <Card className="dark:bg-gray-800 m-4 mt-0 h-max border-2 border-sky-600 sm:min-w-0 ">
             <div className={`flex h-full items-start justify-start rounded-lg p-2 sm:p-5`}>
-                <div className=" h-full w-full space-y-2 rounded-md  bg-slate-100 p-2 text-lg  sm:p-10">
+                <div className="dark:bg-gray-900 h-full w-full space-y-2 rounded-md  bg-slate-100 p-2 text-lg  sm:p-10">
                     <div className='flex justify-between'>
                         <p className=" my-1 font-bold">{generation.name}</p>
                         <RatingButton />
@@ -45,7 +44,7 @@ function Generation() {
                             animate={{ opacity: 1, translateX: 0, translateY: 0 }}
                             transition={{ duration: 0.3, delay: i * 0.3 }}
                         >
-                            <Card>
+                            <Card className='dark:bg-gray-800'>
                                 <CardHeader className="flex-row items-center justify-between">
                                     <ul className="my-2 ml-6 list-disc [&>li]:mt-2 ">
                                         <li className="list-disc">{bullet}</li>
@@ -60,7 +59,7 @@ function Generation() {
             </div>
         </Card>
     ) : (
-        <Card className="m-4 mt-2 h-full sm:min-w-0 ">
+        <Card className="dark:bg-gray-800 m-4 mt-2 h-full sm:min-w-0 ">
             <div className={`flex h-full items-start justify-start rounded-lg p-5`}>
                 <p className="mx-auto my-auto text-slate-400">Your Generation will appear here!</p>
             </div>

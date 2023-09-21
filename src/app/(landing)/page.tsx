@@ -20,7 +20,7 @@ export const metadata = {
 export default async function Home() {
     return (
         <>
-            <div className="  flex grow flex-col items-center justify-center gap-5 bg-contain bg-center p-12 sm:min-h-[450px]  sm:pb-0 ">
+            <div className=" bg-slate-200 flex grow flex-col items-center justify-center gap-5 bg-contain bg-center p-12 sm:min-h-[450px]  sm:pb-0 ">
                 <div className="mx-auto w-52 rounded-full bg-gradient-to-r from-cyan-500/90 to-blue-500 p-0.5 bg-white">
                     <p className="text-center font-semibold tracking-tighter bg-white rounded-full font-necto">Now in beta! 🎉</p>
                 </div>

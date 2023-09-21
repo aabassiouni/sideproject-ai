@@ -1,11 +1,10 @@
 // 'use client'
 
-import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import React from 'react'
+import { CardDescription,  CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from './ui/button'
-import { Input } from './ui/input'
 import { Separator } from './ui/separator'
-import { Github, ArrowRight, ArrowLeftCircle } from 'lucide-react'
+import { ArrowLeftCircle } from 'lucide-react'
 import SubmitLinkButton from './buttons/SubmitLinkButton'
 import Link from 'next/link'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
@@ -13,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 
 function GithubRepoCard({ children }: { children: React.ReactNode }) {
     return (
-        <div className="hidden max-w-sm flex-col items-center overflow-x-hidden rounded-xl bg-white px-6 py-3 sm:flex sm:max-h-screen sm:min-w-[400px] sm:rounded-none sm:rounded-tr-xl">
+        <div className="hidden dark:bg-gray-800 z-10 max-w-sm flex-col items-center overflow-x-hidden rounded-xl bg-white px-6 py-3 sm:flex sm:min-h-screen sm:min-w-[400px] sm:rounded-none sm:rounded-tr-xl">
             <Link className="self-start" href={'/dashboard'}>
                 <Button variant={'link'} size={'sm'} className="">
                     <ArrowLeftCircle size={16} />
@@ -26,7 +25,7 @@ function GithubRepoCard({ children }: { children: React.ReactNode }) {
                 </CardDescription>
             </CardHeader>
             <Tabs defaultValue='repo' className='w-full'>
-                <TabsList className='grid w-full grid-cols-2' >
+                <TabsList className='dark:bg-gray-600 grid w-full grid-cols-2' >
                     <TabsTrigger value="link">Link</TabsTrigger>
                     <TabsTrigger value="repo">Repo</TabsTrigger>
                 </TabsList>

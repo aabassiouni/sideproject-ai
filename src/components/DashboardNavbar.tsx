@@ -16,8 +16,8 @@ import { Badge } from '@/components/ui/badge'
 import { User, CreditCard, LogOut, ContactIcon } from 'lucide-react'
 import { Button } from './ui/button'
 import { SignOutButton } from '@clerk/nextjs'
-import { conn } from '@/lib/planetscale'
 import { fetchUserCredits } from '@/lib/db'
+import { ThemeToggle } from '@/components/buttons/ThemeToggle'
 
 async function UserCredits() {
     const user = await currentUser()
@@ -67,18 +67,18 @@ async function UserButton() {
                             Profile
                         </DropdownMenuItem>
                     </Link>
-                    <Link href={'/dashboard/purchase'}>
+                    {/* <Link href={'/dashboard/purchase'}>
                         <DropdownMenuItem>
                             <CreditCard className="mr-2 h-4 w-4" />
                             <span>Buy Credits</span>
                         </DropdownMenuItem>
-                    </Link>
-                    <Link href={'/dashboard/contact'}>
+                    </Link> */}
+                    {/* <Link href={'/dashboard/contact'}>
                         <DropdownMenuItem>
                             <ContactIcon className="mr-2 h-4 w-4" />
                             Contact
                         </DropdownMenuItem>
-                    </Link>
+                    </Link> */}
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
@@ -97,9 +97,9 @@ async function UserButton() {
 
 function DashboardNavbar() {
     return (
-        <div className="px-2 py-4 shadow-md sm:p-4 ">
+        <div className="relative bg-slate-200 dark:bg-gray-900 z-10 px-2 py-4 shadow-md sm:p-4 ">
             <div className="container mx-auto flex items-center justify-between">
-                <div className="text-lg sm:text-xl font-bold">
+                <div className="text-lg font-bold sm:text-xl">
                     <Link className="font-necto" href="/dashboard" replace>
                         sideprojectAI
                     </Link>
@@ -107,6 +107,7 @@ function DashboardNavbar() {
                 </div>
                 {/* <p>https://github.com/aabassiouni/next-js-app-router-helper</p> */}
                 <div className="flex items-center gap-4">
+                    <ThemeToggle />
                     {/* <Suspense fallback={<Skeleton className="h-4 w-20" />}>
                         <UserCredits />
                     </Suspense> */}
