@@ -1,13 +1,11 @@
 import './globals.css'
-import { ClerkProvider } from '@clerk/nextjs'
-import localFont from 'next/font/local';
-import { Analytics } from '@vercel/analytics/react';
-import { Metadata } from 'next';
-
+import localFont from 'next/font/local'
+import { Analytics } from '@vercel/analytics/react'
+import { Metadata } from 'next'
 
 export const metadata: Metadata = {
     title: 'sideprojectAI',
-    authors: [{name: 'Ali Bassiouni'}],
+    authors: [{ name: 'Ali Bassiouni' }],
     metadataBase: new URL('https://usesideprojectai.com'),
     openGraph: {
         title: 'SideprojectAI',
@@ -28,24 +26,19 @@ export const metadata: Metadata = {
         title: 'SideprojectAI',
         description: 'AI generated resume bullet points for your sideprojects',
         images: ['https://usesideprojectai.com/twitter-image'],
-    }
+    },
 }
 
-
-  const necto = localFont({
+const necto = localFont({
     src: '../fonts/AzeretMonoVF.woff2',
     display: 'swap',
-    variable: "--font-necto",
-  });
+    variable: '--font-necto',
+})
 
-
-  
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
-            <ClerkProvider>
-                <body className={` ${necto.variable} `}>{children}</body>
-            </ClerkProvider>
+            <body className={` ${necto.variable} `}>{children}</body>
             <Analytics />
         </html>
     )

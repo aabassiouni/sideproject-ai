@@ -7,7 +7,6 @@ import { Octokit } from 'octokit'
 import RepoCard from '@/components/RepoCard'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import RepoInfo from '@/components/RepoInfo'
-import { Skeleton } from '@/components/ui/skeleton'
 import MobileRepoSelect from '@/components/MobileRepoSelect'
 
 async function WritePage() {
@@ -26,7 +25,6 @@ async function WritePage() {
                 auth: githubToken[0].token,
             })
 
-            // console.log('token', githubToken[0].token)
 
             const { data } = await octokit.rest.repos.listForAuthenticatedUser({
                 visibility: 'all',

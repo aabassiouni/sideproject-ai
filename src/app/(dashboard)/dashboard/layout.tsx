@@ -10,9 +10,8 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
             <ValueProvider>
                 <div className="h-screen">
                     {/* @ts-ignore */}
-                    <div className='bg-late-200'>
-
-                    <DashboardNavbar />
+                    <div className="bg-late-200">
+                        <DashboardNavbar />
                     </div>
                     {children}
                 </div>

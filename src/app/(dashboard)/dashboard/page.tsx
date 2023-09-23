@@ -3,7 +3,6 @@ import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
 import { currentUser } from '@clerk/nextjs'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
-import { conn } from '@/lib/planetscale'
 import StartWritingButton from '@/components/buttons/StartWritingButton'
 import Link from 'next/link'
 import DeleteGenerationButton from '@/components/buttons/DeleteGenerationButton'
