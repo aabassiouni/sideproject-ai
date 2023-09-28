@@ -235,7 +235,17 @@ const githubLoaderIgnorePaths = [
     'components/',
     '*.yaml',
     "*.h",
-    "*.lock"
+    "*.lock",
+    "*.o",
+    "*.srec",
+    "*.mk",
+    "*.lss",
+    "*.hex",
+    "*.eep",
+    "*.elf",
+    "*.map",
+    "*.d",
+    "*.atsuo"
 ]
 
 export async function POST(request: Request) {
