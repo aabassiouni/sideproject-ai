@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { LogOut } from 'lucide-react'
 import React from 'react'
 import { DropdownMenuItem, DropdownMenuShortcut } from '../ui/dropdown-menu'
-import { useClerk } from '@clerk/clerk-react'
+import { useClerk } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 
 
