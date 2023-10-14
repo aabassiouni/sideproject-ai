@@ -11,6 +11,9 @@ dependencies:
   '@clerk/nextjs':
     specifier: ^4.19.0
     version: 4.23.3(next@13.5.4)(react-dom@18.2.0)(react@18.2.0)
+  '@octokit/types':
+    specifier: ^12.0.0
+    version: 12.0.0
   '@pinecone-database/pinecone':
     specifier: ^0.1.6
     version: 0.1.6(encoding@0.1.13)
@@ -583,6 +586,10 @@ packages:
     resolution: {integrity: sha512-MazrFNx4plbLsGl+LFesMo96eIXkFgEtaKbnNpdh4aQ0VM10aoylFsTYP1AEjkeoRNZiiPe3T6Gl2Hr8dJWdlQ==}
     dev: false
 
+  /@octokit/openapi-types@19.0.0:
+    resolution: {integrity: sha512-PclQ6JGMTE9iUStpzMkwLCISFn/wDeRjkZFIKALpvJQNBGwDoYYi2fFvuHwssoQ1rXI5mfh6jgTgWuddeUzfWw==}
+    dev: false
+
   /@octokit/plugin-paginate-rest@6.1.2(@octokit/core@4.2.1):
     resolution: {integrity: sha512-qhrmtQeHU/IivxucOV1bbI/xZyC/iOBhclokv7Sut5vnejAIAEXVcGQeRpQlU39E0WwK9lNvJHphHri/DB6lbQ==}
     engines: {node: '>= 14'}
@@ -652,6 +659,12 @@ packages:
 
   /@octokit/tsconfig@1.0.2:
     resolution: {integrity: sha512-I0vDR0rdtP8p2lGMzvsJzbhdOWy405HcGovrspJ8RRibHnyRgggUSNO5AIox5LmqiwmatHKYsvj6VGFHkqS7lA==}
+    dev: false
+
+  /@octokit/types@12.0.0:
+    resolution: {integrity: sha512-EzD434aHTFifGudYAygnFlS1Tl6KhbTynEWELQXIbTY8Msvb5nEqTZIm7sbPEt4mQYLZwu3zPKVdeIrw0g7ovg==}
+    dependencies:
+      '@octokit/openapi-types': 19.0.0
     dev: false
 
   /@octokit/types@9.2.3:
