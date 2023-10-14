@@ -36,7 +36,7 @@ export async function fetchGeneration(generation_id: string) {
     const { rows } = (await conn.execute('SELECT * FROM generations WHERE generation_id = UUID_TO_BIN(?)', [
         generation_id,
     ])) as { rows: Generation[] }
-    
+
     const generation = rows[0]
     return generation
 }
@@ -55,7 +55,6 @@ export async function deleteGeneration(generation_id: string, userId: string) {
     ])
 }
 
-
 export async function insertUser(userId: string, email: string, credits: number) {
     await conn.execute('INSERT INTO users (clerk_user_id, email, credits) VALUES (?, ?, ?);', [userId, email, credits])
 }
@@ -64,8 +63,10 @@ export async function updateUserCredits(userId: string) {
     await conn.execute('UPDATE users SET credits = credits - 1 WHERE clerk_user_id = ?', [userId])
 }
 
+export async function updateUserReferral(userId: string, referral: string) {
+    await conn.execute('UPDATE users SET referral = ? WHERE clerk_user_id = ?', [referral, userId])
+}
 export async function fetchUserCredits(userId: string) {
-    
     function delay(ms: number) {
         return new Promise((resolve) => setTimeout(resolve, ms))
     }
@@ -100,4 +101,3 @@ export async function insertError(
         [error_id, userId, generation_id, `${repo}`, error_message, error_type]
     )
 }
-

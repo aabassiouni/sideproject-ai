@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // experimental: {
-    //     serverActions: true,
-    // },
+    experimental: {
+        serverActions: true,
+    },
     // reactStrictMode: true,
     modularizeImports: {
         'lucide-react': {
