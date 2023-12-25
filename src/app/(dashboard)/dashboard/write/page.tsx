@@ -12,14 +12,10 @@ import MobileRepoSelect from '@/components/MobileRepoSelect'
 async function WritePage() {
     const user = await currentUser()
 
-    const { userId } = auth()  
-
-
-
     let repos
-    if (userId) {
+    if (user?.id) {
         if (user?.externalAccounts?.length !== 0) {
-            const githubToken = await clerk.users.getUserOauthAccessToken(userId, 'oauth_github')
+            const githubToken = await clerk.users.getUserOauthAccessToken(user.id, 'oauth_github')
 
             const octokit = new Octokit({
                 auth: githubToken[0].token,
