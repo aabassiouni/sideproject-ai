@@ -4,7 +4,7 @@ import ImportRepoButton from "./buttons/ImportRepoButton";
 import GithubIcon from "./icons/GithubIcon";
 import { GithubRepoType } from "@/types";
 
-export default function RepoCard({repo}: {repo: GithubRepoType}) {
+export default function RepoCard({repo}: {repo: GithubRepoType[0]}) {
 	return (
 		<div className="rounded-xl p-2 border dark:border-gray-600 flex items-center">
 			<div className="grow">

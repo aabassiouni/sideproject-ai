@@ -11,7 +11,7 @@ export type GetTreeType = GetResponseDataTypeFromEndpointMethod<
 >;
 
 export type GithubRepoType = GetResponseDataTypeFromEndpointMethod<
-	typeof octokit.rest.repos.get
+	typeof octokit.rest.repos.listForAuthenticatedUser
 >;
 
 export type GithubOwnerType = {

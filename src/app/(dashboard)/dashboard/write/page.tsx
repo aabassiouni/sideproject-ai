@@ -8,11 +8,13 @@ import RepoCard from '@/components/RepoCard'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import RepoInfo from '@/components/RepoInfo'
 import MobileRepoSelect from '@/components/MobileRepoSelect'
+import { GithubRepoType } from '@/types'
 
 async function WritePage() {
     const user = await currentUser()
 
-    let repos
+    let repos: GithubRepoType = []
+
     if (user?.id) {
         if (user?.externalAccounts?.length !== 0) {
             const githubToken = await clerk.users.getUserOauthAccessToken(user.id, 'oauth_github')
@@ -20,7 +22,6 @@ async function WritePage() {
             const octokit = new Octokit({
                 auth: githubToken[0].token,
             })
-
 
             const { data } = await octokit.rest.repos.listForAuthenticatedUser({
                 visibility: 'all',
@@ -36,9 +37,7 @@ async function WritePage() {
                 <ScrollArea className="h-44">
                     <div className="space-y-3">
                         {repos?.map((repo, idx) => (
-                            // @ts-ignore
                             <Suspense fallback={<div>Loading...</div>}>
-                                {/*  @ts-ignore */}
                                 <RepoCard key={idx} repo={repo} />
                             </Suspense>
                         ))}
@@ -50,9 +49,7 @@ async function WritePage() {
                     <div className="mr-3 space-y-3">
                         {repos ? (
                             repos?.map((repo, idx) => (
-                                // @ts-ignore
                                 <Suspense fallback={<div>Loading...</div>}>
-                                    {/*  @ts-ignore */}
                                     <RepoCard key={idx} repo={repo} />
                                 </Suspense>
                             ))
