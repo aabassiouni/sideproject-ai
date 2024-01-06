@@ -50,11 +50,12 @@ function GenerationCard({ generation }: { generation: Generation }) {
 async function DashboardPage() {
     const user = await currentUser()
 
-    if (user?.privateMetadata?.isOnboarded === false) {
-        redirect('/onboarding')
-    }
     if (!user) {
         return
+    }
+    
+    if (user?.privateMetadata?.isOnboarded === false) {
+        redirect('/onboarding')
     }
 
     const generations = await fetchAllGenerationsForUser(user?.id)
