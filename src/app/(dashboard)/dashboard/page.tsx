@@ -31,10 +31,10 @@ function GenerationCard({ generation }: { generation: Generation }) {
     const date = new Date(generation.timestamp ?? Date.now())
     return (
         <Card className="flex w-full items-center justify-around bg-slate-100 p-4 py-2 dark:bg-gray-900 sm:w-full">
-            <Link className="flex justify-between gap-2 " href={`/dashboard/${generation?.generation_id}`}>
+            <Link className="flex justify-between gap-2 " href={`/dashboard/${generation?.generationID}`}>
                 <div className="w-44 overflow-ellipsis">
                     <p className="line-clamp-1 text-ellipsis text-sm font-medium  tracking-tight sm:text-base">
-                        {generation?.repo_name?.split('/')[1]}
+                        {generation?.repoName?.split('/')[1]}
                     </p>
                 </div>
             </Link>
@@ -42,7 +42,7 @@ function GenerationCard({ generation }: { generation: Generation }) {
                 <p>{date.toLocaleDateString()}</p>
             </div>
             <div className="flex items-center gap-1.5">
-                <DeleteGenerationButton generationID={generation.generation_id ?? '0'} />
+                <DeleteGenerationButton generationID={generation.generationID ?? '0'} />
             </div>
         </Card>
     )

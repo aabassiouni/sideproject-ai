@@ -1,20 +1,10 @@
-import { deleteGeneration } from '@/lib/db'
-import { conn } from '@/lib/planetscale'
+import { deleteGeneration, fetchGenerationByID } from '@/lib/db'
 import { auth } from '@clerk/nextjs'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { NextRequest, NextResponse } from 'next/server'
 
-export const runtime = "edge"
-
-type Generation = {
-    generation_id?: string
-    user_id?: string
-    repo_name?: string
-    created_on_date?: string
-    generated_text?: string
-}
-
+export const runtime = 'edge'
 
 export async function POST(request: NextRequest) {
     console.log('/////////////////////// deleting generation ////////////////////////')
@@ -22,17 +12,15 @@ export async function POST(request: NextRequest) {
     const { generationID } = await request.json()
 
     console.log('looking for generation:', generationID)
-    const { rows: generationFromDB } = (await conn.execute(
-        'SELECT * FROM generations WHERE generation_id = UUID_TO_BIN(?)',
-        [generationID]
-    )) as { rows: Generation[] }
 
-    console.log('generation from db', generationFromDB)
+    const generation = await fetchGenerationByID(generationID)
+
+    console.log('generation from db', generation)
 
     if (userId) {
-        if (userId === generationFromDB[0].user_id) {
+        if (userId === generation.userID) {
             console.log('deleting generation', generationID)
-            
+
             await deleteGeneration(generationID, userId)
 
             revalidatePath('/dashboard')

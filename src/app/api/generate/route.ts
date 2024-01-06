@@ -2,20 +2,18 @@ import { NextResponse } from 'next/server'
 import { GithubRepoLoader } from 'langchain/document_loaders/web/github'
 import { RetrievalQAChain, loadQAStuffChain } from 'langchain/chains'
 import clerk from '@clerk/clerk-sdk-node'
-import { randomUUID } from 'crypto'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { auth } from '@clerk/nextjs'
 import { Octokit } from 'octokit'
-import { PineconeClient } from '@pinecone-database/pinecone'
-import { PineconeStore } from 'langchain/vectorstores/pinecone'
 import { ChatOpenAI } from 'langchain/chat_models/openai'
 // import { ChatAnthropic } from 'langchain/chat_models/anthropic'
 import { StructuredOutputParser } from 'langchain/output_parsers'
 import { z } from 'zod'
 import { MemoryVectorStore } from 'langchain/vectorstores/memory'
 import { PromptTemplate } from 'langchain/prompts'
-import * as db from '@/lib/db'
 import type { Document } from 'langchain/document'
+import { insertError, insertGeneration } from '@/lib/db'
+import { newId } from '@/lib/id'
 
 export const runtime = 'nodejs'
 
@@ -271,7 +269,7 @@ export async function POST(request: Request) {
         // }
 
         // creating a new generation id for the DB
-        const generationID = randomUUID()
+        const generationID = newId('generation')
 
         // instantiating the LLM
         // const llm = new ChatOpenAI({
@@ -339,8 +337,8 @@ export async function POST(request: Request) {
         } catch (error: any) {
             console.log('Error embedding documents:', error)
             console.log('error message:', error?.response?.data)
-            const errorID = randomUUID()
-            await db.insertError(errorID, userId, generationID, owner + '/' + repo, error, 'embeddings')
+            const errorID = newId('error')
+            await insertError(errorID, userId, generationID, owner + '/' + repo, error, 'embeddings')
             return NextResponse.json({ error: 'error during generation', errorID: errorID })
         }
 
@@ -411,8 +409,8 @@ export async function POST(request: Request) {
             console.log('Error fetching completion:', error)
             console.log('error message:', error?.response?.data)
 
-            const errorID = randomUUID()
-            await db.insertError(errorID, userId, generationID, owner + '/' + repo, error, 'completion')
+            const errorID = newId('error')
+            await insertError(errorID, userId, generationID, owner + '/' + repo, error, 'completion')
 
             return NextResponse.json({ error: 'error during generation', errorID: errorID })
         }
@@ -424,8 +422,8 @@ export async function POST(request: Request) {
         const { text } = res
 
         if (text.includes('I do not have enough information to generate 5 bullet points')) {
-            const errorID = randomUUID()
-            await db.insertError(errorID, userId, generationID, owner + '/' + repo, 'not enough information', 'no_code')
+            const errorID = newId('error')
+            await insertError(errorID, userId, generationID, owner + '/' + repo, 'not enough information', 'no_code')
             return NextResponse.json({ error: 'not enough information' })
         }
 
@@ -436,8 +434,8 @@ export async function POST(request: Request) {
             responseObj = await parser.parse(filteredText)
         } catch (error: any) {
             console.log('Error parsing response:', error)
-            const errorID = randomUUID()
-            await db.insertError(errorID, userId, generationID, owner + '/' + repo, error, 'parsing')
+            const errorID = newId('error')
+            await insertError(errorID, userId, generationID, owner + '/' + repo, error, 'parsing')
             return NextResponse.json({ error: 'error during generation', errorID: errorID })
         }
         console.log('the parsed object is', responseObj)
@@ -449,7 +447,7 @@ export async function POST(request: Request) {
         console.time('Saving to DB')
         console.log('Saving to db')
 
-        await db.insertGeneration(generationID, userId, owner, repo, res, bullets)
+        await insertGeneration(generationID, userId, owner, repo, res, bullets)
         // await db.updateUserCredits(userId)
 
         console.log('saved to db:', generationID)
