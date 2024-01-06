@@ -30,26 +30,16 @@ function GithubRepoCard({ children }: { children: React.ReactNode }) {
                     <TabsTrigger value="repo">Repo</TabsTrigger>
                 </TabsList>
                 <TabsContent value="link">
-                    {/* <CardContent className="w-full space-y-2"> */}
                     <div className='space-y-2'>
                         <SubmitLinkButton />
                     </div>
-                    {/* </CardContent> */}
                 </TabsContent>
                 <TabsContent value="repo">
-                    {/* <CardContent className="w-full space-y-2"> */}
-                        {/* <SubmitLinkButton /> */}
-                    {/* </CardContent> */}
                     {children}
                 </TabsContent>
 
             </Tabs>
-            {/* <CardContent className="w-full space-y-2">
-                <SubmitLinkButton />
-            </CardContent> */}
             <Separator className="mx-0 my-3 mt-2" />
-            {/* <FileTree /> */}
-            {/* <div className="space-y-2">{children}</div> */}
         </div>
     )
 }

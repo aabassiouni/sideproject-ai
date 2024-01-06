@@ -14,12 +14,10 @@ function GenerateButton() {
     const router = useRouter()
 
     async function handleClick(event: any) {
-        // event.preventDefault();
         setIsLoading(true)
 
         try {
             const response = await fetch(`/api/generate`, {
-                // cache: 'no-store',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,7 +79,6 @@ function GenerateButton() {
                         Generate
                         <SparkleIcon className="ml-2 inline-block" />
                     </span>
-                    {/* <span className="text-xs leading-none">(1 credit)</span> */}
                 </>
             ) : (
                 <Loader2 className="text-white h-6 w-6 animate-spin" />

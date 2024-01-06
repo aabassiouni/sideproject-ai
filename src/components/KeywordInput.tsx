@@ -14,7 +14,6 @@ function KeywordInput() {
     function handleClick(e: any ) {
         e.preventDefault();
 
-        // console.log(event.target.value)
         
         setKeywords([...keywords, input])
     }

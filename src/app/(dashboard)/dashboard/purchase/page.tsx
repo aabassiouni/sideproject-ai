@@ -10,12 +10,10 @@ import { Badge } from '@/components/ui/badge'
 async function PurchasePage() {
 
     console.log('Loading purchase page...')
-    // await new Promise((resolve) => setTimeout(resolve, 10000))
     const products = await stripe.products.list({
         expand: ['data.default_price'],
         active: true
     })
-    // console.log(products)
 
     if (typeof products.data[0].default_price === 'string') {
         return

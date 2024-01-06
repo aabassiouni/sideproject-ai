@@ -8,15 +8,13 @@ import { extractOwnerAndRepoAndPath } from "@/lib/utils";
 function SubmitLinkButton() {
 
     const [link, setLink] = useState<string>("");
-    const { selectedRepo, setSelectedRepo } = useValues();
+    const { setSelectedRepo } = useValues();
 
     function handleChange(event: any) {
         setLink(event.target.value);
     }
 
     function handleClick(event: any) {
-        // event.preventDefault();
-        console.log("Submitted Link: " + link)
         const { owner, repo, path } = extractOwnerAndRepoAndPath(link.trim());
 
         setSelectedRepo({ owner, repo, path, url: link.trim() });

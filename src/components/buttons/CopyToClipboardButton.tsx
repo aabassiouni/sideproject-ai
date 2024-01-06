@@ -1,6 +1,5 @@
 'use client'
 import React, { useState } from 'react';
-import { Button } from '../ui/button';
 import { Check, Copy } from 'lucide-react';
 
 type CopyToClipboardButtonProps = {

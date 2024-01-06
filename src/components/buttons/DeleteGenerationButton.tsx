@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useRouter, usePathname } from 'next/navigation'
 import { Trash2 } from 'lucide-react'
-import Link from 'next/link'
 
 function DeleteGenerationButton({ className, generationID }: { className?: string; generationID: string }) {
     const router = useRouter()

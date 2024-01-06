@@ -9,6 +9,7 @@ import DeleteGenerationButton from '@/components/buttons/DeleteGenerationButton'
 import { fetchAllGenerationsForUser } from '@/lib/db'
 import type { Generation } from '@/lib/db'
 import { redirect } from 'next/navigation'
+
 export const revalidate = 0
 export const runtime = 'edge'
 
@@ -41,7 +42,6 @@ function GenerationCard({ generation }: { generation: Generation }) {
                 <p>{date.toLocaleDateString()}</p>
             </div>
             <div className="flex items-center gap-1.5">
-                {/* <Button size={'sm'}>View</Button> */}
                 <DeleteGenerationButton generationID={generation.generation_id ?? '0'} />
             </div>
         </Card>

@@ -10,7 +10,6 @@ function ImportRepoButton({ owner, name, url }: { owner: GithubOwnerType; name: 
 	const { setSelectedRepo } = useValues();
 	
 	function handleClick(event: any) {
-		// event.preventDefault();
 		console.log("Importing Repo: " + owner + "/" + name);
 		setSelectedRepo({ owner: owner.login, repo: name, path: "", url: url });
 	}

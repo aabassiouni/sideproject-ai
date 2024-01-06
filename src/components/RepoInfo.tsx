@@ -20,7 +20,6 @@ function RepoInfo() {
 
 
     useEffect(() => {
-        // console.log(selectedRepo)
         async function fetchData() {
             setIsLoading(true)
             const response = await fetch(`/api/repo`, {

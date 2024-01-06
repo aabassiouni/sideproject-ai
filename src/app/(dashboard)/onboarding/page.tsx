@@ -31,7 +31,6 @@ async function OnboardingPage() {
             referralValue = 'none'
         }
 
-        console.log('the form data is', referralValue)
 
         const data = await fetch(`https://api.clerk.com/v1/users/${user?.id}`, {
             method: 'PATCH',

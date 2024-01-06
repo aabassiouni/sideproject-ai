@@ -1,11 +1,8 @@
 // 'use client';
 import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
-import { Separator } from './ui/separator'
 import {Link as LinkIcon } from 'lucide-react'
-import Link from 'next/link'
 import SubmitLinkButton from './buttons/SubmitLinkButton'
-import { Button } from './ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 import GithubIcon from './icons/GithubIcon'
 

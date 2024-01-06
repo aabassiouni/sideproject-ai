@@ -13,7 +13,7 @@ function StartWritingButton({className}: {className?: string}) {
         setGeneration(null)
     }
 
-    return <Button  className={className} onClick={handleClick}>Start Writing <span className='ml-2'><SparkleIcon /></span></Button>
+    return <Button className={className} onClick={handleClick}>Start Writing <span className='ml-2'><SparkleIcon /></span></Button>
 }
 
 export default StartWritingButton
