@@ -37,8 +37,8 @@ async function WritePage() {
                 <ScrollArea className="h-44">
                     <div className="space-y-3">
                         {repos?.map((repo, idx) => (
-                            <Suspense fallback={<div>Loading...</div>}>
-                                <RepoCard key={idx} repo={repo} />
+                            <Suspense key={idx} fallback={<div>Loading...</div>}>
+                                <RepoCard  repo={repo} />
                             </Suspense>
                         ))}
                     </div>
@@ -49,8 +49,8 @@ async function WritePage() {
                     <div className="mr-3 space-y-3">
                         {repos ? (
                             repos?.map((repo, idx) => (
-                                <Suspense fallback={<div>Loading...</div>}>
-                                    <RepoCard key={idx} repo={repo} />
+                                <Suspense key={idx} fallback={<div>Loading...</div>}>
+                                    <RepoCard repo={repo} />
                                 </Suspense>
                             ))
                         ) : (
