@@ -12,10 +12,19 @@ export async function insertUser(userId: string, email: string, credits: number)
     return
 }
 
-export async function updateUserCredits(userId: string) {
+export async function decreaseUserCredits(userId: string) {
     const user = await db
         .update(users)
         .set({ credits: sql`credits - 1` })
+        .where(eq(users.userID, userId))
+
+    return
+}
+
+export async function increaseUserCredits(userId: string) {
+    const user = await db
+        .update(users)
+        .set({ credits: sql`credits + 3` })
         .where(eq(users.userID, userId))
 
     return
