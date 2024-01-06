@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import React, { useState } from 'react'
@@ -21,14 +20,13 @@ import RatingButton from './buttons/RatingButton'
 
 function Generation() {
     const { generation } = useValues()
-    // console.log("generation", generation)
     return generation ? (
         <Card className="dark:bg-gray-800 m-4 mt-0 h-max border-2 border-sky-600 sm:min-w-0 ">
             <div className={`flex h-full items-start justify-start rounded-lg p-2 sm:p-5`}>
                 <div className="dark:bg-gray-900 h-full w-full space-y-2 rounded-md  bg-slate-100 p-2 text-lg  sm:p-10">
                     <div className='flex justify-between'>
                         <p className=" my-1 font-bold">{generation.name}</p>
-                        <RatingButton />
+                        <RatingButton generationID={generation.id} />
                     </div>
                     <Separator className="" />
                     {generation.bullets.map((bullet, i) => (
@@ -50,7 +48,6 @@ function Generation() {
                                         <li className="list-disc">{bullet}</li>
                                     </ul>
                                     <CopyToClipboardButton textToCopy={bullet} />
-                                    {/* <Copy className="m-3 w-7 h-7 bg-slate-500 text-slate-400" /> */}
                                 </CardHeader>
                             </Card>
                         </motion.div>

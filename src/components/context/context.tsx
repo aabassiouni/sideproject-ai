@@ -10,7 +10,7 @@ export const ValueContext = createContext({
     setIsLoading: (isLoading: boolean) => {},
     link: '',
     setLink: (link: string) => {},
-    generation: { id: '', bullets: [] } as { id: string; bullets: string[] } | null,
+    generation: { id: '', name: '', bullets: [] } as { id: string; name: string, bullets: string[] } | null,
     setGeneration: (generation: { id: string; name: string, bullets: string[] } | null) => {},
     keywords: [''],
     setKeywords: (keywords: string[]) => {},
