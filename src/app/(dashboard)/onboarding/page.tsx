@@ -25,6 +25,12 @@ async function OnboardingPage() {
     async function handleSubmit(formData: FormData) {
         'use server'
 
+        const user = await currentUser()
+
+        if (!user) {
+            redirect('/signin')
+        }
+
         let referralValue = formData.get('referral') as string
 
         if (!formData.get('referral')) {
@@ -46,7 +52,7 @@ async function OnboardingPage() {
             cache: 'no-store',
         }).then((res) => res.json())
 
-        await updateUserReferral(user?.id!, referralValue)
+        await updateUserReferral(user?.id, referralValue)
 
         revalidatePath('/dashboard')
         redirect('/dashboard')
