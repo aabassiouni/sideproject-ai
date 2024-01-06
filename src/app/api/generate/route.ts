@@ -234,18 +234,18 @@ const githubLoaderIgnorePaths = [
     '*.css',
     'components/',
     '*.yaml',
-    "*.h",
-    "*.lock",
-    "*.o",
-    "*.srec",
-    "*.mk",
-    "*.lss",
-    "*.hex",
-    "*.eep",
-    "*.elf",
-    "*.map",
-    "*.d",
-    "*.atsuo"
+    '*.h',
+    '*.lock',
+    '*.o',
+    '*.srec',
+    '*.mk',
+    '*.lss',
+    '*.hex',
+    '*.eep',
+    '*.elf',
+    '*.map',
+    '*.d',
+    '*.atsuo',
 ]
 
 export async function POST(request: Request) {
@@ -280,25 +280,11 @@ export async function POST(request: Request) {
         //     temperature: 0.9,
         // })
 
-        const llm = new ChatOpenAI(
-            {
-                modelName: 'anthropic/claude-instant-v1',
-                temperature: 0.8,
-                maxTokens: -1,
-                //   streaming: true,
-                openAIApiKey: process.env.OPENROUTER_API_KEY,
-            },
-            {
-                basePath: 'https://openrouter.ai' + '/api/v1',
-                baseOptions: {
-                    headers: {
-                        'HTTP-Referer': process.env.SITE_URL ?? '',
-                        'X-Title': 'sideproject-ai',
-                    },
-                },
-            }
-        )
-        const embeddings = new OpenAIEmbeddings()
+        const llm = new ChatOpenAI({
+            modelName: 'gpt-4-1106-preview',
+            temperature: 0.8,
+            maxTokens: -1,
+        })
 
         const githubToken = await clerk.users.getUserOauthAccessToken(userId, 'oauth_github')
         console.log('githubToken', githubToken)
@@ -387,7 +373,7 @@ export async function POST(request: Request) {
         const formatInstructions = parser.getFormatInstructions()
 
         const prompt = new PromptTemplate({
-            template: `You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR (Situation, Task, Action, Result) method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. The first bullet point should be a description of the project at a high level. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code. If you do not have enough info to generate 5 bullet points, answer simply with the phrase "I do not have enough information to generate 5 bullet points" only. \n\n
+            template: `You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR (Situation, Task, Action, Result) method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Do not include the names of the providers of services. For example, if planetscale is a company that provides a hosted MySQL database, then you should state MySQL and not Planetscale. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. The first bullet point should be a description of the project at a high level. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code. The bullet points should reflect the skills of the person who wrote the code and convey that to anyone reading them. If you do not have enough info to generate 5 bullet points, answer simply with the phrase "I do not have enough information to generate 5 bullet points" only. \n\n
             
             \n repository name: {repo} 
                 
@@ -424,7 +410,7 @@ export async function POST(request: Request) {
         } catch (error: any) {
             console.log('Error fetching completion:', error)
             console.log('error message:', error?.response?.data)
-            
+
             const errorID = randomUUID()
             await db.insertError(errorID, userId, generationID, owner + '/' + repo, error, 'completion')
 
@@ -437,12 +423,12 @@ export async function POST(request: Request) {
         //@ts-ignore
         const { text } = res
 
-        if(text.includes('I do not have enough information to generate 5 bullet points')){
+        if (text.includes('I do not have enough information to generate 5 bullet points')) {
             const errorID = randomUUID()
             await db.insertError(errorID, userId, generationID, owner + '/' + repo, 'not enough information', 'no_code')
             return NextResponse.json({ error: 'not enough information' })
         }
-           
+
         const filteredText = text.replace(/.*?({.*?}).*/s, '$1')
 
         let responseObj
@@ -462,7 +448,7 @@ export async function POST(request: Request) {
 
         console.time('Saving to DB')
         console.log('Saving to db')
-               
+
         await db.insertGeneration(generationID, userId, owner, repo, res, bullets)
         // await db.updateUserCredits(userId)
 
