@@ -16,6 +16,7 @@ import { insertError, insertGeneration } from '@/lib/db'
 import { newId } from '@/lib/id'
 
 export const runtime = 'nodejs'
+export const maxDuration = 60
 
 const githubLoaderIgnorePaths = [
     'package-lock.json',
