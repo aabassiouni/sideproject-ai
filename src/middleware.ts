@@ -2,7 +2,7 @@ import { authMiddleware, currentUser, redirectToSignIn } from '@clerk/nextjs'
 import { NextResponse } from 'next/server'
 
 export default authMiddleware({
-    publicRoutes: [ '/opengraph-image', '/twitter-image', '/api/webhook/stripe', '/api/webhook/clerk'],
+    publicRoutes: [ '/opengraph-image', '/twitter-image', '/api/webhook/stripe', '/api/webhook/clerk', '/api/cron'],
     ignoredRoutes: ['/'],
     // afterAuth: (auth, req) => {
     //     // Add custom logic here
