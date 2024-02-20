@@ -14,6 +14,7 @@ import { PromptTemplate } from 'langchain/prompts'
 import type { Document } from 'langchain/document'
 import { insertError, insertGeneration } from '@/lib/db'
 import { newId } from '@/lib/id'
+import { notifyDiscord } from '@/lib/discord'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -456,6 +457,12 @@ export async function POST(request: Request) {
 
         // pineconeIndex.delete1({ deleteAll: true, namespace: `${owner}/${repo}-${generationID}` })
 
+        notifyDiscord({
+            type: 'generation_created',
+            data: {
+                repo: owner + '/' + repo,
+            },
+        })
         return NextResponse.json({ id: generationID, name: repo, bullets })
     }
     return

@@ -1,21 +1,21 @@
-import { authMiddleware, currentUser, redirectToSignIn } from '@clerk/nextjs'
+import { authMiddleware } from '@clerk/nextjs'
 import { NextResponse } from 'next/server'
+import { notifyDiscord } from './lib/discord'
 
 export default authMiddleware({
-    publicRoutes: [ '/opengraph-image', '/twitter-image', '/api/webhook/stripe', '/api/webhook/clerk', '/api/cron'],
+    publicRoutes: ['/opengraph-image', '/twitter-image', '/api/webhook/stripe', '/api/webhook/clerk', '/api/cron'],
     ignoredRoutes: ['/'],
-    // afterAuth: (auth, req) => {
-    //     // Add custom logic here
-    //     const user = currentUser()
-    //     if (!auth.userId) {
-    //       console.log("redirecting to signin");
-    //       return redirectToSignIn({ returnBackUrl: req.url });
-    //     }
-    //     console.log("private metadata", auth);
-    //     if (auth.user?.publicMetadata.isOnboarded === false) {
-    //         return NextResponse.redirect('/onboarding')
-    //     }
-    // },
+    afterAuth: (auth, req) => {
+        if (auth.userId) {
+            notifyDiscord({
+                type: 'user_logged_in',
+                data: {
+                    userId: auth.userId,
+                },
+            })
+        }
+        return NextResponse.next()
+    },
 })
 
 export const config = {
