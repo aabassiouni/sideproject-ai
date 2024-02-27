@@ -71,12 +71,12 @@ importers:
       '@sideproject-ai/db':
         specifier: workspace:^
         version: link:../../packages/db
+      '@sideproject-ai/id':
+        specifier: workspace:^
+        version: link:../../packages/id
       '@vercel/analytics':
         specifier: ^1.1.1
         version: 1.2.2(next@14.1.0)(react@18.2.0)
-      base-x:
-        specifier: ^4.0.0
-        version: 4.0.0
       class-variance-authority:
         specifier: ^0.6.1
         version: 0.6.1
@@ -189,6 +189,19 @@ importers:
       drizzle-orm:
         specifier: ^0.29.3
         version: 0.29.4(@planetscale/database@1.16.0)(@types/react@18.2.59)(mysql2@3.9.2)(react@18.2.0)
+
+  packages/id:
+    dependencies:
+      base-x:
+        specifier: ^4.0.0
+        version: 4.0.0
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.5
+        version: 20.11.20
+      typescript:
+        specifier: ^5.2.2
+        version: 5.3.3
 
 packages:
 
