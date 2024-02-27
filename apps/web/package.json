@@ -29,7 +29,6 @@
         "@radix-ui/react-tabs": "^1.0.4",
         "@radix-ui/react-toast": "^1.1.5",
         "@vercel/analytics": "^1.1.1",
-        "base-x": "^4.0.0",
         "class-variance-authority": "^0.6.1",
         "clsx": "^1.2.1",
         "debug": "^4.3.4",
@@ -51,7 +50,8 @@
         "tailwind-merge": "^1.14.0",
         "tailwindcss-animate": "^1.0.7",
         "zod": "^3.22.4",
-        "@sideproject-ai/db": "workspace:^"
+        "@sideproject-ai/db": "workspace:^",
+        "@sideproject-ai/id": "workspace:^"
     },
     "devDependencies": {
         "@types/node": "^20.10.6",

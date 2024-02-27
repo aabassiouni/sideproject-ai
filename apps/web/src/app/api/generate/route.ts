@@ -13,7 +13,7 @@ import { MemoryVectorStore } from 'langchain/vectorstores/memory'
 import { PromptTemplate } from 'langchain/prompts'
 import type { Document } from 'langchain/document'
 import { insertError, insertGeneration } from '@/lib/db'
-import { newId } from '@/lib/id'
+import { newId } from '@sideproject-ai/id'
 import { notifyDiscord } from '@/lib/discord'
 
 export const runtime = 'nodejs'
