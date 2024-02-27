@@ -7,11 +7,12 @@ import StartWritingButton from '@/components/buttons/StartWritingButton'
 import Link from 'next/link'
 import DeleteGenerationButton from '@/components/buttons/DeleteGenerationButton'
 import { fetchAllGenerationsForUser } from '@/lib/db'
-import type { Generation } from '@/lib/db'
+import type { Generation } from '@sideproject-ai/db'
 import { redirect } from 'next/navigation'
 
 export const revalidate = 0
-export const runtime = 'edge'
+//stupid windows workaround
+export const runtime = process.env.NODE_ENV === 'development' ? 'nodejs' : 'experimental-edge'
 
 function GenerationsCardLoading() {
     return (
@@ -53,7 +54,7 @@ async function DashboardPage() {
     if (!user) {
         return
     }
-    
+
     if (user?.privateMetadata?.isOnboarded === false) {
         redirect('/onboarding')
     }

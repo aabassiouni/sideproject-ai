@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { auth } from '@clerk/nextjs'
 
-// export const runtime = 'edge';
+// export const runtime = process.env.NODE_ENV === "development" ? "nodejs" : "experimental-edge"
 
 export async function POST(request: NextRequest) {
     console.log('/////////////// creating checkout session ///////////////')
@@ -26,19 +26,18 @@ export async function POST(request: NextRequest) {
                 ],
                 mode: 'payment',
                 metadata: {
-                    userId, 
+                    userId,
                 },
                 success_url: `${origin}/dashboard`,
                 cancel_url: `${origin}/dashboard`,
             })
-            
+
             if (!session) {
                 return NextResponse.json({ error: 'something happened' })
             }
 
             return NextResponse.redirect(session?.url ?? '/', 303)
         }
-
     } catch (err) {
         console.log(err)
         return NextResponse.json({ error: 'something happened' })

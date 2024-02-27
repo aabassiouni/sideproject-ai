@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/planetscale-serverless'
 import { connect } from '@planetscale/database'
 
-import { errors, generations, users } from './schema'
+import { errors, generations, users } from '@sideproject-ai/db'
 
 const connection = connect({
     host: process.env['DATABASE_HOST'],

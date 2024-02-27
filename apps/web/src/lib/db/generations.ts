@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, sql } from 'drizzle-orm'
 import { db } from './db'
-import { generations } from './schema'
+import { generations } from '@sideproject-ai/db'
 export async function insertGeneration(
     generation_id: string,
     userID: string,
