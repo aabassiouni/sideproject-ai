@@ -11,7 +11,7 @@ import step2Img from '/public/step2.png'
 import step3Img from '/public/step3.png'
 import { Car, UserCircle2, Wand2, Zap } from 'lucide-react'
 
-export const runtime = 'edge'
+export const runtime = process.env.NODE_ENV === 'development' ? 'nodejs' : 'experimental-edge'
 
 export const metadata = {
     title: 'SideprojectAI',
@@ -20,13 +20,17 @@ export const metadata = {
 export default async function Home() {
     return (
         <>
-            <div className=" bg-slate-200 flex grow flex-col items-center justify-center gap-5 bg-contain bg-center p-12 sm:min-h-[450px]  sm:pb-0 ">
-                <div className="mx-auto w-52 rounded-full bg-gradient-to-r from-cyan-500/90 to-blue-500 p-0.5 bg-white">
-                    <p className="text-center font-semibold tracking-tighter bg-white rounded-full font-necto">Now in beta! 🎉</p>
+            <div className=" flex grow flex-col items-center justify-center gap-5 bg-slate-200 bg-contain bg-center p-12 sm:min-h-[450px]  sm:pb-0 ">
+                <div className="mx-auto w-52 rounded-full bg-white bg-gradient-to-r from-cyan-500/90 to-blue-500 p-0.5">
+                    <p className="rounded-full bg-white text-center font-necto font-semibold tracking-tighter">
+                        Now in beta! 🎉
+                    </p>
                 </div>
-                <div className='sm:w-2/3 bg-gradient-to-r bg-clip-text from-cyan-500/90 to-blue-500'>
+                <div className="bg-gradient-to-r from-cyan-500/90 to-blue-500 bg-clip-text sm:w-2/3">
                     <span className="  text-center text-4xl font-extrabold text-transparent sm:text-5xl">
-                        <Balancer ratio={0.65}>Transform Your GitHub Projects Into Impressive Resume Sections!</Balancer>
+                        <Balancer ratio={0.65}>
+                            Transform Your GitHub Projects Into Impressive Resume Sections!
+                        </Balancer>
                     </span>
                 </div>
                 <p className="text-medium text-center text-xl font-medium ">
@@ -132,10 +136,12 @@ export default async function Home() {
                     </Card>
                 </div>
                 <Separator className="my-5" />
-                <h1 id='pricing' className="text-center text-4xl font-extrabold">Pricing</h1>
+                <h1 id="pricing" className="text-center text-4xl font-extrabold">
+                    Pricing
+                </h1>
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-xl text-center font-bold">Coming Soon</CardTitle>
+                        <CardTitle className="text-center text-xl font-bold">Coming Soon</CardTitle>
                         <CardDescription className="text-center">
                             SideprojectAI is currently in beta. During this time, all generations are free.
                         </CardDescription>

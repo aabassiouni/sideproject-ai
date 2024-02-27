@@ -8,10 +8,10 @@ import Link from 'next/link'
 import { Separator } from '@/components/ui/separator'
 import CopyToClipboardButton from '@/components/buttons/CopyToClipboardButton'
 import { fetchGenerationByID } from '@/lib/db'
-import type { Generation } from '@/lib/db'
+import type { Generation } from '@sideproject-ai/db'
 
 export const revalidate = 0
-export const runtime = 'edge'
+export const runtime = process.env.NODE_ENV === 'development' ? 'nodejs' : 'experimental-edge'
 
 // type Generation = {
 //     generation_id?: string

@@ -1,5 +1,5 @@
 import { db } from './db'
-import { errors } from './schema'
+import { errors } from '@sideproject-ai/db'
 
 export async function insertError(
     error_id: string,

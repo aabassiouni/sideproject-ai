@@ -1,6 +1,7 @@
 import { SignUp } from "@clerk/nextjs";
 
-export const runtime = "edge";
+export const runtime = process.env.NODE_ENV === "development" ? "nodejs" : "experimental-edge"
+
 
 export default function Page() {
 	return (
