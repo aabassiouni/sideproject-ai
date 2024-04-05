@@ -1,13 +1,13 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Button } from '../ui/button'
-import SparkleIcon from '../icons/SparkleIcon'
-import { useValues } from '../context/context'
+import { useAuth } from '@clerk/nextjs'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { useValues } from '../context/context'
+import SparkleIcon from '../icons/SparkleIcon'
+import { Button } from '../ui/button'
 import { useToast } from '../ui/use-toast'
-import { useAuth } from '@clerk/nextjs'
 
 function GenerateButton() {
     const { selectedRepo, generation, setGeneration, keywords } = useValues()
@@ -23,7 +23,7 @@ function GenerateButton() {
         })
         console.log(sstToken)
         try {
-            const response = await fetch('https://kiwxedcl5g.execute-api.us-east-1.amazonaws.com/generate', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/generate`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${sstToken}`,
