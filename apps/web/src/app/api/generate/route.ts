@@ -17,7 +17,7 @@ import { newId } from '@sideproject-ai/id'
 import { notifyDiscord } from '@/lib/discord'
 
 export const runtime = 'nodejs'
-export const maxDuration = 60
+// export const maxDuration = 60
 
 const githubLoaderIgnorePaths = [
     'package-lock.json',
