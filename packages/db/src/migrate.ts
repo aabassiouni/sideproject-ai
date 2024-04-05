@@ -1,7 +1,7 @@
+import { Client } from '@planetscale/database'
+import * as dotenv from 'dotenv'
 import { drizzle } from 'drizzle-orm/planetscale-serverless'
 import { migrate } from 'drizzle-orm/planetscale-serverless/migrator'
-import * as dotenv from 'dotenv'
-import { connect } from '@planetscale/database'
 import { errors, generations, users } from './schema'
 
 dotenv.config({ path: '.env.local' })
@@ -14,12 +14,9 @@ const runMigration = async () => {
         throw new Error('No database URL')
     }
 
-    const planetscale = connect({
-        // host: process.env['DATABASE_HOST'],
-        // username: process.env['DATABASE_USERNAME'],
-        // password: process.env['DATABASE_PASSWORD'],
-        url: process.env.DATABASE_URL,
-    })
+    const planetscale = new Client({
+      url: process.env.DATABASE_URL,
+    });
 
     const db = drizzle(planetscale, {
         schema: {
