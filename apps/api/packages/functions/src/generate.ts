@@ -344,14 +344,14 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
     console.log("Error embedding documents:", error);
     console.log("error message:", error?.response?.data);
     const errorID = newId("error");
-    // await insertError(
-    //   errorID,
-    //   userId,
-    //   generationID,
-    //   `${owner}/${repo}`,
-    //   error,
-    //   "embeddings"
-    // );
+    await insertError(
+      errorID,
+      userId,
+      generationID,
+      `${owner}/${repo}`,
+      error,
+      "embeddings"
+    );
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -428,14 +428,14 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
     console.log("error message:", error?.response?.data);
 
     const errorID = newId("error");
-    // await insertError(
-    //   errorID,
-    //   userId,
-    //   generationID,
-    //   `${owner}/${repo}`,
-    //   error,
-    //   "completion"
-    // );
+    await insertError(
+      errorID,
+      userId,
+      generationID,
+      `${owner}/${repo}`,
+      error,
+      "completion"
+    );
 
     return {
       statusCode: 500,
@@ -456,14 +456,14 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
     )
   ) {
     const errorID = newId("error");
-    // await insertError(
-    //   errorID,
-    //   userId,
-    //   generationID,
-    //   `${owner}/${repo}`,
-    //   "not enough information",
-    //   "no_code"
-    // );
+    await insertError(
+      errorID,
+      userId,
+      generationID,
+      `${owner}/${repo}`,
+      "not enough information",
+      "no_code"
+    );
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "not enough information" }),
@@ -478,14 +478,14 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
   } catch (error) {
     console.log("Error parsing response:", error);
     const errorID = newId("error");
-    // await insertError(
-    //   errorID,
-    //   userId,
-    //   generationID,
-    //   `${owner}/${repo}`,
-    //   error,
-    //   "parsing"
-    // );
+    await insertError(
+      errorID,
+      userId,
+      generationID,
+      `${owner}/${repo}`,
+      error,
+      "parsing"
+    );
     return {
       error: "error during generation",
       errorID: errorID,
@@ -500,14 +500,14 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
   console.log(bullets);
 
   console.log("Saving to db");
-  // await insertGeneration({
-  //   generation_id: generationID,
-  //   userID: userId,
-  //   owner,
-  //   repo,
-  //   text,
-  //   bullets,
-  // });
+  await insertGeneration({
+    generation_id: generationID,
+    userID: userId,
+    owner,
+    repo,
+    text,
+    bullets,
+  });
   console.log("saved to db:", generationID);
 
   notifyDiscord({
