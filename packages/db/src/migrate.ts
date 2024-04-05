@@ -15,9 +15,10 @@ const runMigration = async () => {
     }
 
     const planetscale = connect({
-        host: process.env['DATABASE_HOST'],
-        username: process.env['DATABASE_USERNAME'],
-        password: process.env['DATABASE_PASSWORD'],
+        // host: process.env['DATABASE_HOST'],
+        // username: process.env['DATABASE_USERNAME'],
+        // password: process.env['DATABASE_PASSWORD'],
+        url: process.env.DATABASE_URL,
     })
 
     const db = drizzle(planetscale, {
