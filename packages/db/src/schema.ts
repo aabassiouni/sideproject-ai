@@ -16,7 +16,7 @@ import { sql } from 'drizzle-orm'
 
 export const errors = mysqlTable('errors', {
     errorID: varchar('error_id', { length: 256 }).notNull().primaryKey(),
-    generationID: binary('generation_id', { length: 16 }).notNull(),
+    generationID: varchar('generation_id', { length: 256 }).notNull(),
     userID: varchar('clerk_user_id', { length: 255 }).notNull(),
     repoName: varchar('repo_name', { length: 255 }).notNull(),
     timestamp: timestamp('timestamp', { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`),
