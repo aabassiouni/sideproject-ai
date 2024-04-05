@@ -7,19 +7,26 @@ import { useValues } from '../context/context'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useToast } from '../ui/use-toast'
+import { useAuth } from '@clerk/nextjs'
+
 function GenerateButton() {
     const { selectedRepo, generation, setGeneration, keywords } = useValues()
     const [isLoading, setIsLoading] = useState(false)
     const { toast } = useToast()
     const router = useRouter()
+    const { getToken } = useAuth()
 
     async function handleClick(event: any) {
         setIsLoading(true)
-
+        const sstToken = await getToken({
+            template: 'sst-test',
+        })
+        console.log(sstToken)
         try {
-            const response = await fetch(`/api/generate`, {
+            const response = await fetch('https://kiwxedcl5g.execute-api.us-east-1.amazonaws.com/generate', {
                 method: 'POST',
                 headers: {
+                    Authorization: `Bearer ${sstToken}`,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
@@ -81,7 +88,7 @@ function GenerateButton() {
                     </span>
                 </>
             ) : (
-                <Loader2 className="text-white h-6 w-6 animate-spin" />
+                <Loader2 className="h-6 w-6 animate-spin text-white" />
             )}
         </Button>
     )
