@@ -1,6 +1,7 @@
 // written by @chronark and @unkeydev
 
 import baseX from 'base-x'
+import crypto from 'crypto'
 
 const prefixes = {
     generation: 'gen',
