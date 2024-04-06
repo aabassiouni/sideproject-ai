@@ -7,7 +7,10 @@ export function ApiStack({ app, stack }: StackContext) {
   const DATABASE_URL = new Config.Secret(stack, "DATABASE_URL");
   const DISCORD_WEBHOOK_URL = new Config.Secret(stack, "DISCORD_WEBHOOK_URL");
 
-  if (!process.env.AWS_CUSTOM_DOMAIN || !process.env.AWS_CERTIFICATE_ARN) {
+  if (
+    (!process.env.AWS_CUSTOM_DOMAIN || !process.env.AWS_CERTIFICATE_ARN) &&
+    (app.stage === "prod" || app.stage === "preview")
+  ) {
     throw new Error(
       "Please set the AWS_CUSTOM_DOMAIN and AWS_CERTIFICATE_ARN environment variables."
     );
@@ -26,17 +29,20 @@ export function ApiStack({ app, stack }: StackContext) {
         ],
       },
     },
-    customDomain: app.stage === "prod" ? {
-      domainName: process.env.AWS_CUSTOM_DOMAIN,
-      isExternalDomain: true,
-      cdk: {
-        certificate: Certificate.fromCertificateArn(
-          stack,
-          "MyCert",
-          process.env.AWS_CERTIFICATE_ARN
-        ),
-      },
-    } : undefined,
+    customDomain:
+      app.stage === "prod" || app.stage === "preview"
+        ? {
+            domainName: process.env.AWS_CUSTOM_DOMAIN,
+            isExternalDomain: true,
+            cdk: {
+              certificate: Certificate.fromCertificateArn(
+                stack,
+                "MyCert",
+                process.env.AWS_CERTIFICATE_ARN ?? ""
+              ),
+            },
+          }
+        : undefined,
     // cors: {
     //   // allowMethods: ["ANY"],
     //   // allowHeaders: ["*"],
