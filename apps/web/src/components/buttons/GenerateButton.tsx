@@ -21,7 +21,6 @@ function GenerateButton() {
         const sstToken = await getToken({
             template: 'sst-test',
         })
-        console.log(sstToken)
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/generate`, {
                 method: 'POST',
