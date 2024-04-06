@@ -20,7 +20,7 @@ export function ApiStack({ app, stack }: StackContext) {
     defaults: {
       authorizer: "clerk",
       function: {
-        timeout: 60,
+        timeout: 30,
         bind: [
           OPENAI_API_KEY,
           CLERK_SECRET_KEY,
