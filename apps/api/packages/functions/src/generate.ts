@@ -347,7 +347,6 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
     await insertError(
       errorID,
       userId,
-      generationID,
       `${owner}/${repo}`,
       error,
       "embeddings"
@@ -431,7 +430,6 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
     await insertError(
       errorID,
       userId,
-      generationID,
       `${owner}/${repo}`,
       error,
       "completion"
@@ -459,7 +457,6 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
     await insertError(
       errorID,
       userId,
-      generationID,
       `${owner}/${repo}`,
       "not enough information",
       "no_code"
@@ -481,7 +478,6 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
     await insertError(
       errorID,
       userId,
-      generationID,
       `${owner}/${repo}`,
       error,
       "parsing"
