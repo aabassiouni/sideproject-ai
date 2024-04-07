@@ -16,6 +16,13 @@ export function ApiStack({ app, stack }: StackContext) {
     );
   }
 
+  const customDomain =
+    app.stage === "prod"
+      ? "api.usesideprojectai.com"
+      : app.stage === "preview"
+      ? "preview-api.usesideprojectai.com"
+      : undefined;
+
   const api = new Api(stack, "Api", {
     defaults: {
       authorizer: "clerk",
@@ -32,12 +39,12 @@ export function ApiStack({ app, stack }: StackContext) {
     customDomain:
       app.stage === "prod" || app.stage === "preview"
         ? {
-            domainName: process.env.AWS_CUSTOM_DOMAIN,
+            domainName: customDomain,
             isExternalDomain: true,
             cdk: {
               certificate: Certificate.fromCertificateArn(
                 stack,
-                "MyCert",
+                "preview-api-certificate",
                 process.env.AWS_CERTIFICATE_ARN ?? ""
               ),
             },
