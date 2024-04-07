@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - preview
+    paths:
+      - "apps/api/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::391273453287:role/GitHub
+          role-duration-seconds: 300 #adjust as needed for your build time
+          aws-region: us-east-1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: pnpm install
+      - name: Deploy API
+        run: pnpm deploy:api --stage preview
