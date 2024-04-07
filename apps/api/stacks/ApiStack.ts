@@ -25,7 +25,7 @@ export function ApiStack({ app, stack }: StackContext) {
 
   const api = new Api(stack, "Api", {
     defaults: {
-      authorizer: "clerk",
+      authorizer: app.stage === "prod" ? "clerkProd" : "clerkPreview",
       function: {
         timeout: 30,
         bind: [
@@ -56,12 +56,20 @@ export function ApiStack({ app, stack }: StackContext) {
     //   allowOrigins: ["https://usesideprojectai.com"],
     // },
     authorizers: {
-      clerk: {
+      clerkPreview: {
         type: "jwt",
         identitySource: ["$request.header.Authorization"],
         jwt: {
           issuer: "https://one-bonefish-61.clerk.accounts.dev",
           audience: ["test"],
+        },
+      },
+      clerkProd: {
+        type: "jwt",
+        identitySource: ["$request.header.Authorization"],
+        jwt: {
+          issuer: "https://clerk.usesideprojectai.com",
+          audience: ["prod"],
         },
       },
     },
