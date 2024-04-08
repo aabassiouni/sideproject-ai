@@ -1,19 +1,25 @@
-'use client';
+"use client";
 
-import React from 'react'
-import { Button } from '../ui/button'
-import { useValues } from '../context/context'
-import SparkleIcon from '../icons/SparkleIcon';
+import { useValues } from "../context/context";
+import SparkleIcon from "../icons/SparkleIcon";
+import { Button } from "../ui/button";
 
-function StartWritingButton({className}: {className?: string}) {
-    const { setSelectedRepo, setGeneration } = useValues()
-    
-    function handleClick() {
-        setSelectedRepo({ repo: '', url: '', owner: '', path: '' })
-        setGeneration(null)
-    }
+function StartWritingButton({ className }: { className?: string }) {
+  const { setSelectedRepo, setGeneration } = useValues();
 
-    return <Button className={className} onClick={handleClick}>Start Writing <span className='ml-2'><SparkleIcon /></span></Button>
+  function handleClick() {
+    setSelectedRepo({ repo: "", url: "", owner: "", path: "" });
+    setGeneration(null);
+  }
+
+  return (
+    <Button className={className} onClick={handleClick}>
+      Start Writing{" "}
+      <span className="ml-2">
+        <SparkleIcon />
+      </span>
+    </Button>
+  );
 }
 
-export default StartWritingButton
+export default StartWritingButton;

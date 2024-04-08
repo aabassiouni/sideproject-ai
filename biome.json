@@ -6,7 +6,7 @@
 	"formatter": {
 		"enabled": true,
 		"lineWidth": 120,
-		"indentStyle": "tab",
+		"indentStyle": "space",
 		"indentWidth": 2,
 		"lineEnding": "crlf",
 		"ignore": [".sst", ".next", ".turbo", "node_modules", ".env*", ".git"]
