@@ -1,20 +1,20 @@
-import { NextResponse } from 'next/server'
-import { GithubRepoLoader } from 'langchain/document_loaders/web/github'
-import { RetrievalQAChain, loadQAStuffChain } from 'langchain/chains'
+import { insertError, insertGeneration } from '@/lib/db'
+import { notifyDiscord } from '@/lib/discord'
 import clerk from '@clerk/clerk-sdk-node'
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { auth } from '@clerk/nextjs'
-import { Octokit } from 'octokit'
+import { newId } from '@sideproject-ai/id'
+import { RetrievalQAChain, loadQAStuffChain } from 'langchain/chains'
 import { ChatOpenAI } from 'langchain/chat_models/openai'
+import type { Document } from 'langchain/document'
+import { GithubRepoLoader } from 'langchain/document_loaders/web/github'
+import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 // import { ChatAnthropic } from 'langchain/chat_models/anthropic'
 import { StructuredOutputParser } from 'langchain/output_parsers'
-import { z } from 'zod'
-import { MemoryVectorStore } from 'langchain/vectorstores/memory'
 import { PromptTemplate } from 'langchain/prompts'
-import type { Document } from 'langchain/document'
-import { insertError, insertGeneration } from '@/lib/db'
-import { newId } from '@sideproject-ai/id'
-import { notifyDiscord } from '@/lib/discord'
+import { MemoryVectorStore } from 'langchain/vectorstores/memory'
+import { NextResponse } from 'next/server'
+import { Octokit } from 'octokit'
+import { z } from 'zod'
 
 export const runtime = 'nodejs'
 // export const maxDuration = 60
@@ -340,7 +340,7 @@ export async function POST(request: Request) {
             console.log('Error embedding documents:', error)
             console.log('error message:', error?.response?.data)
             const errorID = newId('error')
-            await insertError(errorID, userId, generationID, owner + '/' + repo, error, 'embeddings')
+            await insertError(errorID, userId, owner + '/' + repo, error, 'embeddings')
             return NextResponse.json({ error: 'error during generation', errorID: errorID })
         }
 
@@ -412,7 +412,7 @@ export async function POST(request: Request) {
             console.log('error message:', error?.response?.data)
 
             const errorID = newId('error')
-            await insertError(errorID, userId, generationID, owner + '/' + repo, error, 'completion')
+            await insertError(errorID, userId, owner + '/' + repo, error, 'completion')
 
             return NextResponse.json({ error: 'error during generation', errorID: errorID })
         }
@@ -425,7 +425,7 @@ export async function POST(request: Request) {
 
         if (text.includes('I do not have enough information to generate 5 bullet points')) {
             const errorID = newId('error')
-            await insertError(errorID, userId, generationID, owner + '/' + repo, 'not enough information', 'no_code')
+            await insertError(errorID, userId, owner + '/' + repo, 'not enough information', 'no_code')
             return NextResponse.json({ error: 'not enough information' })
         }
 
@@ -437,7 +437,7 @@ export async function POST(request: Request) {
         } catch (error: any) {
             console.log('Error parsing response:', error)
             const errorID = newId('error')
-            await insertError(errorID, userId, generationID, owner + '/' + repo, error, 'parsing')
+            await insertError(errorID, userId, owner + '/' + repo, error, 'parsing')
             return NextResponse.json({ error: 'error during generation', errorID: errorID })
         }
         console.log('the parsed object is', responseObj)
