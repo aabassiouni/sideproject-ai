@@ -1,7 +1,6 @@
 import { RedirectToSignIn, SignedIn, SignedOut, UserProfile, currentUser } from '@clerk/nextjs'
 import React, { Suspense } from 'react'
 
-export const runtime = "edge";
 
 async function ProfilePage() {
     const user = await currentUser()

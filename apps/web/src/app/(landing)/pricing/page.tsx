@@ -4,7 +4,6 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import BuyButton from '@/components/buttons/BuyButton'
 import { Badge } from '@/components/ui/badge'
 
-export const runtime = "edge"
 
 async function PurchasePage() {
     const products = await stripe.products.list({

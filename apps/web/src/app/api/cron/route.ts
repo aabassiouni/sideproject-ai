@@ -3,8 +3,6 @@ import { sql } from 'drizzle-orm'
 import { unstable_noStore } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
-export const runtime = process.env.NODE_ENV === 'development' ? 'nodejs' : 'experimental-edge'
-
 export async function GET(req: NextRequest, res: NextResponse) {
     console.log('running cron job')
     if (req.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {

@@ -4,7 +4,6 @@ import { stripe } from '@/lib/stripe'
 import Stripe from 'stripe'
 import { increaseUserCredits } from '@/lib/db'
 
-export const runtime = process.env.NODE_ENV === "development" ? "nodejs" : "experimental-edge"
 
 export async function POST(request: Request) {
     const body = await request.text()
