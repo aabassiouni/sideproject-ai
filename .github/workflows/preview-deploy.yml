@@ -1,12 +1,12 @@
 on:
   pull_request:
     branches:
-      - preview
+      - main
     paths:
       - "apps/api/**"
   push:
     branches:
-      - preview
+      - dev
     paths:
       - "apps/api/**"
 
