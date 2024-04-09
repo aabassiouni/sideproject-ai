@@ -1,43 +1,30 @@
-import { sql } from "drizzle-orm";
-import {
-  AnyMySqlColumn,
-  binary,
-  char,
-  int,
-  longtext,
-  mysqlSchema,
-  mysqlTable,
-  text,
-  timestamp,
-  tinyint,
-  varchar,
-} from "drizzle-orm/mysql-core";
+import { pgTable, smallint, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
-export const errors = mysqlTable("errors", {
+export const errors = pgTable("errors", {
   errorID: varchar("error_id", { length: 256 }).notNull().primaryKey(),
   userID: varchar("clerk_user_id", { length: 255 }).notNull(),
   repoName: varchar("repo_name", { length: 255 }).notNull(),
-  timestamp: timestamp("timestamp", { mode: "string" }).default(sql`CURRENT_TIMESTAMP`),
-  errorMessage: longtext("error_message"),
+  timestamp: timestamp("timestamp", { mode: "string" }).defaultNow(),
+  errorMessage: text("error_message"),
   errorType: varchar("error_type", { length: 100 }),
 });
 
-export const generations = mysqlTable("generations", {
+export const generations = pgTable("generations", {
   generationID: varchar("generation_id", { length: 256 }).notNull().primaryKey(),
   userID: varchar("user_id", { length: 255 }),
   repoName: varchar("repo_name", { length: 255 }),
   generatedText: text("generated_text"),
   bullets: text("bullets"),
-  rating: tinyint("rating").default(0).notNull(),
-  deleted: tinyint("deleted").default(0).notNull(),
-  timestamp: timestamp("timestamp", { mode: "string" }).default(sql`CURRENT_TIMESTAMP`),
+  rating: smallint("rating").default(0).notNull(),
+  deleted: smallint("deleted").default(0).notNull(),
+  timestamp: timestamp("timestamp", { mode: "string" }).defaultNow(),
 });
 
-export const users = mysqlTable("users", {
+export const users = pgTable("users", {
   userID: varchar("user_id", { length: 255 }).notNull().primaryKey(),
   createdOn: timestamp("created_on", { mode: "string" }),
   lastLogin: timestamp("last_login", { mode: "string" }),
-  credits: int("credits"),
-  email: text("email"),
+  credits: smallint("credits"),
+  email: varchar("email", { length: 320 }),
   referral: varchar("referral", { length: 255 }),
 });

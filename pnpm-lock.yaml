@@ -52,7 +52,10 @@ importers:
         version: link:../../../../packages/id
       drizzle-orm:
         specifier: ^0.29.3
-        version: 0.29.4(@aws-sdk/client-rds-data@3.521.0)(@planetscale/database@1.16.0)(kysely@0.25.0)(react@18.2.0)
+        version: 0.29.4(@aws-sdk/client-rds-data@3.521.0)(@planetscale/database@1.16.0)(kysely@0.25.0)(postgres@3.4.4)(react@18.2.0)
+      postgres:
+        specifier: ^3.4.4
+        version: 3.4.4
     devDependencies:
       '@types/node':
         specifier: ^20.11.20
@@ -161,8 +164,8 @@ importers:
         specifier: ^4.3.4
         version: 4.3.4
       drizzle-orm:
-        specifier: ^0.29.3
-        version: 0.29.4(@planetscale/database@1.16.0)(@types/react@18.2.59)(mysql2@3.9.2)(react@18.2.0)
+        specifier: ^0.29.4
+        version: 0.29.4(@planetscale/database@1.16.0)(@types/react@18.2.59)(mysql2@3.9.2)(postgres@3.4.4)(react@18.2.0)
       eventsource-parser:
         specifier: ^1.1.1
         version: 1.1.2
@@ -193,6 +196,9 @@ importers:
       postcss:
         specifier: 8.4.23
         version: 8.4.23
+      postgres:
+        specifier: ^3.4.4
+        version: 3.4.4
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -262,7 +268,10 @@ importers:
         version: 0.20.14
       drizzle-orm:
         specifier: ^0.29.3
-        version: 0.29.4(@planetscale/database@1.16.0)(@types/react@18.2.59)(mysql2@3.9.2)(react@18.2.0)
+        version: 0.29.4(@planetscale/database@1.16.0)(@types/react@18.2.59)(mysql2@3.9.2)(postgres@3.4.4)(react@18.2.0)
+      postgres:
+        specifier: ^3.4.4
+        version: 3.4.4
 
   packages/id:
     dependencies:
@@ -6754,7 +6763,7 @@ packages:
       - supports-color
     dev: false
 
-  /drizzle-orm@0.29.4(@aws-sdk/client-rds-data@3.521.0)(@planetscale/database@1.16.0)(kysely@0.25.0)(react@18.2.0):
+  /drizzle-orm@0.29.4(@aws-sdk/client-rds-data@3.521.0)(@planetscale/database@1.16.0)(kysely@0.25.0)(postgres@3.4.4)(react@18.2.0):
     resolution: {integrity: sha512-ZnSM8TAxFhzH7p1s3+w3pRE/eKaOeNkH9SKitm717pubDVVcV2I0BCDBPGKV+pe02+wMfw37ntlTcCyo2rA3IA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -6828,10 +6837,11 @@ packages:
       '@aws-sdk/client-rds-data': 3.521.0
       '@planetscale/database': 1.16.0
       kysely: 0.25.0
+      postgres: 3.4.4
       react: 18.2.0
     dev: false
 
-  /drizzle-orm@0.29.4(@planetscale/database@1.16.0)(@types/react@18.2.59)(mysql2@3.9.2)(react@18.2.0):
+  /drizzle-orm@0.29.4(@planetscale/database@1.16.0)(@types/react@18.2.59)(mysql2@3.9.2)(postgres@3.4.4)(react@18.2.0):
     resolution: {integrity: sha512-ZnSM8TAxFhzH7p1s3+w3pRE/eKaOeNkH9SKitm717pubDVVcV2I0BCDBPGKV+pe02+wMfw37ntlTcCyo2rA3IA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -6905,6 +6915,7 @@ packages:
       '@planetscale/database': 1.16.0
       '@types/react': 18.2.59
       mysql2: 3.9.2
+      postgres: 3.4.4
       react: 18.2.0
     dev: false
 
@@ -9539,6 +9550,11 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: true
+
+  /postgres@3.4.4:
+    resolution: {integrity: sha512-IbyN+9KslkqcXa8AO9fxpk97PA4pzewvpi2B3Dwy9u4zpV32QicaEdgmF3eSQUzdRk7ttDHQejNgAEr4XoeH4A==}
+    engines: {node: '>=12'}
+    dev: false
 
   /prettier-plugin-tailwindcss@0.3.0(prettier@2.8.8):
     resolution: {integrity: sha512-009/Xqdy7UmkcTBpwlq7jsViDqXAYSOMLDrHAdTMlVZOrKfM2o9Ci7EMWTMZ7SkKBFTG04UM9F9iM2+4i6boDA==}

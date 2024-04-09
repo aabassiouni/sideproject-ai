@@ -5,17 +5,18 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
-    "db:migrate": "drizzle-kit generate:mysql",
+    "db:migrate": "drizzle-kit generate:pg",
     "db:push": "tsx src/migrate.ts",
-    "db:pull": "drizzle-kit introspect:mysql",
+    "db:pull": "drizzle-kit introspect:pg",
     "db:drop": "drizzle-kit drop"
   },
   "dependencies": {
+    "@planetscale/database": "^1.13.0",
     "@types/node": "^20.11.5",
     "dotenv": "^16.3.1",
-    "@planetscale/database": "^1.13.0",
+    "drizzle-kit": "^0.20.10",
     "drizzle-orm": "^0.29.3",
-    "drizzle-kit": "^0.20.10"
+    "postgres": "^3.4.4"
   },
   "keywords": [],
   "author": "",
