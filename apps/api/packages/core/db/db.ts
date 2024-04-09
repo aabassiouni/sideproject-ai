@@ -1,15 +1,14 @@
-import { drizzle } from "drizzle-orm/planetscale-serverless";
-
-import { Client } from "@planetscale/database";
-import { generations, errors, users, sql } from "@sideproject-ai/db";
-
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { Config } from "sst/node/config";
 
-const connection = new Client({
-  url: Config.DATABASE_URL,
-});
+import { errors, generations, users } from "@sideproject-ai/db";
 
-export const db = drizzle(connection, {
+const connectionString = Config.DATABASE_URL;
+
+const client = postgres(connectionString, { prepare: false });
+
+export const db = drizzle(client, {
   schema: {
     errors,
     generations,
