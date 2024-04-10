@@ -1,8 +1,8 @@
-import { AuthenticateWithRedirectCallback } from '@clerk/nextjs';
-import React from 'react'
+import { AuthenticateWithRedirectCallback } from "@clerk/nextjs";
+import React from "react";
 
 function SSOCallbackPage() {
-    return <AuthenticateWithRedirectCallback />;
+  return <AuthenticateWithRedirectCallback />;
 }
 
-export default SSOCallbackPage
+export default SSOCallbackPage;

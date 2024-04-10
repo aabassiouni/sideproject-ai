@@ -29,9 +29,7 @@ export default async function Home() {
             <Balancer ratio={0.65}>Transform Your GitHub Projects Into Impressive Resume Sections!</Balancer>
           </span>
         </div>
-        <p className="text-center font-medium text-medium text-xl">
-          Stop thinking about your resume. Just build.
-        </p>
+        <p className="text-center font-medium text-medium text-xl">Stop thinking about your resume. Just build.</p>
         <Link className="w-fit" href="/signin">
           <Button size="lg" className="mt-4 text-lg">
             Get Started for Free!

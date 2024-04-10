@@ -29,7 +29,7 @@ function GenerationCard({ generation }: { generation: Generation }) {
   const date = new Date(generation.timestamp ?? Date.now());
 
   const deleteGenerationWithId = deleteGenerationAction.bind(null, generation.generationID);
-  
+
   return (
     <Card className="flex w-full items-center justify-around bg-slate-100 p-4 py-2 sm:w-full dark:bg-gray-900">
       <Link className="flex justify-between gap-2" href={`/dashboard/${generation?.generationID}`}>

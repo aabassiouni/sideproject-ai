@@ -1,6 +1,5 @@
 import { SignUp } from "@clerk/nextjs";
 
-
 export default function Page() {
   return (
     <div className="flex flex-col gap-5 justify-center h-screen w-screen bg-slate-200 items-center">

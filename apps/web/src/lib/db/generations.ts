@@ -1,24 +1,24 @@
-import { and, asc, desc, eq, sql } from 'drizzle-orm'
-import { db } from './db'
-import { generations } from '@sideproject-ai/db'
-import { auth } from '@clerk/nextjs'
+import { auth } from "@clerk/nextjs";
+import { generations } from "@sideproject-ai/db";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { db } from "./db";
 export async function insertGeneration(
-    generation_id: string,
-    userID: string,
-    owner: string,
-    repo: string,
-    res: any,
-    bullets: string[]
+  generation_id: string,
+  userID: string,
+  owner: string,
+  repo: string,
+  res: any,
+  bullets: string[],
 ) {
-    const generation = await db.insert(generations).values({
-        generationID: generation_id,
-        userID: userID,
-        repoName: `${owner}/${repo}`,
-        generatedText: res?.text,
-        bullets: JSON.stringify(bullets),
-    })
+  const generation = await db.insert(generations).values({
+    generationID: generation_id,
+    userID: userID,
+    repoName: `${owner}/${repo}`,
+    generatedText: res?.text,
+    bullets: JSON.stringify(bullets),
+  });
 
-    return generation
+  return generation;
 }
 
 export async function fetchAllGenerationsForUser(userId: string) {
@@ -38,18 +38,18 @@ export async function fetchAllGenerationsForUser(userId: string) {
 }
 
 export async function fetchGenerationByID(generation_id: string) {
-    const generation = await db.select().from(generations).where(eq(generations.generationID, generation_id))
+  const generation = await db.select().from(generations).where(eq(generations.generationID, generation_id));
 
-    return generation[0]
+  return generation[0];
 }
 
 export async function updateGenerationRating(generation_id: string, rating: number) {
-    const generation = await db
-        .update(generations)
-        .set({ rating: rating })
-        .where(eq(generations.generationID, generation_id))
+  const generation = await db
+    .update(generations)
+    .set({ rating: rating })
+    .where(eq(generations.generationID, generation_id));
 
-    return
+  return;
 }
 
 export async function deleteGeneration(generationId: string) {
