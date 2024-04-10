@@ -1,6 +1,7 @@
 import { and, asc, desc, eq, sql } from 'drizzle-orm'
 import { db } from './db'
 import { generations } from '@sideproject-ai/db'
+import { auth } from '@clerk/nextjs'
 export async function insertGeneration(
     generation_id: string,
     userID: string,
@@ -21,19 +22,19 @@ export async function insertGeneration(
 }
 
 export async function fetchAllGenerationsForUser(userId: string) {
-    const generationsResult = await db
-        .select({
-            userID: generations.userID,
-            repoName: generations.repoName,
-            generatedText: generations.generatedText,
-            timestamp: generations.timestamp,
-            generationID: generations.generationID,
-        })
-        .from(generations)
-        .where(eq(generations.userID, userId))
-        .orderBy(desc(generations.timestamp))
+  const generationsResult = await db
+    .select({
+      userID: generations.userID,
+      repoName: generations.repoName,
+      generatedText: generations.generatedText,
+      timestamp: generations.timestamp,
+      generationID: generations.generationID,
+    })
+    .from(generations)
+    .where(and(eq(generations.userID, userId), eq(generations.deleted, 0)))
+    .orderBy(desc(generations.timestamp));
 
-    return generationsResult
+  return generationsResult;
 }
 
 export async function fetchGenerationByID(generation_id: string) {
@@ -51,11 +52,14 @@ export async function updateGenerationRating(generation_id: string, rating: numb
     return
 }
 
-export async function deleteGeneration(generation_id: string, userId: string) {
-    const generation = await db
-        .update(generations)
-        .set({ deleted: 1 })
-        .where(and(eq(generations.userID, userId), eq(generations.generationID, generation_id)))
+export async function deleteGeneration(generationId: string) {
+  const { userId } = auth();
+  if (!userId) return;
 
-    return
+  await db
+    .update(generations)
+    .set({ deleted: 1 })
+    .where(and(eq(generations.userID, userId), eq(generations.generationID, generationId)));
+
+  return;
 }

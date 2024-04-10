@@ -12,17 +12,20 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import type React from "react";
 import { startTransition, useState } from "react";
 import { Button } from "../ui/button";
 
-function DeleteGenerationButton({ className, generationID }: { className?: string; generationID: string }) {
+function DeleteGenerationButton({
+  className,
+  deleteGenerationAction,
+}: { className?: string; deleteGenerationAction: () => void }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isEditing, setIsEditing] = useState(false);
 
+  const [isEditing, setIsEditing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   async function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -30,23 +33,13 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
 
     setIsEditing(true);
 
-    await fetch("/api/generations", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        generationID: generationID,
-      }),
-    });
+    await deleteGenerationAction();
 
     setIsEditing(false);
     setIsOpen(false);
 
     startTransition(() => {
-      if (pathname === "/dashboard") {
-        router.refresh();
-      } else {
+      if (pathname !== "/dashboard") {
         router.refresh();
         router.replace("/dashboard");
       }
@@ -62,7 +55,7 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
     >
       <AlertDialogTrigger asChild>
         <Button type="button" size={"sm"} className={cn(className)} disabled={isEditing} variant={"destructive"}>
-          {isEditing ? "Deleting" : <Trash2 size={16} />}
+          <Trash2 size={16} />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -76,7 +69,7 @@ function DeleteGenerationButton({ className, generationID }: { className?: strin
             onClick={handleClick}
             className="bg-red-600 text-slate-50 dark:bg-red-900 dark:hover:bg-red-900/90 hover:bg-red-600/90 dark:text-slate-50"
           >
-            {isEditing ? "Deleting" : "Delete"}
+            {isEditing ? <Loader2 className="animate-spin" /> : "Delete"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

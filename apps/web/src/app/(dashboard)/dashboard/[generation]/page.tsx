@@ -4,6 +4,7 @@ import GithubIcon from "@/components/icons/GithubIcon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { deleteGenerationAction } from "@/lib/actions";
 import { fetchGenerationByID } from "@/lib/db";
 import { ArrowLeftCircle } from "lucide-react";
 import Link from "next/link";
@@ -16,6 +17,8 @@ async function GenerationPage({ params }: { params: { generation: string } }) {
   const generation = await fetchGenerationByID(params.generation);
   const bullets = JSON.parse(generation.bullets ?? "[]");
   const date = new Date(generation.timestamp ?? Date.now());
+
+  const deleteGenerationWithId = deleteGenerationAction.bind(null, generation.generationID);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 bg-slate-200 px-4 pb-4 dark:bg-gray-900">
@@ -43,7 +46,10 @@ async function GenerationPage({ params }: { params: { generation: string } }) {
         </CardHeader>
         <div className="flex h-full grow items-center justify-center">
           <CardContent className="">
-            <DeleteGenerationButton generationID={params.generation} className="absolute top-0 right-0 m-4" />
+            <DeleteGenerationButton
+              deleteGenerationAction={deleteGenerationWithId}
+              className="absolute top-0 right-0 m-4"
+            />
             <div className="h-full w-full space-y-2 rounded-md bg-slate-100 p-2 text-lg dark:bg-gray-900 sm:p-10">
               <p className="my-1 font-bold">{generation.repoName?.split("/")[1]}</p>
               <Separator className="" />

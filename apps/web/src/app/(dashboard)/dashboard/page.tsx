@@ -3,14 +3,13 @@ import StartWritingButton from "@/components/buttons/StartWritingButton";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { deleteGenerationAction } from "@/lib/actions";
 import { fetchAllGenerationsForUser } from "@/lib/db";
 import { currentUser } from "@clerk/nextjs";
 import type { Generation } from "@sideproject-ai/db";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-
-export const revalidate = 0;
 
 function GenerationsCardLoading() {
   return (
@@ -28,6 +27,9 @@ function GenerationsCardLoading() {
 }
 function GenerationCard({ generation }: { generation: Generation }) {
   const date = new Date(generation.timestamp ?? Date.now());
+
+  const deleteGenerationWithId = deleteGenerationAction.bind(null, generation.generationID);
+  
   return (
     <Card className="flex w-full items-center justify-around bg-slate-100 p-4 py-2 sm:w-full dark:bg-gray-900">
       <Link className="flex justify-between gap-2" href={`/dashboard/${generation?.generationID}`}>
@@ -41,7 +43,7 @@ function GenerationCard({ generation }: { generation: Generation }) {
         <p>{date.toLocaleDateString()}</p>
       </div>
       <div className="flex items-center gap-1.5">
-        <DeleteGenerationButton generationID={generation.generationID ?? "0"} />
+        <DeleteGenerationButton deleteGenerationAction={deleteGenerationWithId} />
       </div>
     </Card>
   );
@@ -78,7 +80,6 @@ async function DashboardPage() {
             ) : (
               <p className="text-center text-slate-400">No generations yet!</p>
             )}
-            {/* </div> */}
           </CardContent>
           <CardFooter />
         </Card>
