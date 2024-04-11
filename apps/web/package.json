@@ -29,6 +29,7 @@
         "@radix-ui/react-toast": "^1.1.5",
         "@sideproject-ai/db": "workspace:^",
         "@sideproject-ai/id": "workspace:^",
+        "@tanstack/react-query": "^5.29.0",
         "@vercel/analytics": "^1.1.1",
         "@vercel/postgres": "^0.8.0",
         "class-variance-authority": "^0.6.1",
@@ -47,9 +48,11 @@
         "stripe": "^12.18.0",
         "tailwind-merge": "^1.14.0",
         "tailwindcss-animate": "^1.0.7",
-        "zod": "^3.22.4"
+        "zod": "^3.22.4",
+        "zustand": "^4.5.2"
     },
     "devDependencies": {
+        "@tanstack/react-query-devtools": "^5.29.0",
         "@types/node": "^20.10.6",
         "@types/react": "^18.2.47",
         "@types/react-dom": "^18.2.18",
