@@ -57,7 +57,7 @@ function RatingButton({ generationID }: { generationID: string }) {
             <ThumbsUp className={"text-slate-600 group-disabled:text-green-700"} />
           )}
         </div>
-        <p className="font-necto text-slate-600 tracking-tighter group-disabled:text-green-700">Like</p>
+        <p className="font-azeret text-slate-600 tracking-tighter group-disabled:text-green-700">Like</p>
       </Button>
       <Button
         className="group inline-flex items-center justify-center gap-2 rounded border-2 border-slate-300 bg-slate-200 p-1 active:animate-click disabled:animate-none disabled:border-red-400 hover:bg-slate-300 disabled:opacity-100"
@@ -71,7 +71,7 @@ function RatingButton({ generationID }: { generationID: string }) {
             <ThumbsDown className={"text-slate-600 group-disabled:text-red-700"} />
           )}
         </div>
-        <p className="font-necto text-slate-600 tracking-tighter group-disabled:text-red-700">Dislike</p>
+        <p className="font-azeret text-slate-600 tracking-tighter group-disabled:text-red-700">Dislike</p>
       </Button>
     </div>
   );

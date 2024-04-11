@@ -29,16 +29,16 @@ export const metadata: Metadata = {
   },
 };
 
-const necto = localFont({
+const azeret = localFont({
   src: "../fonts/AzeretMonoVF.woff2",
   display: "swap",
-  variable: "--font-necto",
+  variable: "--font-azeret",
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${necto.variable}`}>{children}</body>
+      <body className={`${azeret.variable}`}>{children}</body>
       <Analytics />
     </html>
   );

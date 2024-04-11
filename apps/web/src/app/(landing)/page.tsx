@@ -22,7 +22,9 @@ export default async function Home() {
     <>
       <div className="flex grow flex-col items-center justify-center gap-5 bg-center bg-contain bg-slate-200 p-12 sm:min-h-[450px] sm:pb-0">
         <div className="mx-auto w-52 rounded-full bg-gradient-to-r bg-white from-cyan-500/90 to-blue-500 p-0.5">
-          <p className="rounded-full bg-white text-center font-necto font-semibold tracking-tighter">Now in beta! 🎉</p>
+          <p className="rounded-full bg-white text-center font-azeret font-semibold tracking-tighter">
+            Now in beta! 🎉
+          </p>
         </div>
         <div className="bg-gradient-to-r from-cyan-500/90 to-blue-500 bg-clip-text sm:w-2/3">
           <span className="text-center font-extrabold text-4xl text-transparent sm:text-5xl">

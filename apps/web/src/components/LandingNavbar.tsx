@@ -8,7 +8,7 @@ function LandingNavbar() {
     <div className="rounded-b-md bg-slate-200 p-4">
       <div className="container mx-auto flex items-center justify-between">
         <div className="font-bold text-lg sm:text-xl">
-          <Link className="font-necto" href="/">
+          <Link className="font-azeret" href="/">
             sideprojectAI
           </Link>
         </div>

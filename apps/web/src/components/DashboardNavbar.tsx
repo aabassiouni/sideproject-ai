@@ -25,7 +25,7 @@ async function UserCredits() {
   const credits = await fetchUserCredits(user?.id);
 
   return (
-    <p className="font-necto text-muted-foreground">{credits === 1 ? `${credits} credit` : `${credits} credits`}</p>
+    <p className="font-azeret text-muted-foreground">{credits === 1 ? `${credits} credit` : `${credits} credits`}</p>
   );
 }
 
@@ -84,7 +84,7 @@ function DashboardNavbar() {
     <div className="relative z-10 bg-slate-200 px-2 py-4 shadow-md dark:bg-gray-900 sm:p-4">
       <div className="container mx-auto flex items-center justify-between">
         <div className="font-bold text-lg sm:text-xl">
-          <Link className="font-necto" href="/dashboard" replace>
+          <Link className="font-azeret" href="/dashboard" replace>
             sideprojectAI
           </Link>
           <Badge className="ml-2 bg-slate-800">Beta</Badge>

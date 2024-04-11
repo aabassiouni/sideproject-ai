@@ -72,9 +72,7 @@ module.exports = {
         click: "click 0.1s ease-out",
       },
       fontFamily: {
-        necto: ["var(--font-necto)"],
-        heming: ["var(--font-heming)"],
-        fairfax: ["var(--font-fairfax)"],
+        azeret: ["var(--font-azeret)"],
       },
     },
   },
