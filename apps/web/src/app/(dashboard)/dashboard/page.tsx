@@ -32,7 +32,7 @@ function GenerationCard({ generation }: { generation: Generation }) {
 
   return (
     <Card className="flex w-full items-center justify-around bg-slate-100 p-4 py-2 sm:w-full dark:bg-gray-900">
-      <Link className="flex justify-between gap-2" href={`/dashboard/${generation?.generationID}`}>
+      <Link prefetch={false} className="flex justify-between gap-2" href={`/dashboard/${generation?.generationID}`}>
         <div className="w-44 overflow-ellipsis">
           <p className="line-clamp-1 text-ellipsis font-medium text-sm tracking-tight sm:text-base">
             {generation?.repoName?.split("/")[1]}
