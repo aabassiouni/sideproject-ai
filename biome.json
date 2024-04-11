@@ -48,8 +48,8 @@
 	},
 	"json": {
 		"formatter": {
-			"indentWidth": 4,
-			"indentStyle": "tab"
+			"indentWidth": 2,
+			"indentStyle": "space"
 		}
 	}
 }

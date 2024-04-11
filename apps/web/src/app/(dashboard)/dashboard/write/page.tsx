@@ -8,7 +8,6 @@ import type { GithubRepoType } from "@/types";
 import clerk from "@clerk/clerk-sdk-node";
 import { currentUser } from "@clerk/nextjs";
 import { Octokit } from "octokit";
-import { Suspense } from "react";
 
 async function WritePage() {
   const user = await currentUser();
@@ -37,9 +36,7 @@ async function WritePage() {
         <ScrollArea className="h-44">
           <div className="space-y-3">
             {repos?.map((repo, idx) => (
-              <Suspense key={idx} fallback={<div>Loading...</div>}>
-                <RepoCard repo={repo} />
-              </Suspense>
+              <RepoCard key={idx} repo={repo} />
             ))}
           </div>
         </ScrollArea>
@@ -48,11 +45,7 @@ async function WritePage() {
         <ScrollArea className="sm:h-96">
           <div className="mr-3 space-y-3">
             {repos ? (
-              repos?.map((repo, idx) => (
-                <Suspense key={idx} fallback={<div>Loading...</div>}>
-                  <RepoCard repo={repo} />
-                </Suspense>
-              ))
+              repos?.map((repo, idx) => <RepoCard key={idx} repo={repo} />)
             ) : (
               <p className="my-auto text-center text-slate-400">
                 Connect your GitHub account to view your repositories

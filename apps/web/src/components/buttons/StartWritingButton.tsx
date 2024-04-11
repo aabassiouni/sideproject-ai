@@ -1,15 +1,14 @@
 "use client";
 
-import { useValues } from "../context/context";
+import { useRepoInfoActions } from "@/lib/store";
 import SparkleIcon from "../icons/SparkleIcon";
 import { Button } from "../ui/button";
 
 function StartWritingButton({ className }: { className?: string }) {
-  const { setSelectedRepo, setGeneration } = useValues();
+  const { setRepoInfo } = useRepoInfoActions();
 
   function handleClick() {
-    setSelectedRepo({ repo: "", url: "", owner: "", path: "" });
-    setGeneration(null);
+    setRepoInfo(null);
   }
 
   return (

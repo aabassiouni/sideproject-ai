@@ -1,24 +1,14 @@
 "use client";
 
+import { useGeneration } from "@/lib/store";
 import { motion } from "framer-motion";
 import CopyToClipboardButton from "./buttons/CopyToClipboardButton";
 import RatingButton from "./buttons/RatingButton";
-import { useValues } from "./context/context";
 import { Card, CardHeader } from "./ui/card";
 import { Separator } from "./ui/separator";
 
-//for testing
-// const generation = [
-//     'listenin',
-//     'Developed a full-stack music sharing application using React, Node.js, Express, MongoDB and Firebase to allow users to connect with friends and share their music listening history.',
-//     'Built responsive frontend using React with components like Tabs, Modals and Scroll Areas to provide a polished user experience across different devices.',
-//     'Employed Spotify Web API to retrieve user profiles, playback data and track metadata to power core application features and integrated third party APIs like Firebase.',
-//     'Implemented authentication with Spotify OAuth and generated custom authentication tokens with Firebase Admin SDK to securely store user accounts and profile data in NoSQL database.',
-//     'Wrote RESTful APIs with Express.js to handle CRUD operations for user and friend data along with real-time messaging capabilities with WebSockets.',
-// ]
-
 function Generation() {
-  const { generation } = useValues();
+  const generation = useGeneration();
   return generation ? (
     <Card className="m-4 mt-0 h-max border-2 border-sky-600 sm:min-w-0 dark:bg-gray-800">
       <div className={"flex h-full items-start justify-start rounded-lg p-2 sm:p-5"}>

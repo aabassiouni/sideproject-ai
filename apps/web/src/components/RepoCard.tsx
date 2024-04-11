@@ -11,7 +11,7 @@ export default function RepoCard({ repo }: { repo: GithubRepoType[0] }) {
           {repo.full_name}
         </p>
       </div>
-      <ImportRepoButton owner={repo.owner} name={repo.name} url={repo.html_url} />
+      <ImportRepoButton owner={repo.owner.login} name={repo.name} />
     </div>
   );
 }

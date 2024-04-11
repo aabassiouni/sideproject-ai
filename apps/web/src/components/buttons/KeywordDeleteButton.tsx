@@ -1,15 +1,15 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useValues } from "../context/context";
+// import { useValues } from "../context/context";
 
 function KeywordDeleteButton({ currKeyword }: { currKeyword: string }) {
-  const { keywords, setKeywords } = useValues();
+  // const { keywords, setKeywords } = useValues();
   console.log("curr keyword is ", currKeyword);
 
   function handleClick() {
     console.log("delete button clicked");
-    setKeywords(keywords.filter((keyword) => keyword !== currKeyword));
+    // setKeywords(keywords.filter((keyword) => keyword !== currKeyword));
   }
 
   return (

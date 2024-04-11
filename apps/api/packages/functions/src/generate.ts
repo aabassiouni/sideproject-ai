@@ -1,18 +1,18 @@
 import { Clerk } from "@clerk/clerk-sdk-node";
-import { APIGatewayProxyHandlerV2WithJWTAuthorizer } from "aws-lambda";
-import { GithubRepoLoader } from "langchain/document_loaders/web/github";
-import { RetrievalQAChain, loadQAStuffChain } from "langchain/chains";
-import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { Octokit } from "octokit";
-import { ChatOpenAI } from "langchain/chat_models/openai";
-import { StructuredOutputParser } from "langchain/output_parsers";
-import { z } from "zod";
-import { MemoryVectorStore } from "langchain/vectorstores/memory";
-import { PromptTemplate } from "langchain/prompts";
-import type { Document } from "langchain/document";
 import { newId } from "@sideproject-ai/id";
-import { Config } from "sst/node/config";
+import { APIGatewayProxyHandlerV2WithJWTAuthorizer } from "aws-lambda";
+import { RetrievalQAChain, loadQAStuffChain } from "langchain/chains";
+import { ChatOpenAI } from "langchain/chat_models/openai";
 import { ChainValues } from "langchain/dist/schema";
+import type { Document } from "langchain/document";
+import { GithubRepoLoader } from "langchain/document_loaders/web/github";
+import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { StructuredOutputParser } from "langchain/output_parsers";
+import { PromptTemplate } from "langchain/prompts";
+import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { Octokit } from "octokit";
+import { Config } from "sst/node/config";
+import { z } from "zod";
 import { insertError, insertGeneration } from "../../core/db";
 import { notifyDiscord } from "../../core/discord";
 
@@ -244,9 +244,7 @@ const githubLoaderIgnorePaths = [
   "*.d",
   "*.atsuo",
 ];
-export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
-  event
-) => {
+export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) => {
   const clerkClient = Clerk({
     secretKey: Config.CLERK_SECRET_KEY,
   });
@@ -258,13 +256,12 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
       body: JSON.stringify({ message: "No body provided" }),
     };
   }
-  const { repo, owner, url, keywords } = JSON.parse(event.body);
+  const { repo, owner, keywords } = JSON.parse(event.body);
   const userId = event.requestContext.authorizer.jwt.claims.sub as string;
 
   console.log({
     repo,
     owner,
-    url,
     keywords,
   });
 
@@ -277,10 +274,7 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
     openAIApiKey: Config.OPENAI_API_KEY,
   });
 
-  const githubToken = await clerkClient.users.getUserOauthAccessToken(
-    userId,
-    "oauth_github"
-  );
+  const githubToken = await clerkClient.users.getUserOauthAccessToken(userId, "oauth_github");
 
   console.log("githubToken", githubToken);
 
@@ -297,7 +291,7 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
     repo: repo,
   });
 
-  const loader = new GithubRepoLoader(url.trim(), {
+  const loader = new GithubRepoLoader(repoResponse.html_url, {
     ignorePaths: githubLoaderIgnorePaths,
     accessToken: githubToken[0]?.token,
     branch: repoResponse.default_branch,
@@ -310,12 +304,7 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
 
   const processedDocs = docs
     .map((doc) => {
-      console.log(
-        "length of doc",
-        doc.metadata.source,
-        "is",
-        doc.pageContent?.length
-      );
+      console.log("length of doc", doc.metadata.source, "is", doc.pageContent?.length);
       if (doc.pageContent === undefined) {
         console.log("Removing doc:", doc.metadata.source);
         return null;
@@ -338,19 +327,13 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
       processedDocs,
       new OpenAIEmbeddings({
         openAIApiKey: Config.OPENAI_API_KEY,
-      })
+      }),
     );
   } catch (error) {
     console.log("Error embedding documents:", error);
     console.log("error message:", error?.response?.data);
     const errorID = newId("error");
-    await insertError(
-      errorID,
-      userId,
-      `${owner}/${repo}`,
-      error,
-      "embeddings"
-    );
+    await insertError(errorID, userId, `${owner}/${repo}`, error, "embeddings");
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -374,7 +357,7 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
       thirdBullet: z.string().describe("the third resume bullet point"),
       fourthBullet: z.string().describe("the fourth resume bullet point"),
       fifthBullet: z.string().describe("the fifth resume bullet point"),
-    })
+    }),
   );
 
   const formatInstructions = parser.getFormatInstructions();
@@ -386,22 +369,14 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
         
         ${
           keywords.length > 0
-            ? `Include the following keywords to include in your statements: ${keywords.join(
-                ", "
-              )}.`
+            ? `Include the following keywords to include in your statements: ${keywords.join(", ")}.`
             : ""
         }
 
         ${
           repoResponse.stargazers_count || repoResponse.watchers_count
-            ? `Metrics: ${
-                repoResponse.stargazers_count
-                  ? `${repoResponse.stargazers_count} Github Stars`
-                  : ""
-              }, ${
-                repoResponse.watchers_count
-                  ? `${repoResponse.watchers_count} watchers on github`
-                  : ""
+            ? `Metrics: ${repoResponse.stargazers_count ? `${repoResponse.stargazers_count} Github Stars` : ""}, ${
+                repoResponse.watchers_count ? `${repoResponse.watchers_count} watchers on github` : ""
               }`
             : ""
         }
@@ -427,13 +402,7 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
     console.log("error message:", error?.response?.data);
 
     const errorID = newId("error");
-    await insertError(
-      errorID,
-      userId,
-      `${owner}/${repo}`,
-      error,
-      "completion"
-    );
+    await insertError(errorID, userId, `${owner}/${repo}`, error, "completion");
 
     return {
       statusCode: 500,
@@ -448,19 +417,9 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
 
   const { text } = res;
 
-  if (
-    text.includes(
-      "I do not have enough information to generate 5 bullet points"
-    )
-  ) {
+  if (text.includes("I do not have enough information to generate 5 bullet points")) {
     const errorID = newId("error");
-    await insertError(
-      errorID,
-      userId,
-      `${owner}/${repo}`,
-      "not enough information",
-      "no_code"
-    );
+    await insertError(errorID, userId, `${owner}/${repo}`, "not enough information", "no_code");
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "not enough information" }),
@@ -470,18 +429,13 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
   const filteredText = text.replace(/.*?({.*?}).*/s, "$1");
 
   let responseObj;
+  
   try {
     responseObj = await parser.parse(filteredText);
   } catch (error) {
     console.log("Error parsing response:", error);
     const errorID = newId("error");
-    await insertError(
-      errorID,
-      userId,
-      `${owner}/${repo}`,
-      error,
-      "parsing"
-    );
+    await insertError(errorID, userId, `${owner}/${repo}`, error, "parsing");
     return {
       error: "error during generation",
       errorID: errorID,
@@ -489,9 +443,7 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (
   }
   console.log("the parsed object is", responseObj);
 
-  const bullets = Object.values(responseObj).map((bullet: any) =>
-    bullet.replace(/\n/g, "")
-  );
+  const bullets = Object.values(responseObj).map((bullet: any) => bullet.replace(/\n/g, ""));
 
   console.log(bullets);
 

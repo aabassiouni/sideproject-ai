@@ -1,22 +1,35 @@
 "use client";
 
+import { useRepoInfoMutation } from "@/lib/hooks";
+import { useRepoInfoActions } from "@/lib/store";
 import { extractOwnerAndRepoAndPath } from "@/lib/utils";
 import { useState } from "react";
-import { useValues } from "../context/context";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+
 function SubmitLinkButton() {
   const [link, setLink] = useState<string>("");
-  const { setSelectedRepo } = useValues();
+  const { setRepoInfo } = useRepoInfoActions();
+
+  const { mutate } = useRepoInfoMutation({
+    onSuccess: (data) => {
+      setRepoInfo({
+        name: data.name,
+        owner: data.owner,
+        size: data.numFiles,
+        starCount: data.starCount,
+        numFiles: data.numFiles,
+      });
+    },
+  });
 
   function handleChange(event: any) {
     setLink(event.target.value);
   }
 
   function handleClick() {
-    const { owner, repo, path } = extractOwnerAndRepoAndPath(link.trim());
-
-    setSelectedRepo({ owner, repo, path, url: link.trim() });
+    const { owner, repo } = extractOwnerAndRepoAndPath(link.trim());
+    mutate({ repo, owner });
   }
 
   return (

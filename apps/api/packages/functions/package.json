@@ -14,9 +14,10 @@
   },
   "dependencies": {
     "@clerk/clerk-sdk-node": "^4.13.4",
+    "@sideproject-ai/id": "workspace:^",
+    "ignore": "^5.3.1",
     "langchain": "^0.0.136",
     "octokit": "^2.1.0",
-    "zod": "^3.22.4",
-    "@sideproject-ai/id": "workspace:^"
+    "zod": "^3.22.4"
   }
 }

@@ -1,16 +1,29 @@
 "use client";
 
-import type { GithubOwnerType } from "@/types";
+import { useRepoInfoMutation } from "@/lib/hooks";
+import { useRepoInfoActions } from "@/lib/store";
 import { ArrowRight } from "lucide-react";
-import { useValues } from "../context/context";
 import { Button } from "../ui/button";
-function ImportRepoButton({ owner, name, url }: { owner: GithubOwnerType; name: string; url: string }) {
-  const { setSelectedRepo } = useValues();
+
+function ImportRepoButton({ owner, name }: { owner: string; name: string }) {
+  const { setRepoInfo } = useRepoInfoActions();
+
+  const { mutate } = useRepoInfoMutation({
+    onSuccess: (data) => {
+      setRepoInfo({
+        name: data.name,
+        owner: data.owner,
+        size: data.numFiles,
+        starCount: data.starCount,
+        numFiles: data.numFiles,
+      });
+    },
+  });
 
   function handleClick() {
-    console.log(`Importing Repo: ${owner}/${name}`);
-    setSelectedRepo({ owner: owner.login, repo: name, path: "", url: url });
+    mutate({ repo: name, owner: owner });
   }
+
   return (
     <Button onClick={handleClick} size="sm" className="">
       <ArrowRight size={16} />

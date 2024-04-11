@@ -1,43 +1,17 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useRepoInfo } from "@/lib/store";
+import { useIsMutating } from "@tanstack/react-query";
 import GenerateButton from "./buttons/GenerateButton";
-import { useValues } from "./context/context";
 import GithubIcon from "./icons/GithubIcon";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
 
 function RepoInfo() {
-  const { selectedRepo } = useValues();
-  const [title, setTitle] = useState<string>("");
-  const [size, setSize] = useState<number>(0);
-  const [starCount, setStarCount] = useState<number>(0);
-  const [numFiles, setNumFiles] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      const response = await fetch("/api/repo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          repo: selectedRepo.repo,
-          owner: selectedRepo.owner,
-        }),
-      });
-      const data = await response.json();
-      setTitle(data.name);
-      setSize(data.size);
-      setStarCount(data.stargazers_count);
-      setNumFiles(data.numFiles);
-      setIsLoading(false);
-    }
-    if (selectedRepo.repo) {
-      fetchData();
-    }
-  }, [selectedRepo]);
+  const { repoInfo } = useRepoInfo();
+  const isLoading = useIsMutating({
+    mutationKey: ["repoInfo"],
+  });
 
   return (
     <Card className="w-80 sm:h-full dark:bg-gray-800">
@@ -52,17 +26,17 @@ function RepoInfo() {
         ) : (
           <></>
         )}
-        {selectedRepo.repo && !isLoading ? (
+        {repoInfo && !isLoading ? (
           <>
             {/* add basis back when keywords is added*/}
             <div className="basi-1/3">
               <CardHeader>
                 <CardTitle className="text-center text-lg sm:text-left">
                   <GithubIcon className="mr-2 inline-block text-center sm:text-left" size={16} />
-                  {title ?? "N/A"}
+                  {`${repoInfo?.owner}/${repoInfo.name}` ?? "N/A"}
                 </CardTitle>
                 <CardDescription className="mx-auto text-center sm:text-left">
-                  {numFiles} files, {size}MB, {starCount} stars{" "}
+                  {repoInfo?.numFiles} files, {repoInfo?.size}MB, {repoInfo?.starCount} stars{" "}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
