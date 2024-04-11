@@ -8,11 +8,7 @@ import { deleteGenerationAction } from "@/lib/actions";
 import { fetchGenerationByID } from "@/lib/db";
 import { ArrowLeftCircle } from "lucide-react";
 import Link from "next/link";
-import { Suspense } from "react";
 
-function Loading() {
-  return <p>Loading...</p>;
-}
 async function GenerationPage({ params }: { params: { generation: string } }) {
   const generation = await fetchGenerationByID(params.generation);
   const bullets = JSON.parse(generation.bullets ?? "[]");
@@ -31,12 +27,10 @@ async function GenerationPage({ params }: { params: { generation: string } }) {
         <Card className="flex h-24 w-full flex-col p-2 sm:w-[550px] dark:bg-gray-800">
           <p className="self-end p-1 text-muted-foreground text-sm leading-none">{date.toLocaleDateString()}</p>
           <CardContent className="flex h-full items-center gap-4 self-center">
-            <Suspense fallback={<Loading />}>
-              <p className="inline-flex items-center justify-center font-semibold text-base sm:text-lg">
-                <GithubIcon className="mr-2 inline-block" />
-                {generation?.repoName}
-              </p>
-            </Suspense>
+            <p className="inline-flex items-center justify-center font-semibold text-base sm:text-lg">
+              <GithubIcon className="mr-2 inline-block" />
+              {generation?.repoName}
+            </p>
           </CardContent>
         </Card>
       </div>
