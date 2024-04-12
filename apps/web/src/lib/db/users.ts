@@ -12,6 +12,17 @@ export async function insertUser(userId: string, email: string, credits: number)
   return;
 }
 
+export async function fetchUser(userId: string) {
+  const user = await db
+    .select({
+      userId: users.userID,
+    })
+    .from(users)
+    .where(eq(users.userID, userId));
+
+  return user[0];
+}
+
 export async function decreaseUserCredits(userId: string) {
   const user = await db.update(users).set({ credits: sql`credits - 1` }).where(eq(users.userID, userId));
 
