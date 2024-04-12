@@ -4,8 +4,8 @@ import Link from "next/link";
 
 function SuccessPage() {
   return (
-    <div className="flex w-full flex-col overflow-y-scroll bg-slate-200 dark:bg-gray-900">
-      <Card className="mx-auto my-4 w-full max-w-lg flex-1">
+    <div className="flex min-h-screen w-full flex-col overflow-y-scroll bg-slate-200 dark:bg-gray-900">
+      <Card className="mx-auto my-4 w-full max-w-lg">
         <div className="absolute left-1/2">{/* {render && <Confetti stageWidth={1000} />} */}</div>
         <CardHeader>
           <CardTitle className="text-center text-2xl">🎉 Your credits have been added! 🎉</CardTitle>
