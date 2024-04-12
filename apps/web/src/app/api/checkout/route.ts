@@ -1,6 +1,6 @@
 import { stripe } from "@/lib/stripe";
 import { auth } from "@clerk/nextjs";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   console.log("/////////////// creating checkout session ///////////////");
@@ -8,11 +8,8 @@ export async function POST(request: NextRequest) {
 
   try {
     const origin = request.headers.get("origin");
-    // const body = await request.body
-    // console.log('body', body)
     const formData = await request.formData();
     const item = formData.get("item") as string;
-    // Create Checkout Sessions from body params.
 
     if (item !== null) {
       const session = await stripe.checkout.sessions.create({
@@ -26,7 +23,7 @@ export async function POST(request: NextRequest) {
         metadata: {
           userId,
         },
-        success_url: `${origin}/dashboard`,
+        success_url: `${origin}/dashboard/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/dashboard`,
       });
 
