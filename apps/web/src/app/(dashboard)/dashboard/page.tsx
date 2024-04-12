@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { deleteGenerationAction } from "@/lib/actions";
-import { fetchAllGenerationsForUser } from "@/lib/db";
+import { fetchAllGenerationsForUser, fetchUserCredits } from "@/lib/db";
 import { currentUser } from "@clerk/nextjs";
 import type { Generation } from "@sideproject-ai/db";
 import Link from "next/link";
@@ -48,6 +48,16 @@ function GenerationCard({ generation }: { generation: Generation }) {
     </Card>
   );
 }
+async function UserCredits() {
+  const user = await currentUser();
+  if (!user) return;
+  const credits = await fetchUserCredits(user?.id);
+
+  return (
+    <p className="font-azeret text-muted-foreground">{credits === 1 ? `${credits} credit` : `${credits} credits`}</p>
+  );
+}
+
 async function DashboardPage() {
   const user = await currentUser();
 
@@ -67,6 +77,9 @@ async function DashboardPage() {
         <Card className="mt-10 w-full sm:w-[650px] dark:bg-gray-800">
           <CardHeader className="items-center justify-between sm:flex-row">
             <CardTitle className="p-2 sm:p-0">Generations</CardTitle>
+            <Suspense fallback={<Skeleton className="h-4 w-20" />}>
+              <UserCredits />
+            </Suspense>
             <Link href="/dashboard/write">
               <StartWritingButton className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white dark:bg-gradient-to-r dark:from-blue-700 dark:to-indigo-800 dark:text-white" />
             </Link>

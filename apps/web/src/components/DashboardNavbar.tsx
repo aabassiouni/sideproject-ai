@@ -13,21 +13,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { fetchUserCredits } from "@/lib/db";
 import { currentUser } from "@clerk/nextjs";
 import { SignOutButton } from "@clerk/nextjs";
-import { LogOut, User } from "lucide-react";
+import { LogOut, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Avatar, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
-
-async function UserCredits() {
-  const user = await currentUser();
-  if (!user) return;
-  const credits = await fetchUserCredits(user?.id);
-
-  return (
-    <p className="font-azeret text-muted-foreground">{credits === 1 ? `${credits} credit` : `${credits} credits`}</p>
-  );
-}
 
 async function UserButton() {
   const user = await currentUser();
@@ -35,18 +25,14 @@ async function UserButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        {/* <div> */}
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Suspense fallback={<Skeleton className="h-10 w-10 rounded-full" />}>
-            <Avatar>
-              <AvatarImage src={user?.imageUrl} />
-              {/* <AvatarFallback>
-																{user?.firstName && user.lastName ? user?.firstName[0] + user?.lastName[0] : ''}
-														</AvatarFallback> */}
-            </Avatar>
-          </Suspense>
+          <Avatar>
+            <AvatarImage src={user?.imageUrl} />
+            <AvatarFallback>
+              <Skeleton className="h-10 w-10 rounded-full" />
+            </AvatarFallback>
+          </Avatar>
         </Button>
-        {/* </div> */}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mt-2 w-56" align="center" forceMount>
         <DropdownMenuLabel className="font-normal">
@@ -63,10 +49,15 @@ async function UserButton() {
               Profile
             </DropdownMenuItem>
           </Link>
+          <Link href={"/dashboard/purchase"}>
+            <DropdownMenuItem>
+              <ShoppingCart className="mr-2 h-4 w-4" />
+              Buy Credits
+            </DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {/* <LogoutButton /> */}
           <SignOutButton>
             <DropdownMenuItem>
               <LogOut className="mr-2 h-4 w-4" />
@@ -91,9 +82,6 @@ function DashboardNavbar() {
         </div>
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          {/* <Suspense fallback={<Skeleton className="h-4 w-20" />}>
-									<UserCredits />
-							</Suspense> */}
           <Suspense fallback={<Skeleton className="h-10 w-10 rounded-full" />}>
             <UserButton />
           </Suspense>
