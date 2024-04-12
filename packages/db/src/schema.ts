@@ -2,7 +2,7 @@ import { pgTable, smallint, text, timestamp, varchar } from "drizzle-orm/pg-core
 
 export const errors = pgTable("errors", {
   errorID: varchar("error_id", { length: 256 }).notNull().primaryKey(),
-  userID: varchar("clerk_user_id", { length: 255 }).notNull(),
+  userID: varchar("clerk_user_id", { length: 255 }).references(() => users.userID),
   repoName: varchar("repo_name", { length: 255 }).notNull(),
   timestamp: timestamp("timestamp", { mode: "string" }).defaultNow(),
   errorMessage: text("error_message"),
@@ -11,7 +11,7 @@ export const errors = pgTable("errors", {
 
 export const generations = pgTable("generations", {
   generationID: varchar("generation_id", { length: 256 }).notNull().primaryKey(),
-  userID: varchar("user_id", { length: 255 }),
+  userID: varchar("user_id", { length: 255 }).references(() => users.userID),
   repoName: varchar("repo_name", { length: 255 }),
   generatedText: text("generated_text"),
   bullets: text("bullets"),
@@ -22,9 +22,7 @@ export const generations = pgTable("generations", {
 
 export const users = pgTable("users", {
   userID: varchar("user_id", { length: 255 }).notNull().primaryKey(),
-  createdOn: timestamp("created_on", { mode: "string" }),
-  lastLogin: timestamp("last_login", { mode: "string" }),
+  createdOn: timestamp("created_on", { mode: "string" }).defaultNow(),
   credits: smallint("credits"),
-  email: varchar("email", { length: 320 }),
   referral: varchar("referral", { length: 255 }),
 });

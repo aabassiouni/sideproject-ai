@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
           isOnboarded: false,
         },
       });
-      await insertUser(event.data.id, event.data.email_addresses[0].email_address, 3);
+      await insertUser(event.data.id, 3);
       await notifyDiscord({
         type: "user_created",
         data: {

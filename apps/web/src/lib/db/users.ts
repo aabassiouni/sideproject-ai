@@ -2,10 +2,9 @@ import { users } from "@sideproject-ai/db";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { db } from "./db";
 
-export async function insertUser(userId: string, email: string, credits: number) {
+export async function insertUser(userId: string, credits: number) {
   const user = await db.insert(users).values({
     userID: userId,
-    email: email,
     credits: credits,
   });
 
