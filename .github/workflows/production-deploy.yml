@@ -29,15 +29,15 @@ jobs:
           role-to-assume: arn:aws:iam::391273453287:role/GitHub
           role-duration-seconds: 1200 #adjust as needed for your build time
           aws-region: us-east-1
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: latest
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "pnpm"
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: latest
       - name: Install dependencies
         run: pnpm install
       - name: Deploy API
