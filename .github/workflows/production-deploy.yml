@@ -17,10 +17,10 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: preview
+    environment: Production
     env:
-      AWS_CUSTOM_DOMAIN: ${{ vars.AWS_CUSTOM_DOMAIN }}
-      AWS_CERTIFICATE_ARN: ${{ vars.AWS_CERTIFICATE_ARN }}
+      AWS_CUSTOM_DOMAIN: ${{ secrets.AWS_CUSTOM_DOMAIN }}
+      AWS_CERTIFICATE_ARN: ${{ secrets.AWS_CERTIFICATE_ARN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
