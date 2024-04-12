@@ -25,20 +25,16 @@ export async function POST(request: Request) {
       console.log("/////////////// receiving webhook ///////////////");
       console.log("## checkout.session.completed ##");
 
-      const line_items = (await stripe.checkout.sessions.listLineItems(
-        //@ts-ignore
-        event.data.object.id,
-      )) as Stripe.ApiList<Stripe.LineItem>;
-      console.log(line_items.data[0].price?.product);
+      const eventObject = event.data.object as Stripe.Checkout.Session;
+      const metadata = eventObject.metadata;
 
-      if (line_items.data[0].price?.product === process.env.THREE_CREDITS) {
+      if (metadata?.pid === process.env.THREE_CREDITS) {
         console.log("## Adding 3 Credits ##");
-        //@ts-ignore
-        await increaseUserCredits(event.data.object.metadata?.userId);
-      } else if (line_items.data[0].price?.product === process.env.ONE_CREDIT) {
+        await increaseUserCredits(metadata?.userId!);
+
+      } else if (metadata?.pid === process.env.ONE_CREDIT) {
         console.log("## Adding 1 Credit ##");
-        //@ts-ignore
-        await increaseUserCredits(event.data.object.metadata?.userId);
+        await increaseUserCredits(metadata?.userId!);
       }
       break;
     }
