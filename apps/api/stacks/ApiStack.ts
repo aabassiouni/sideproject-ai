@@ -11,29 +11,18 @@ export function ApiStack({ app, stack }: StackContext) {
     (!process.env.AWS_CUSTOM_DOMAIN || !process.env.AWS_CERTIFICATE_ARN) &&
     (app.stage === "prod" || app.stage === "preview")
   ) {
-    throw new Error(
-      "Please set the AWS_CUSTOM_DOMAIN and AWS_CERTIFICATE_ARN environment variables."
-    );
+    throw new Error("Please set the AWS_CUSTOM_DOMAIN and AWS_CERTIFICATE_ARN environment variables.");
   }
 
-  const customDomain =
-    app.stage === "prod"
-      ? "api.usesideprojectai.com"
-      : app.stage === "preview"
-      ? "preview-api.usesideprojectai.com"
-      : undefined;
+  const customDomain = process.env.AWS_CUSTOM_DOMAIN;
+  const certificateArn = process.env.AWS_CERTIFICATE_ARN;
 
   const api = new Api(stack, "Api", {
     defaults: {
       authorizer: app.stage === "prod" ? "clerkProd" : "clerkPreview",
       function: {
         timeout: 30,
-        bind: [
-          OPENAI_API_KEY,
-          CLERK_SECRET_KEY,
-          DATABASE_URL,
-          DISCORD_WEBHOOK_URL,
-        ],
+        bind: [OPENAI_API_KEY, CLERK_SECRET_KEY, DATABASE_URL, DISCORD_WEBHOOK_URL],
       },
     },
     customDomain:
@@ -42,11 +31,7 @@ export function ApiStack({ app, stack }: StackContext) {
             domainName: customDomain,
             isExternalDomain: true,
             cdk: {
-              certificate: Certificate.fromCertificateArn(
-                stack,
-                "preview-api-certificate",
-                process.env.AWS_CERTIFICATE_ARN ?? ""
-              ),
+              certificate: Certificate.fromCertificateArn(stack, `${app.stage}-api-certificate`, certificateArn!),
             },
           }
         : undefined,
