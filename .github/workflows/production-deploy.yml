@@ -4,6 +4,7 @@ on:
       - main
     paths:
       - "apps/api/**"
+  workflow_dispatch:
 
 # Concurrency group name ensures concurrent workflow runs wait for any in-progress job to finish
 concurrency:
