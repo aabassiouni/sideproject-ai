@@ -11,7 +11,7 @@ import step1Img from "/public/step1.png";
 import step2Img from "/public/step2.png";
 import step3Img from "/public/step3.png";
 
-export const runtime = "edge";
+export const runtime = process.env.NODE_ENV === "development" ? "nodejs" : "edge";
 
 export const metadata = {
   title: "SideprojectAI",
