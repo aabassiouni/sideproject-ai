@@ -1,9 +1,9 @@
 import { Clerk } from "@clerk/clerk-sdk-node";
 import { newId } from "@sideproject-ai/id";
-import { APIGatewayProxyHandlerV2WithJWTAuthorizer } from "aws-lambda";
+import type { APIGatewayProxyHandlerV2WithJWTAuthorizer } from "aws-lambda";
 import { RetrievalQAChain, loadQAStuffChain } from "langchain/chains";
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import { ChainValues } from "langchain/dist/schema";
+import type { ChainValues } from "langchain/dist/schema";
 import type { Document } from "langchain/document";
 import { GithubRepoLoader } from "langchain/document_loaders/web/github";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
@@ -13,7 +13,7 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { Octokit } from "octokit";
 import { Config } from "sst/node/config";
 import { z } from "zod";
-import { insertError, insertGeneration } from "../../core/db";
+import { decreaseUserCredits, insertError, insertGeneration } from "../../core/db";
 import { notifyDiscord } from "../../core/discord";
 
 const githubLoaderIgnorePaths = [
@@ -248,7 +248,6 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
   const clerkClient = Clerk({
     secretKey: Config.CLERK_SECRET_KEY,
   });
-  console.log("req body is ", event.body);
 
   if (!event.body) {
     return {
@@ -256,14 +255,9 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
       body: JSON.stringify({ message: "No body provided" }),
     };
   }
+
   const { repo, owner, keywords } = JSON.parse(event.body);
   const userId = event.requestContext.authorizer.jwt.claims.sub as string;
-
-  console.log({
-    repo,
-    owner,
-    keywords,
-  });
 
   const generationID = newId("generation");
 
@@ -276,15 +270,9 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
 
   const githubToken = await clerkClient.users.getUserOauthAccessToken(userId, "oauth_github");
 
-  console.log("githubToken", githubToken);
-
   const octokit = new Octokit({
     auth: githubToken[0]?.token,
   });
-
-  console.log("## Fetching Repo Info ##");
-  console.log("owner", owner);
-  console.log("repo", repo);
 
   const { data: repoResponse } = await octokit.rest.repos.get({
     owner: owner,
@@ -299,19 +287,13 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
 
   const docs = await loader.load();
 
-  console.log("## Analyzing Docs ##");
-  console.log(docs.map((d) => d.metadata));
-
   const processedDocs = docs
     .map((doc) => {
-      console.log("length of doc", doc.metadata.source, "is", doc.pageContent?.length);
       if (doc.pageContent === undefined) {
-        console.log("Removing doc:", doc.metadata.source);
         return null;
       }
 
       if (doc.pageContent.length > 15000) {
-        console.log("Trimming doc:", doc.metadata.source);
         doc.pageContent = doc.pageContent.substring(0, 15000);
       }
 
@@ -319,29 +301,12 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
     })
     .filter((doc) => doc !== null) as Document<Record<string, any>>[];
 
-  console.log("## Embedding Documents ##");
-
-  let vectorStore: MemoryVectorStore;
-  try {
-    vectorStore = await MemoryVectorStore.fromDocuments(
-      processedDocs,
-      new OpenAIEmbeddings({
-        openAIApiKey: Config.OPENAI_API_KEY,
-      }),
-    );
-  } catch (error) {
-    console.log("Error embedding documents:", error);
-    console.log("error message:", error?.response?.data);
-    const errorID = newId("error");
-    await insertError(errorID, userId, `${owner}/${repo}`, error, "embeddings");
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: "error during generation",
-        errorID: errorID,
-      }),
-    };
-  }
+  const vectorStore = await MemoryVectorStore.fromDocuments(
+    processedDocs,
+    new OpenAIEmbeddings({
+      openAIApiKey: Config.OPENAI_API_KEY,
+    }),
+  );
 
   const chain = new RetrievalQAChain({
     retriever: vectorStore.asRetriever(100),
@@ -350,28 +315,26 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
 
   console.log("## calling chain ##");
 
-  const parser = StructuredOutputParser.fromZodSchema(
-    z.object({
-      firstBullet: z.string().describe("the first resume bullet point"),
-      secondBullet: z.string().describe("the second resume bullet point"),
-      thirdBullet: z.string().describe("the third resume bullet point"),
-      fourthBullet: z.string().describe("the fourth resume bullet point"),
-      fifthBullet: z.string().describe("the fifth resume bullet point"),
-    }),
-  );
+  const ResponseSchema = z.object({
+    firstBullet: z.string().describe("the first resume bullet point"),
+    secondBullet: z.string().describe("the second resume bullet point"),
+    thirdBullet: z.string().describe("the third resume bullet point"),
+    fourthBullet: z.string().describe("the fourth resume bullet point"),
+    fifthBullet: z.string().describe("the fifth resume bullet point"),
+  });
+
+  type Response = z.infer<typeof ResponseSchema>;
+
+  const parser = StructuredOutputParser.fromZodSchema(ResponseSchema);
 
   const formatInstructions = parser.getFormatInstructions();
 
   const prompt = new PromptTemplate({
-    template: `You are an expert resume writer for software engineers. I want you to understand the code then generate 5 resume bullet points for this codebase. Follow the STAR (Situation, Task, Action, Result) method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Do not include the names of the providers of services. For example, if planetscale is a company that provides a hosted MySQL database, then you should state MySQL and not Planetscale. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. The first bullet point should be a description of the project at a high level. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code. The bullet points should reflect the skills of the person who wrote the code and convey that to anyone reading them. If you do not have enough info to generate 5 bullet points, answer simply with the phrase "I do not have enough information to generate 5 bullet points" only. \n\n
+    template: `You are an expert resume writer for software engineers. I am going to give you the code for a software engineers project on github and I want you to create 5 resume bullet points to show their contributions on their resume. Follow the STAR (Situation, Task, Action, Result) method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Do not include the names of the providers of services. For example, if planetscale is a company that provides a hosted MySQL database, then you should state MySQL and not Planetscale. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. The first bullet point should be a description of the project at a high level. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code. The bullet points should reflect the skills of the person who wrote the code and convey that to anyone reading them. If you do not have enough info to generate 5 bullet points, answer simply with the phrase "I do not have enough information to generate 5 bullet points" only. \n\n
     
-    \n repository name: {repo} 
+        \n repository name: {repo} 
         
-        ${
-          keywords.length > 0
-            ? `Include the following keywords to include in your statements: ${keywords.join(", ")}.`
-            : ""
-        }
+        ${keywords.length > 0 ? `Optimize your bullet points for the following keywords: ${keywords.join(", ")}.` : ""}
 
         ${
           repoResponse.stargazers_count || repoResponse.watchers_count
@@ -413,8 +376,6 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
     };
   }
 
-  console.log("## splitting the text into bullets ##");
-
   const { text } = res;
 
   if (text.includes("I do not have enough information to generate 5 bullet points")) {
@@ -428,11 +389,11 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
 
   const filteredText = text.replace(/.*?({.*?}).*/s, "$1");
 
-  let responseObj;
-  
+  let responseObj: Response;
+
   try {
     responseObj = await parser.parse(filteredText);
-  } catch (error) {
+  } catch (error: any) {
     console.log("Error parsing response:", error);
     const errorID = newId("error");
     await insertError(errorID, userId, `${owner}/${repo}`, error, "parsing");
@@ -441,13 +402,9 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
       errorID: errorID,
     };
   }
-  console.log("the parsed object is", responseObj);
 
   const bullets = Object.values(responseObj).map((bullet: any) => bullet.replace(/\n/g, ""));
 
-  console.log(bullets);
-
-  console.log("Saving to db");
   await insertGeneration({
     generation_id: generationID,
     userID: userId,
@@ -456,7 +413,8 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
     text,
     bullets,
   });
-  console.log("saved to db:", generationID);
+
+  await decreaseUserCredits(userId);
 
   notifyDiscord({
     type: "generation_created",
