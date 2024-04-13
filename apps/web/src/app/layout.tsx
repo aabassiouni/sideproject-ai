@@ -11,13 +11,6 @@ export const metadata: Metadata = {
     title: "SideprojectAI",
     description: "AI Generated Resume Bullet points for your sideprojects!",
     url: "https://usesideprojectai.com",
-    images: [
-      {
-        url: "https://usesideprojectai.com/opengraph-image",
-        width: 1200,
-        height: 630,
-      },
-    ],
     type: "website",
     siteName: "SideprojectAI",
   },
