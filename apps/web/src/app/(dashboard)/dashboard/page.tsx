@@ -1,6 +1,6 @@
 import DeleteGenerationButton from "@/components/buttons/DeleteGenerationButton";
 import StartWritingButton from "@/components/buttons/StartWritingButton";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { deleteGenerationAction } from "@/lib/actions";
@@ -11,20 +11,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-function GenerationsCardLoading() {
-  return (
-    <Card className="mt-10 w-full sm:w-[650px]">
-      <CardHeader className="space-y-4">
-        <CardTitle>Generations</CardTitle>
-        <Separator />
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-12 w-full" />
-      </CardHeader>
-    </Card>
-  );
-}
 function GenerationCard({ generation }: { generation: Generation }) {
   const date = new Date(generation.timestamp ?? Date.now());
 
@@ -73,30 +59,25 @@ async function DashboardPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center gap-4 bg-slate-200 p-4 pt-0 dark:bg-gray-900">
-      <Suspense fallback={<GenerationsCardLoading />}>
-        <Card className="mt-10 w-full sm:w-[650px] dark:bg-gray-800">
-          <CardHeader className="items-center justify-between sm:flex-row">
-            <CardTitle className="p-2 sm:p-0">Generations</CardTitle>
-            <Suspense fallback={<Skeleton className="h-4 w-20" />}>
-              <UserCredits />
-            </Suspense>
-            <Link href="/dashboard/write">
-              <StartWritingButton className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white dark:bg-gradient-to-r dark:from-blue-700 dark:to-indigo-800 dark:text-white" />
-            </Link>
-          </CardHeader>
-          <Separator />
-          <CardContent className="my-auto flex min-h-[50px] flex-col gap-2 overflow-x-scroll p-2">
-            {generations?.length > 0 ? (
-              generations.map((generation: any, index: number) => (
-                <GenerationCard key={index} generation={generation} />
-              ))
-            ) : (
-              <p className="text-center text-slate-400">No generations yet!</p>
-            )}
-          </CardContent>
-          <CardFooter />
-        </Card>
-      </Suspense>
+      <Card className="mt-10 w-full sm:w-[650px] dark:bg-gray-800">
+        <CardHeader className="items-center justify-between sm:flex-row">
+          <CardTitle className="p-2 sm:p-0">Generations</CardTitle>
+          <Suspense fallback={<Skeleton className="h-4 w-20" />}>
+            <UserCredits />
+          </Suspense>
+          <Link href="/dashboard/write">
+            <StartWritingButton className="min-w-[50px] bg-gradient-to-r from-cyan-500 to-blue-500 text-white dark:bg-gradient-to-r dark:from-blue-700 dark:to-indigo-800 dark:text-white" />
+          </Link>
+        </CardHeader>
+        <Separator />
+        <CardContent className="my-auto flex min-h-[50px] flex-col gap-2 overflow-x-scroll p-2">
+          {generations?.length > 0 ? (
+            generations.map((generation: any, index: number) => <GenerationCard key={index} generation={generation} />)
+          ) : (
+            <p className="text-center text-slate-400">No generations yet!</p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
