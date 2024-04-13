@@ -28,8 +28,11 @@ export async function decreaseUserCredits(userId: string) {
   return;
 }
 
-export async function increaseUserCredits(userId: string) {
-  const user = await db.update(users).set({ credits: sql`credits + 3` }).where(eq(users.userID, userId));
+export async function increaseUserCredits({ userId, credits }: { userId: string; credits: number }) {
+  const user = await db
+    .update(users)
+    .set({ credits: sql`credits + ${credits}` })
+    .where(eq(users.userID, userId));
 
   return;
 }

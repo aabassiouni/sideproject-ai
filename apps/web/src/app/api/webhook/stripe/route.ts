@@ -30,11 +30,10 @@ export async function POST(request: Request) {
 
       if (metadata?.pid === process.env.THREE_CREDITS) {
         console.log("## Adding 3 Credits ##");
-        await increaseUserCredits(metadata?.userId!);
-
+        await increaseUserCredits({ userId: metadata?.userId!, credits: 3 });
       } else if (metadata?.pid === process.env.ONE_CREDIT) {
         console.log("## Adding 1 Credit ##");
-        await increaseUserCredits(metadata?.userId!);
+        await increaseUserCredits({ userId: metadata?.userId!, credits: 1 });
       }
       break;
     }
