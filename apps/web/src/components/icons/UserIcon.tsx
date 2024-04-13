@@ -1,5 +1,3 @@
-import React from "react";
-
 function UserIcon({ size = 16, className }: { size?: number; className?: string }) {
   return (
     <svg
@@ -15,7 +13,7 @@ function UserIcon({ size = 16, className }: { size?: number; className?: string 
         fill="currentColor"
         fill-rule="evenodd"
         clip-rule="evenodd"
-      ></path>
+      />
     </svg>
   );
 }

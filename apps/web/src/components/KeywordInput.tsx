@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 function KeywordInput() {
   const [input, setInput] = useState<string>("");
-//   const { keywords, setKeywords } = useValues();
+  //   const { keywords, setKeywords } = useValues();
 
   function handleChange(event: any) {
     setInput(event.target.value);
@@ -16,7 +16,7 @@ function KeywordInput() {
     // setKeywords([...keywords, input]);
   }
   return (
-    <div className="flex items-center flex-initial gap-2">
+    <div className="flex flex-initial items-center gap-2">
       <div className="flex items-center justify-center gap-2">
         <Input placeholder="Keyword" onChange={handleChange} className="text-center sm:w-24" />
         <Button onClick={handleClick} size={"sm"}>

@@ -1,5 +1,3 @@
-import React from "react";
-
 function LinkedInIcon({ size = 16, className }: { size?: number; className?: string }) {
   return (
     <svg
@@ -15,7 +13,7 @@ function LinkedInIcon({ size = 16, className }: { size?: number; className?: str
         fill="currentColor"
         fill-rule="evenodd"
         clip-rule="evenodd"
-      ></path>
+      />
     </svg>
   );
 }

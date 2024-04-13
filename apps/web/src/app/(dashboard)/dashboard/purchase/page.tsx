@@ -3,7 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2 } from "lucide-react";
 
-
 async function PurchasePage() {
   console.log("Loading purchase page...");
 

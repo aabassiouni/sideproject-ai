@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchUserCredits } from "@/lib/db";
 import { currentUser } from "@clerk/nextjs";
 import { SignOutButton } from "@clerk/nextjs";
 import { LogOut, ShoppingCart, User } from "lucide-react";

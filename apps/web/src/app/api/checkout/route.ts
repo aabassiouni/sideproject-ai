@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
         },
         success_url: `${origin}/dashboard/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/dashboard`,
-        
       });
 
       if (!session) {

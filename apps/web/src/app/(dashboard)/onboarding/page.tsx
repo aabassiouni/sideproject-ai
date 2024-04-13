@@ -58,7 +58,7 @@ async function OnboardingPage() {
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-2 bg-slate-200 dark:bg-gray-900">
-      <h1 className="font-bold font-azeret text-2xl">sideprojectAI</h1>
+      <h1 className="font-azeret font-bold text-2xl">sideprojectAI</h1>
       <Card className="w-fit">
         <CardHeader>
           <CardTitle className="text-center text-xl">How did you find out about us?</CardTitle>

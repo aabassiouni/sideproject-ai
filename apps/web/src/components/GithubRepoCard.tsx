@@ -1,5 +1,3 @@
-// 'use client'
-
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeftCircle } from "lucide-react";
 import Link from "next/link";
@@ -8,7 +6,6 @@ import SubmitLinkButton from "./buttons/SubmitLinkButton";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-// import FileTree from './FileTree'
 
 function GithubRepoCard({ children }: { children: React.ReactNode }) {
   return (

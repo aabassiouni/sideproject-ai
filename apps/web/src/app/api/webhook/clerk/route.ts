@@ -2,7 +2,7 @@ import { insertUser } from "@/lib/db";
 import { notifyDiscord } from "@/lib/discord";
 import type { WebhookEvent } from "@clerk/clerk-sdk-node";
 import { clerkClient } from "@clerk/nextjs";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   const event = (await request.json()) as WebhookEvent;

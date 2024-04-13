@@ -25,12 +25,14 @@ const useRepoInfoStore = create<RepoStore>((set) => ({
   },
 }));
 
-const useGenerationStore = create<{
+interface GenerationStore {
   generation: Generation | null;
   actions: {
     setGeneration: (generation: Generation) => void;
   };
-}>((set) => ({
+}
+
+const useGenerationStore = create<GenerationStore>((set) => ({
   generation: null,
   actions: {
     setGeneration: (generation) => set({ generation }),
