@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SideprojectAI",
     description: "AI generated resume bullet points for your sideprojects",
-    images: ["https://usesideprojectai.com/twitter-image"],
+    creator: "@alibassiouni",
   },
 };
 
