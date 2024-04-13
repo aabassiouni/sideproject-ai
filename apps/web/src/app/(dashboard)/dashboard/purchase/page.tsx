@@ -4,10 +4,9 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { CheckCircle2 } from "lucide-react";
 
 async function PurchasePage() {
-  console.log("Loading purchase page...");
-
   const oneCredit = process.env.ONE_CREDIT!;
   const threeCredits = process.env.THREE_CREDITS!;
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-200 dark:bg-gray-900">
       <div className="py-10">
@@ -34,7 +33,7 @@ async function PurchasePage() {
         <Card className="mx-3 flex min-h-[350px] w-full min-w-[350px] flex-col border-2 border-blue-400 sm:w-64">
           <CardHeader>
             <CardTitle className="text-center text-2xl">3 Credits</CardTitle>
-            <CardTitle className="pb-2 text-center font-bold text-6xl">$ 7</CardTitle>
+            <CardTitle className="pb-2 text-center font-bold text-6xl">$7</CardTitle>
             <Badge className="my-5 w-max self-center">Recommended</Badge>
           </CardHeader>
           <CardContent className="grow">
