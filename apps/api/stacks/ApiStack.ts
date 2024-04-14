@@ -1,5 +1,5 @@
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
-import { Api, Config, StackContext } from "sst/constructs";
+import { Api, Config, type StackContext } from "sst/constructs";
 
 export function ApiStack({ app, stack }: StackContext) {
   const OPENAI_API_KEY = new Config.Secret(stack, "OPENAI_API_KEY");
@@ -16,6 +16,12 @@ export function ApiStack({ app, stack }: StackContext) {
 
   const customDomain = process.env.AWS_CUSTOM_DOMAIN;
   const certificateArn = process.env.AWS_CERTIFICATE_ARN;
+  const corsURL =
+    app.stage === "prod"
+      ? "https://usesideprojectai.com"
+      : app.stage === "preview"
+        ? "https://preview.usesideprojectai.com"
+        : "http://localhost:3000";
 
   const api = new Api(stack, "Api", {
     defaults: {
@@ -35,11 +41,11 @@ export function ApiStack({ app, stack }: StackContext) {
             },
           }
         : undefined,
-    // cors: {
-    //   // allowMethods: ["ANY"],
-    //   // allowHeaders: ["*"],
-    //   allowOrigins: ["https://usesideprojectai.com"],
-    // },
+    cors: {
+      allowMethods: ["POST"],
+      allowHeaders: ["*"],
+      allowOrigins: [corsURL],
+    },
     authorizers: {
       clerkPreview: {
         type: "jwt",
