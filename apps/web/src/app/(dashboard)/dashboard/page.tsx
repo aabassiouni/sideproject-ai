@@ -1,3 +1,4 @@
+import { SupportPopover } from "@/components/SupportPopover";
 import DeleteGenerationButton from "@/components/buttons/DeleteGenerationButton";
 import StartWritingButton from "@/components/buttons/StartWritingButton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -78,6 +79,7 @@ async function DashboardPage() {
           )}
         </CardContent>
       </Card>
+      <SupportPopover />
     </div>
   );
 }
