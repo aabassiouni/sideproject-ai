@@ -13,7 +13,7 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { Octokit } from "octokit";
 import { Config } from "sst/node/config";
 import { z } from "zod";
-import { decreaseUserCredits, insertError, insertGeneration } from "../../core/db";
+import { fetchUserCredits, insertError, insertGeneration } from "../../core/db";
 import { notifyDiscord } from "../../core/discord";
 
 const githubLoaderIgnorePaths = [
@@ -259,6 +259,15 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
   const { repo, owner, keywords } = JSON.parse(event.body);
   const userId = event.requestContext.authorizer.jwt.claims.sub as string;
 
+  const userCredits = await fetchUserCredits(userId);
+
+  if (userCredits <= 0) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "not enough credits" }),
+    };
+  }
+
   const generationID = newId("generation");
 
   const llm = new ChatOpenAI({
@@ -405,16 +414,22 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
 
   const bullets = Object.values(responseObj).map((bullet: any) => bullet.replace(/\n/g, ""));
 
-  await insertGeneration({
-    generation_id: generationID,
-    userID: userId,
-    owner,
-    repo,
-    text,
-    bullets,
-  });
-
-  await decreaseUserCredits(userId);
+  try {
+    await insertGeneration({
+      generation_id: generationID,
+      userID: userId,
+      owner,
+      repo,
+      text,
+      bullets,
+    });
+  } catch (error: any) {
+    console.log("Error inserting generation:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "not enough credits" }),
+    };
+  }
 
   notifyDiscord({
     type: "generation_created",
