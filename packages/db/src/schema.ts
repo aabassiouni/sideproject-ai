@@ -1,4 +1,4 @@
-import { pgTable, smallint, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { jsonb, pgTable, smallint, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
 export const errors = pgTable("errors", {
   errorID: varchar("error_id", { length: 256 }).notNull().primaryKey(),
@@ -23,6 +23,7 @@ export const generations = pgTable("generations", {
 export const users = pgTable("users", {
   userID: varchar("user_id", { length: 255 }).notNull().primaryKey(),
   createdOn: timestamp("created_on", { mode: "string" }).defaultNow(),
-  credits: smallint("credits"),
+  credits: smallint("credits").notNull().default(1),
   referral: varchar("referral", { length: 255 }),
+  repos: jsonb("repos").$type<{ [key: string]: number }>().default({}).notNull(),
 });
