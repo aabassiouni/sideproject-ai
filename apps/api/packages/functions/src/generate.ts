@@ -245,10 +245,6 @@ const githubLoaderIgnorePaths = [
   "*.atsuo",
 ];
 export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) => {
-  const clerkClient = Clerk({
-    secretKey: Config.CLERK_SECRET_KEY,
-  });
-
   if (!event.body) {
     return {
       statusCode: 400,
@@ -277,24 +273,22 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
     openAIApiKey: Config.OPENAI_API_KEY,
   });
 
-  const githubToken = await clerkClient.users.getUserOauthAccessToken(userId, "oauth_github");
+  const githubToken = await Clerk({
+    secretKey: Config.CLERK_SECRET_KEY,
+  }).users.getUserOauthAccessToken(userId, "oauth_github");
 
-  const octokit = new Octokit({
+  const { data: repoResponse } = await new Octokit({
     auth: githubToken[0]?.token,
-  });
-
-  const { data: repoResponse } = await octokit.rest.repos.get({
+  }).rest.repos.get({
     owner: owner,
     repo: repo,
   });
 
-  const loader = new GithubRepoLoader(repoResponse.html_url, {
+  const docs = await new GithubRepoLoader(repoResponse.html_url, {
     ignorePaths: githubLoaderIgnorePaths,
     accessToken: githubToken[0]?.token,
     branch: repoResponse.default_branch,
-  });
-
-  const docs = await loader.load();
+  }).load();
 
   const processedDocs = docs
     .map((doc) => {
@@ -317,13 +311,6 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
     }),
   );
 
-  const chain = new RetrievalQAChain({
-    retriever: vectorStore.asRetriever(100),
-    combineDocumentsChain: loadQAStuffChain(llm),
-  });
-
-  console.log("## calling chain ##");
-
   const ResponseSchema = z.object({
     firstBullet: z.string().describe("the first resume bullet point"),
     secondBullet: z.string().describe("the second resume bullet point"),
@@ -331,14 +318,18 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
     fourthBullet: z.string().describe("the fourth resume bullet point"),
     fifthBullet: z.string().describe("the fifth resume bullet point"),
   });
-
   type Response = z.infer<typeof ResponseSchema>;
-
   const parser = StructuredOutputParser.fromZodSchema(ResponseSchema);
-
   const formatInstructions = parser.getFormatInstructions();
 
-  const prompt = new PromptTemplate({
+  const chain = new RetrievalQAChain({
+    retriever: vectorStore.asRetriever(100),
+    combineDocumentsChain: loadQAStuffChain(llm),
+  });
+
+  console.log("## calling chain ##");
+
+  const prompt = await new PromptTemplate({
     template: `You are an expert resume writer for software engineers. I am going to give you the code for a software engineers project on github and I want you to create 5 resume bullet points to show their contributions on their resume. Follow the STAR (Situation, Task, Action, Result) method when creating the bullet points. You should include the technogies used. The statements should be professional and always start with an action verb in the past tense. Do not include the names of the providers of services. For example, if planetscale is a company that provides a hosted MySQL database, then you should state MySQL and not Planetscale. Avoid talking about fonts, colors, and other design elements. Make sure the bullet points are ATS friendly. The first bullet point should be a description of the project at a high level. Be detailed in your bullet points but keep them short and concise. Do not make up things or add information that you cannot deduce from the code. The bullet points should reflect the skills of the person who wrote the code and convey that to anyone reading them. If you do not have enough info to generate 5 bullet points, answer simply with the phrase "I do not have enough information to generate 5 bullet points" only. \n\n
     
         \n repository name: {repo} 
@@ -358,16 +349,14 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
         `,
     inputVariables: ["repo"],
     partialVariables: { format_instructions: formatInstructions },
-  });
-
-  const input = await prompt.format({
+  }).format({
     repo: repo,
   });
 
   let res: ChainValues;
   try {
     res = await chain.call({
-      query: input,
+      query: prompt,
     });
   } catch (error: any) {
     console.log("Error fetching completion:", error);
