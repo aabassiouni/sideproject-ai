@@ -1,8 +1,8 @@
 import * as dotenv from "dotenv";
 import { drizzle } from "drizzle-orm/postgres-js";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 import { errors, generations, users } from "./schema";
-import { migrate } from "drizzle-orm/postgres-js/migrator";
 
 dotenv.config({ path: ".env.local" });
 
@@ -29,6 +29,7 @@ const runMigration = async () => {
   await migrate(db, { migrationsFolder: "./drizzle/migrations" });
 
   console.log("Migration complete");
+  process.exit(0);
 };
 
 runMigration().catch((err) => {
