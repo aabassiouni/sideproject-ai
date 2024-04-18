@@ -7,7 +7,6 @@
     "typecheck": "tsc -noEmit"
   },
   "dependencies": {
-    "@planetscale/database": "^1.13.0",
     "@sideproject-ai/db": "workspace:^",
     "@sideproject-ai/id": "workspace:^",
     "drizzle-orm": "^0.29.3",

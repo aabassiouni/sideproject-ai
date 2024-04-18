@@ -41,9 +41,6 @@ importers:
 
   apps/api/packages/core:
     dependencies:
-      '@planetscale/database':
-        specifier: ^1.13.0
-        version: 1.16.0
       '@sideproject-ai/db':
         specifier: workspace:^
         version: link:../../../../packages/db
@@ -52,7 +49,7 @@ importers:
         version: link:../../../../packages/id
       drizzle-orm:
         specifier: ^0.29.3
-        version: 0.29.4(@aws-sdk/client-rds-data@3.521.0)(@planetscale/database@1.16.0)(kysely@0.25.0)(postgres@3.4.4)(react@18.2.0)
+        version: 0.29.4(@aws-sdk/client-rds-data@3.521.0)(kysely@0.25.0)(postgres@3.4.4)(react@18.2.0)
       postgres:
         specifier: ^3.4.4
         version: 3.4.4
@@ -262,7 +259,7 @@ importers:
         version: 0.20.14
       drizzle-orm:
         specifier: ^0.29.3
-        version: 0.29.4(@aws-sdk/client-rds-data@3.521.0)(@planetscale/database@1.16.0)(kysely@0.25.0)(postgres@3.4.4)(react@18.2.0)
+        version: 0.29.4(@planetscale/database@1.16.0)(postgres@3.4.4)
       postgres:
         specifier: ^3.4.4
         version: 3.4.4
@@ -7158,7 +7155,7 @@ packages:
       - supports-color
     dev: false
 
-  /drizzle-orm@0.29.4(@aws-sdk/client-rds-data@3.521.0)(@planetscale/database@1.16.0)(kysely@0.25.0)(postgres@3.4.4)(react@18.2.0):
+  /drizzle-orm@0.29.4(@aws-sdk/client-rds-data@3.521.0)(kysely@0.25.0)(postgres@3.4.4)(react@18.2.0):
     resolution: {integrity: sha512-ZnSM8TAxFhzH7p1s3+w3pRE/eKaOeNkH9SKitm717pubDVVcV2I0BCDBPGKV+pe02+wMfw37ntlTcCyo2rA3IA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -7230,7 +7227,6 @@ packages:
         optional: true
     dependencies:
       '@aws-sdk/client-rds-data': 3.521.0
-      '@planetscale/database': 1.16.0
       kysely: 0.25.0
       postgres: 3.4.4
       react: 18.2.0
@@ -7311,6 +7307,81 @@ packages:
       '@types/react': 18.2.59
       '@vercel/postgres': 0.8.0
       react: 18.2.0
+    dev: false
+
+  /drizzle-orm@0.29.4(@planetscale/database@1.16.0)(postgres@3.4.4):
+    resolution: {integrity: sha512-ZnSM8TAxFhzH7p1s3+w3pRE/eKaOeNkH9SKitm717pubDVVcV2I0BCDBPGKV+pe02+wMfw37ntlTcCyo2rA3IA==}
+    peerDependencies:
+      '@aws-sdk/client-rds-data': '>=3'
+      '@cloudflare/workers-types': '>=3'
+      '@libsql/client': '*'
+      '@neondatabase/serverless': '>=0.1'
+      '@opentelemetry/api': ^1.4.1
+      '@planetscale/database': '>=1'
+      '@types/better-sqlite3': '*'
+      '@types/pg': '*'
+      '@types/react': '>=18'
+      '@types/sql.js': '*'
+      '@vercel/postgres': '*'
+      better-sqlite3: '>=7'
+      bun-types: '*'
+      expo-sqlite: '>=13.2.0'
+      knex: '*'
+      kysely: '*'
+      mysql2: '>=2'
+      pg: '>=8'
+      postgres: '>=3'
+      react: '>=18'
+      sql.js: '>=1'
+      sqlite3: '>=5'
+    peerDependenciesMeta:
+      '@aws-sdk/client-rds-data':
+        optional: true
+      '@cloudflare/workers-types':
+        optional: true
+      '@libsql/client':
+        optional: true
+      '@neondatabase/serverless':
+        optional: true
+      '@opentelemetry/api':
+        optional: true
+      '@planetscale/database':
+        optional: true
+      '@types/better-sqlite3':
+        optional: true
+      '@types/pg':
+        optional: true
+      '@types/react':
+        optional: true
+      '@types/sql.js':
+        optional: true
+      '@vercel/postgres':
+        optional: true
+      better-sqlite3:
+        optional: true
+      bun-types:
+        optional: true
+      expo-sqlite:
+        optional: true
+      knex:
+        optional: true
+      kysely:
+        optional: true
+      mysql2:
+        optional: true
+      pg:
+        optional: true
+      postgres:
+        optional: true
+      react:
+        optional: true
+      sql.js:
+        optional: true
+      sqlite3:
+        optional: true
+    dependencies:
+      '@planetscale/database': 1.16.0
+      postgres: 3.4.4
     dev: false
 
   /dset@3.1.3:
