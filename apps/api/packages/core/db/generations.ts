@@ -9,6 +9,7 @@ export async function insertGeneration({
   repo,
   text,
   bullets,
+  regeneration,
 }: {
   generation_id: string;
   userID: string;
@@ -16,6 +17,7 @@ export async function insertGeneration({
   repo: string;
   text: string;
   bullets: string[];
+  regeneration: boolean;
 }) {
   console.log("inserting generation");
 
@@ -24,19 +26,21 @@ export async function insertGeneration({
   console.log("repos", repos);
 
   await db.transaction(async (tx) => {
-    console.log("decreasing user credits");
-    const [{ credits }] = await tx
-      .update(users)
-      .set({ credits: sql`credits - 1` })
-      .where(eq(users.userID, userID))
-      .returning({
-        credits: users.credits,
-      });
+    if (!regeneration) {
+      console.log("decreasing user credits");
+      const [{ credits }] = await tx
+        .update(users)
+        .set({ credits: sql`credits - 1` })
+        .where(eq(users.userID, userID))
+        .returning({
+          credits: users.credits,
+        });
 
-    if (credits < 0) {
-      console.log("credits less than zero, rolling back");
-      tx.rollback();
-      return { error: "Not enough credits" };
+      if (credits < 0) {
+        console.log("credits less than zero, rolling back");
+        tx.rollback();
+        return { error: "Not enough credits" };
+      }
     }
 
     console.log("inserting generation");

@@ -13,7 +13,7 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { Octokit } from "octokit";
 import { Config } from "sst/node/config";
 import { z } from "zod";
-import { fetchUserCredits, insertError, insertGeneration } from "../../core/db";
+import { fetchUserCredits, fetchUserRepos, insertError, insertGeneration } from "../../core/db";
 import { notifyDiscord } from "../../core/discord";
 
 const githubLoaderIgnorePaths = [
@@ -256,12 +256,19 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
   const userId = event.requestContext.authorizer.jwt.claims.sub as string;
 
   const userCredits = await fetchUserCredits(userId);
+  const userRepos = await fetchUserRepos(userId);
 
-  if (userCredits <= 0) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "not enough credits" }),
-    };
+  let regeneration = true;
+
+  if (!Object.keys(userRepos).includes(`${owner}/${repo}`)) {
+    regeneration = false;
+
+    if (userCredits <= 0) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: "not enough credits" }),
+      };
+    }
   }
 
   const generationID = newId("generation");
@@ -411,6 +418,7 @@ export const handler: APIGatewayProxyHandlerV2WithJWTAuthorizer = async (event) 
       repo,
       text,
       bullets,
+      regeneration,
     });
   } catch (error: any) {
     console.log("Error inserting generation:", error);
