@@ -33,8 +33,8 @@ async function PurchasePage() {
         <Card className="mx-3 flex min-h-[350px] w-full min-w-[350px] flex-col border-2 border-blue-400 sm:w-64">
           <CardHeader>
             <CardTitle className="text-center text-2xl">3 Credits</CardTitle>
-            <CardTitle className="pb-2 text-center font-bold text-6xl">$7</CardTitle>
-            <Badge className="my-5 w-max self-center">Recommended</Badge>
+            <CardTitle className="pb-2 text-center font-bold text-6xl">$5</CardTitle>
+            <Badge className="my-5 w-max self-center bg-blue-500 dark:bg-blue-700 dark:text-white">Save $4!</Badge>
           </CardHeader>
           <CardContent className="grow">
             <div className="flex justify-center gap-2">
