@@ -1,8 +1,8 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { UserCircle2, Wand2, Zap } from "lucide-react";
+import { Check, UserCircle2, Wand2, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
@@ -17,6 +17,7 @@ export const metadata = {
   title: "SideprojectAI",
   description: "Transform your GitHub projects into impressive resume bullet points!",
 };
+
 export default async function Home() {
   return (
     <>
@@ -47,7 +48,6 @@ export default async function Home() {
           />
         </div>
       </div>
-
       <div className="z-20 flex grow flex-col items-center justify-evenly gap-5 bg-white p-8 shadow-black">
         <p className="text-center font-extrabold text-4xl">How it Works</p>
         <div className="p- flex flex-row flex-wrap justify-around gap-10 lg:flex-nowrap">
@@ -132,14 +132,43 @@ export default async function Home() {
         <h1 id="pricing" className="text-center font-extrabold text-4xl">
           Pricing
         </h1>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center font-bold text-xl">Coming Soon</CardTitle>
-            <CardDescription className="text-center">
-              SideprojectAI is currently in beta. During this time, all generations are free.
-            </CardDescription>
-          </CardHeader>
-        </Card>
+        <p className="text-balance text-center text-lg text-slate-500 sm:text-xl">
+          Each credit allows you to generate a resume section for one repository. Regenerations for the same repository
+          are available at no charge.
+        </p>
+        <p className="text-center font-medium text-lg sm:text-xl">All users receive 2 free credits to start!</p>
+        <div className="flex flex-wrap items-center justify-center gap-8">
+          <Card className="min-h-64 w-96 border-2 border-blue-500">
+            <CardHeader className="gap-2 space-y-0">
+              <CardTitle className="text-center font-azeret">1 credit</CardTitle>
+              <p className="py-2 text-center font-azeret font-semibold text-5xl">$3</p>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <div className="flex items-center justify-center gap-2">
+                <div className="h-fit w-fit rounded-full bg-cyan-500 p-1">
+                  <Check size={16} className="text-white" />
+                </div>
+                <p className="font-medium text-lg">Unlimited Regenerations</p>
+              </div>
+            </CardContent>
+            <CardFooter />
+          </Card>
+          <Card className="min-h-64 w-96 border-2 border-blue-500">
+            <CardHeader className="gap-2 space-y-0">
+              <CardTitle className="text-center font-azeret">3 credits</CardTitle>
+              <p className="py-2 text-center font-azeret font-semibold text-5xl">$5</p>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <div className="flex items-center justify-center gap-2">
+                <div className="h-fit w-fit rounded-full bg-cyan-500 p-1">
+                  <Check size={16} className="text-white" />
+                </div>
+                <p className="font-medium text-lg">Unlimited Regenerations</p>
+              </div>
+            </CardContent>
+            <CardFooter />
+          </Card>
+        </div>
         <Separator className="my-5" />
         <h1 className="text-center font-extrabold text-4xl">Frequently Asked Questions</h1>
         <Accordion id="faq" orientation="horizontal" type="multiple" className="sm:w-2/5">
