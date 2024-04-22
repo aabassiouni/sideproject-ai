@@ -5,7 +5,7 @@ type Event =
     }
   | {
       type: "generation_created";
-      data: { repo: string };
+      data?: undefined;
     }
   | {
       type: "user_logged_in";
@@ -19,7 +19,7 @@ export async function notifyDiscord({ type, data }: Event) {
       message = `🎉 New user created: ${data.email}`;
       break;
     case "generation_created":
-      message = `🎉 New generation created for repo: ${data.repo}`;
+      message = "🎉 New generation created for repo";
       break;
     case "user_logged_in":
       message = `🎉 User logged in: ${data.userId}`;
