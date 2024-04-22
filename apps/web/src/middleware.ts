@@ -12,7 +12,7 @@ export default authMiddleware({
 
       if (!userFromDB) {
         console.log(`User ${auth.userId} not found in the database`);
-        insertUser(auth.userId, 3);
+        insertUser(auth.userId, 2);
         await clerkClient.users.updateUserMetadata(auth.userId, {
           privateMetadata: {
             isOnboarded: false,
