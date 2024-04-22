@@ -172,17 +172,6 @@ export default async function Home() {
         <Separator className="my-5" />
         <h1 className="text-center font-extrabold text-4xl">Frequently Asked Questions</h1>
         <Accordion id="faq" orientation="horizontal" type="multiple" className="sm:w-2/5">
-          <AccordionItem value="item1">
-            <AccordionTrigger className="">
-              <p className="text-center text-xl">Is SideprojectAI free? </p>
-            </AccordionTrigger>
-            <AccordionContent>
-              <p className="text-base text-slate-600">
-                SideprojectAI is currently in beta. During this time, all credits are free. There are plans to add
-                pricing in the future.
-              </p>
-            </AccordionContent>
-          </AccordionItem>
           <AccordionItem value="item2">
             <AccordionTrigger className="">
               <p className="text-xl">Who is SideprojectAI for?</p>
