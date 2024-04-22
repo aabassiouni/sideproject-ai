@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Check, UserCircle2, Wand2, Zap } from "lucide-react";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
@@ -170,6 +171,28 @@ export default async function Home() {
           </Card>
         </div>
         <Separator className="my-5" />
+        <div className="mx-auto max-w-screen-lg space-y-8 px-4 pb-16 sm:px-0">
+          <div className="flex flex-col gap-10">
+            <div className="space-y-2">
+              <h1 className="text-balance text-center font-extrabold text-5xl">Fully Open Source</h1>
+              <p className="text-balance text-center text-neutral-400 sm:text-xl">
+                Fully open source. We believe in the power of open source and the community. Feel free to review, learn
+                from, and contribute to our codebase.
+              </p>
+            </div>
+            <div className="self-center">
+              <Link href={"https://github.com/aabassiouni/sideproject-ai"}>
+                <button
+                  type="button"
+                  className="inline-flex h-12 animate-background-shine items-center justify-center gap-2 rounded-md border border-cyan-500 bg-[length:200%_100%] bg-[linear-gradient(110deg,#ffffff,45%,#06b6d4,55%,#ffffff)] px-6 font-medium text-black transition-colors"
+                >
+                  <GitHubLogoIcon className="h-6 w-6 text-black" />
+                  <p className="font-semibold text-black">Star On GitHub</p>
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
         <h1 className="text-center font-extrabold text-4xl">Frequently Asked Questions</h1>
         <Accordion id="faq" orientation="horizontal" type="multiple" className="sm:w-2/5">
           <AccordionItem value="item2">
