@@ -175,19 +175,18 @@ export default async function Home() {
           <div className="flex flex-col gap-10">
             <div className="space-y-2">
               <h1 className="text-balance text-center font-extrabold text-5xl">Fully Open Source</h1>
-              <p className="text-balance text-center text-neutral-400 sm:text-xl">
-                Fully open source. We believe in the power of open source and the community. Feel free to review, learn
-                from, and contribute to our codebase.
+              <p className="text-balance text-center text-slate-500 sm:text-xl">
+                Fully open source. Feel free to review, learn from, and contribute to our codebase.
               </p>
             </div>
             <div className="self-center">
               <Link href={"https://github.com/aabassiouni/sideproject-ai"}>
                 <button
                   type="button"
-                  className="inline-flex h-12 animate-background-shine items-center justify-center gap-2 rounded-md border border-cyan-500 bg-[length:200%_100%] bg-[linear-gradient(110deg,#ffffff,45%,#06b6d4,55%,#ffffff)] px-6 font-medium text-black transition-colors"
+                  className="inline-flex h-12 animate-background-shine items-center justify-center gap-2 rounded-md border border-primary bg-[length:200%_100%] bg-[linear-gradient(110deg,#0f172a,45%,#06b6d4,55%,#0f172a)] px-6 font-medium text-slate-400 transition-colors"
                 >
-                  <GitHubLogoIcon className="h-6 w-6 text-black" />
-                  <p className="font-semibold text-black">Star On GitHub</p>
+                  <GitHubLogoIcon className="h-6 w-6 text-white" />
+                  <p className="font-semibold text-white">Star On GitHub</p>
                 </button>
               </Link>
             </div>
