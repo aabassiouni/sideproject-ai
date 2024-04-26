@@ -3,10 +3,13 @@ import GithubRepoCard from "@/components/GithubRepoCard";
 import MobileRepoSelect from "@/components/MobileRepoSelect";
 import RepoCard from "@/components/RepoCard";
 import RepoInfo from "@/components/RepoInfo";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { GithubRepoType } from "@/types";
 import clerk from "@clerk/clerk-sdk-node";
 import { currentUser } from "@clerk/nextjs";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 import { Octokit } from "octokit";
 
 async function WritePage() {
@@ -30,6 +33,7 @@ async function WritePage() {
     }
   }
 
+  console.log(repos);
   return (
     <div className="flex min-h-screen flex-col bg-slate-200 sm:flex-row dark:bg-gray-900">
       <MobileRepoSelect>
@@ -44,12 +48,19 @@ async function WritePage() {
       <GithubRepoCard>
         <ScrollArea className="sm:h-96">
           <div className="mr-3 space-y-3">
-            {repos ? (
+            {repos.length > 0 ? (
               repos?.map((repo, idx) => <RepoCard key={idx} repo={repo} />)
             ) : (
-              <p className="my-auto text-center text-slate-400">
-                Connect your GitHub account to view your repositories
-              </p>
+              <div className="flex flex-col gap-2">
+                <p className="my-auto text-balance text-center text-slate-400">
+                  Connect your GitHub account to view your repositories
+                </p>
+                <Link className="w-fit self-center" href="/dashboard/profile">
+                  <Button >Go to Profile
+                    <ArrowUpRight />
+                  </Button>
+                </Link>
+              </div>
             )}
           </div>
         </ScrollArea>
