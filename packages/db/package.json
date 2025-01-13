@@ -8,17 +8,20 @@
     "db:migrate": "drizzle-kit generate:pg",
     "db:push": "tsx src/migrate.ts",
     "db:pull": "drizzle-kit introspect:pg",
-    "db:drop": "drizzle-kit drop"
+    "db:drop": "drizzle-kit drop",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@planetscale/database": "^1.13.0",
+    "@neondatabase/serverless": "^0.10.4",
     "@types/node": "^20.11.5",
     "dotenv": "^16.3.1",
-    "drizzle-kit": "^0.20.10",
-    "drizzle-orm": "^0.29.3",
+    "drizzle-orm": "^0.38.3",
     "postgres": "^3.4.4"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "drizzle-kit": "^0.30.1"
+  }
 }

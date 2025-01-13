@@ -1,14 +1,13 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { neon, neonConfig } from "@neondatabase/serverless";
+import { drizzle, errors, generations, users } from "@sideproject-ai/db";
 import { Config } from "sst/node/config";
-
-import { errors, generations, users } from "@sideproject-ai/db";
 
 const connectionString = Config.DATABASE_URL;
 
-const client = postgres(connectionString, { prepare: false });
+neonConfig.fetchConnectionCache = true;
+const neonDB = neon(connectionString);
 
-export const db = drizzle(client, {
+export const db = drizzle(neonDB, {
   schema: {
     errors,
     generations,

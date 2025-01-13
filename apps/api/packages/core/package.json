@@ -7,9 +7,9 @@
     "typecheck": "tsc -noEmit"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
     "@sideproject-ai/db": "workspace:^",
     "@sideproject-ai/id": "workspace:^",
-    "drizzle-orm": "^0.29.3",
     "postgres": "^3.4.4"
   },
   "devDependencies": {

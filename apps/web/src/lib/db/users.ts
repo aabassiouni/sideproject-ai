@@ -1,5 +1,4 @@
-import { users } from "@sideproject-ai/db";
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { eq, sql, users } from "@sideproject-ai/db";
 import { db } from "./db";
 
 export async function insertUser(userId: string, credits: number) {
