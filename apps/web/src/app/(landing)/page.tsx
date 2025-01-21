@@ -1,9 +1,11 @@
+import Footer from "@/components/Footer";
+import LandingNavbar from "@/components/LandingNavbar";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Check, UserCircle2, Wand2, Zap } from "lucide-react";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { Check, UserCircle2, Wand2, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
@@ -22,6 +24,7 @@ export const metadata = {
 export default async function Home() {
   return (
     <>
+      <LandingNavbar />
       <div className="flex grow flex-col items-center justify-center gap-5 bg-center bg-contain bg-slate-200 p-12 sm:min-h-[450px] sm:pb-0">
         <div className="mx-auto w-52 rounded-full bg-gradient-to-r bg-white from-cyan-500/90 to-blue-500 p-0.5">
           <p className="rounded-full bg-white text-center font-azeret font-semibold tracking-tighter">
@@ -233,6 +236,7 @@ export default async function Home() {
           </AccordionItem>
         </Accordion>
       </div>
+      <Footer />
     </>
   );
 }
