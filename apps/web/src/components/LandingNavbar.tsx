@@ -13,7 +13,7 @@ function LandingNavbar() {
           </Link>
         </div>
         <div className="hidden sm:block">
-          <Link href="/signin">
+          <Link href="/auth/signin">
             <Button className="rounded-lg bg-gray-800 px-4 py-2 text-white hover:bg-gray-900">Login</Button>
           </Link>
         </div>
@@ -24,7 +24,7 @@ function LandingNavbar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <Link href={"/signin"}>
+            <Link href={"/auth/signin"}>
               <DropdownMenuItem>Login</DropdownMenuItem>
             </Link>
             <Link href={"#pricing"}>

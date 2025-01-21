@@ -1,3 +1,4 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
@@ -31,7 +32,9 @@ const azeret = localFont({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${azeret.variable}`}>{children}</body>
+      <ClerkProvider>
+        <body className={`${azeret.variable}`}>{children}</body>
+      </ClerkProvider>
       <Analytics />
     </html>
   );
