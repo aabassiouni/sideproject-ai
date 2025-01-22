@@ -1,6 +1,5 @@
 import { auth } from "@clerk/nextjs";
-import { generations } from "@sideproject-ai/db";
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, generations, sql } from "@sideproject-ai/db";
 import { db } from "./db";
 export async function insertGeneration(
   generation_id: string,
