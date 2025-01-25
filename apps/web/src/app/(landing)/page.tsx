@@ -9,12 +9,12 @@ import { Check, UserCircle2, Wand2, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
-import exampleImg from "/public/example.png";
-import step1Img from "/public/step1.png";
-import step2Img from "/public/step2.png";
-import step3Img from "/public/step3.png";
+import exampleImg from "../../../public/example.png";
+import step1Img from "../../../public/step1.png";
+import step2Img from "../../../public/step2.png";
+import step3Img from "../../../public/step3.png";
 
-export const runtime = process.env.NODE_ENV === "development" ? "nodejs" : "edge";
+export const runtime = "edge";
 
 export const metadata = {
   title: "SideprojectAI",

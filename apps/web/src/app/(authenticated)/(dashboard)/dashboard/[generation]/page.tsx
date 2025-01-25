@@ -9,7 +9,8 @@ import { fetchGenerationByID } from "@/lib/db";
 import { ArrowLeftCircle } from "lucide-react";
 import Link from "next/link";
 
-async function GenerationPage({ params }: { params: { generation: string } }) {
+async function GenerationPage(props: { params: Promise<{ generation: string }> }) {
+  const params = await props.params;
   const generation = await fetchGenerationByID(params.generation);
   const bullets = JSON.parse(generation.bullets ?? "[]");
   const date = new Date(generation.timestamp ?? Date.now());
