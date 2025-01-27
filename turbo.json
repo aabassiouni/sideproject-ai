@@ -4,7 +4,22 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "OPENAI_API_KEY",
+        "STRIPE_API_KEY",
+        "THREE_CREDITS",
+        "STRIPE_WEBHOOK_SECRET",
+        "SITE_URL",
+        "OPENROUTER_API_KEY",
+        "LANGCHAIN_TRACING_V2",
+        "LANGCHAIN_ENDPOINT",
+        "LANGCHAIN_API_KEY",
+        "CLERK_SECRET_KEY",
+        "DISCORD_WEBHOOK_URL",
+        "DATABASE_URL",
+        "ONE_CREDIT"
+      ]
     },
     "@sideproject-ai/api#deploy": {
       "dependsOn": []
