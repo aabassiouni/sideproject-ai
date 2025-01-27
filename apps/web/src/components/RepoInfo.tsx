@@ -33,7 +33,7 @@ function RepoInfo() {
               <CardHeader>
                 <CardTitle className="text-center text-lg sm:text-left">
                   <GithubIcon className="mr-2 inline-block text-center sm:text-left" size={16} />
-                  {`${repoInfo?.owner}/${repoInfo.name}` ?? "N/A"}
+                  {`${repoInfo?.owner}/${repoInfo.name}`}
                 </CardTitle>
                 <CardDescription className="mx-auto text-center sm:text-left">
                   {repoInfo?.numFiles} files, {repoInfo?.size}MB, {repoInfo?.starCount} stars{" "}
