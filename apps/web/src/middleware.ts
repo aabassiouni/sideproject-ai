@@ -1,34 +1,30 @@
-import { authMiddleware, clerkClient } from "@clerk/nextjs";
-import { NextResponse } from "next/server";
+import { clerkClient, clerkMiddleware } from "@clerk/nextjs/server";
 import { fetchUser, insertUser } from "./lib/db";
 import { notifyDiscord } from "./lib/discord";
 
-export default authMiddleware({
-  publicRoutes: ["/opengraph-image", "/twitter-image", "/api/webhook/stripe", "/api/webhook/clerk", "/api/cron"],
-  ignoredRoutes: ["/"],
-  afterAuth: async (auth) => {
-    if (auth.userId) {
-      const userFromDB = await fetchUser(auth.userId);
+export default clerkMiddleware(async (auth, _req) => {
+  const { userId } = await auth();
+  const clerk = await clerkClient();
+  if (userId) {
+    const userFromDB = await fetchUser(userId);
 
-      if (!userFromDB) {
-        console.log(`User ${auth.userId} not found in the database`);
-        insertUser(auth.userId, 2);
-        await clerkClient.users.updateUserMetadata(auth.userId, {
-          privateMetadata: {
-            isOnboarded: false,
-          },
-        });
-      }
-
-      notifyDiscord({
-        type: "user_logged_in",
-        data: {
-          userId: auth.userId,
+    if (!userFromDB) {
+      console.log(`User ${userId} not found in the database`);
+      insertUser(userId, 2);
+      await clerk.users.updateUserMetadata(userId, {
+        privateMetadata: {
+          isOnboarded: false,
         },
       });
     }
-    return NextResponse.next();
-  },
+
+    notifyDiscord({
+      type: "user_logged_in",
+      data: {
+        userId: userId,
+      },
+    });
+  }
 });
 
 export const config = {

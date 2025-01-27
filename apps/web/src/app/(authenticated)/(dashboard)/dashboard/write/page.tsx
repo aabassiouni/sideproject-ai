@@ -6,8 +6,7 @@ import RepoInfo from "@/components/RepoInfo";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { GithubRepoType } from "@/types";
-import clerk from "@clerk/clerk-sdk-node";
-import { currentUser } from "@clerk/nextjs";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { Octokit } from "octokit";
@@ -19,10 +18,11 @@ async function WritePage() {
 
   if (user?.id) {
     if (user?.externalAccounts?.length !== 0) {
+      const clerk = await clerkClient();
       const githubToken = await clerk.users.getUserOauthAccessToken(user.id, "oauth_github");
 
       const octokit = new Octokit({
-        auth: githubToken[0].token,
+        auth: githubToken.data[0].token,
       });
 
       const { data } = await octokit.rest.repos.listForAuthenticatedUser({
@@ -56,7 +56,8 @@ async function WritePage() {
                   Connect your GitHub account to view your repositories
                 </p>
                 <Link className="w-fit self-center" href="/dashboard/profile">
-                  <Button >Go to Profile
+                  <Button>
+                    Go to Profile
                     <ArrowUpRight />
                   </Button>
                 </Link>

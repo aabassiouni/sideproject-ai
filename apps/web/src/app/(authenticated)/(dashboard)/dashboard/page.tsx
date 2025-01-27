@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { deleteGenerationAction } from "@/lib/actions";
 import { fetchAllGenerationsForUser, fetchUserCredits } from "@/lib/db";
-import { currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import type { Generation } from "@sideproject-ai/db";
 import Link from "next/link";
 import { redirect } from "next/navigation";

@@ -1,10 +1,10 @@
 import { stripe } from "@/lib/stripe";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   console.log("/////////////// creating checkout session ///////////////");
-  const { userId } = auth();
+  const { userId } = await auth();
 
   try {
     const origin = request.headers.get("origin");

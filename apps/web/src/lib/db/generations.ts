@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { and, asc, desc, eq, generations, sql } from "@sideproject-ai/db";
 import { db } from "./db";
 export async function insertGeneration(
@@ -52,7 +52,7 @@ export async function updateGenerationRating(generation_id: string, rating: numb
 }
 
 export async function deleteGeneration(generationId: string) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return;
 
   await db
