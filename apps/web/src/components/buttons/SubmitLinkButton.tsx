@@ -33,12 +33,12 @@ function SubmitLinkButton() {
   }
 
   return (
-    <>
+    <div className="space-y-2">
       <Input placeholder="Github Link" onChange={handleChange} className="w-full" />
       <Button onClick={handleClick} className="w-full">
         Submit
       </Button>
-    </>
+    </div>
   );
 }
 

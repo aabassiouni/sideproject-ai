@@ -41,6 +41,7 @@ export async function updateUserReferral(userId: string, referral: string) {
 
   return;
 }
+
 export async function fetchUserCredits(userId: string) {
   function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));

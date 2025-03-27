@@ -1,41 +1,62 @@
-import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeftCircle } from "lucide-react";
+import { type GithubRepoType, getAuthGHClient } from "@/lib/github";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import type React from "react";
-import SubmitLinkButton from "./buttons/SubmitLinkButton";
+import RepoCard from "./RepoCard";
 import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { ScrollArea } from "./ui/scroll-area";
+import { Skeleton } from "./ui/skeleton";
 
-function GithubRepoCard({ children }: { children: React.ReactNode }) {
+export async function GithubRepos() {
+  const user = await currentUser();
+
+  let repos: GithubRepoType = [];
+
+  if (user?.id) {
+    if (user?.externalAccounts?.length !== 0) {
+      const clerk = await clerkClient();
+      const githubToken = await clerk.users.getUserOauthAccessToken(user.id, "oauth_github");
+
+      const octokit = getAuthGHClient(githubToken.data[0].token);
+
+      const { data } = await octokit.rest.repos.listForAuthenticatedUser({
+        visibility: "all",
+      });
+
+      repos = data;
+    }
+  }
+
   return (
-    <div className="z-10 hidden max-w-sm flex-col items-center overflow-x-hidden rounded-xl bg-white px-6 py-3 sm:flex sm:min-h-screen sm:min-w-[400px] sm:rounded-none sm:rounded-tr-xl dark:bg-gray-800">
-      <Link className="self-start" href={"/dashboard"}>
-        <Button variant={"link"} size={"sm"} className="">
-          <ArrowLeftCircle size={16} />
-        </Button>
-      </Link>
-      <CardHeader className="pt-2">
-        <CardTitle>Choose a repo!</CardTitle>
-        <CardDescription>
-          Choose a repo from your Github account to import into SideprojectAI or enter a GitHub link
-        </CardDescription>
-      </CardHeader>
-      <Tabs defaultValue="repo" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 dark:bg-gray-600">
-          <TabsTrigger value="link">Link</TabsTrigger>
-          <TabsTrigger value="repo">Repo</TabsTrigger>
-        </TabsList>
-        <TabsContent value="link">
-          <div className="space-y-2">
-            <SubmitLinkButton />
+    <ScrollArea className="sm:h-96">
+      <div className="mr-3 space-y-3">
+        {repos.length > 0 ? (
+          repos?.map((repo, idx) => <RepoCard key={idx} repo={repo} />)
+        ) : (
+          <div className="flex flex-col gap-2">
+            <p className="my-auto text-balance text-center text-slate-400">
+              Connect your GitHub account to view your repositories
+            </p>
+            <Link className="w-fit self-center" href="/dashboard/profile">
+              <Button>
+                Go to Profile
+                <ArrowUpRight />
+              </Button>
+            </Link>
           </div>
-        </TabsContent>
-        <TabsContent value="repo">{children}</TabsContent>
-      </Tabs>
-      <Separator className="mx-0 my-3 mt-2" />
-    </div>
+        )}
+      </div>
+    </ScrollArea>
   );
 }
 
-export default GithubRepoCard;
+export function GithubReposLoading() {
+  return (
+    <>
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+    </>
+  );
+}

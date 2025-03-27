@@ -1,5 +1,4 @@
 import Generation from "@/components/Generation";
-import GithubRepoCard from "@/components/GithubRepoCard";
 import MobileRepoSelect from "@/components/MobileRepoSelect";
 import RepoCard from "@/components/RepoCard";
 import RepoInfo from "@/components/RepoInfo";

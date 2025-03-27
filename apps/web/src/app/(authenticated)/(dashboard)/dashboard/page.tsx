@@ -1,9 +1,9 @@
+import { GithubRepos, GithubReposLoading } from "@/components/GithubRepoCard";
 import { SupportPopover } from "@/components/SupportPopover";
 import DeleteGenerationButton from "@/components/buttons/DeleteGenerationButton";
-import StartWritingButton from "@/components/buttons/StartWritingButton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
+import SubmitLinkButton from "@/components/buttons/SubmitLinkButton";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { deleteGenerationAction } from "@/lib/actions";
 import { fetchAllGenerationsForUser, fetchUserCredits } from "@/lib/db";
 import { currentUser } from "@clerk/nextjs/server";
@@ -60,24 +60,38 @@ async function DashboardPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center gap-4 bg-slate-200 p-4 pt-0 dark:bg-gray-900">
-      <Card className="mt-10 w-full sm:w-[650px] dark:bg-gray-800">
-        <CardHeader className="items-center justify-between sm:flex-row">
+      <Card className="mt-10 w-full sm:w-[450px] dark:bg-gray-800">
+        <CardContent className="pt-4">
+          <Tabs defaultValue="link" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 dark:bg-gray-600">
+              <TabsTrigger value="repo">Repo</TabsTrigger>
+              <TabsTrigger value="link">Link</TabsTrigger>
+            </TabsList>
+            <TabsContent value="link">
+              <SubmitLinkButton />
+            </TabsContent>
+            <TabsContent value="repos">
+              <Suspense fallback={<GithubReposLoading />}>
+                <GithubRepos />
+              </Suspense>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+        {/* <CardHeader className="items-center justify-between sm:flex-row">
           <CardTitle className="p-2 sm:p-0">Generations</CardTitle>
           <Suspense fallback={<Skeleton className="h-4 w-20" />}>
             <UserCredits />
           </Suspense>
-          <Link href="/dashboard/write">
-            <StartWritingButton className="min-w-[50px] bg-gradient-to-r from-cyan-500 to-blue-500 text-white dark:bg-gradient-to-r dark:from-blue-700 dark:to-indigo-800 dark:text-white" />
-          </Link>
-        </CardHeader>
-        <Separator />
-        <CardContent className="my-auto flex min-h-[50px] flex-col gap-2 overflow-x-scroll p-2">
+          <Link href="/dashboard/write"></Link>
+        </CardHeader> */}
+        {/* <Separator /> */}
+        {/* <CardContent className="my-auto flex min-h-[50px] flex-col gap-2 overflow-x-scroll p-2">
           {generations?.length > 0 ? (
             generations.map((generation: any, index: number) => <GenerationCard key={index} generation={generation} />)
           ) : (
             <p className="text-center text-slate-400">No generations yet!</p>
           )}
-        </CardContent>
+        </CardContent> */}
       </Card>
       <SupportPopover />
     </div>
