@@ -1,11 +1,12 @@
 import { insertUser } from "@/lib/db";
 import { notifyDiscord } from "@/lib/discord";
 import { type WebhookEvent, clerkClient } from "@clerk/nextjs/server";
+import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const event = (await request.json()) as WebhookEvent;
-  // console.log(event)
+  const event = await verifyWebhook(request);
+
   switch (event.type) {
     case "user.created": {
       const clerk = await clerkClient();

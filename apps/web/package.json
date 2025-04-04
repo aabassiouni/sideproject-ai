@@ -41,6 +41,7 @@
         "react-dom": "19.1.0",
         "react-wrap-balancer": "^1.1.0",
         "stripe": "^12.18.0",
+        "svix": "^1.63.1",
         "tailwind-merge": "^1.14.0",
         "tailwindcss-animate": "^1.0.7",
         "zod": "^3.22.4",
